@@ -360,8 +360,7 @@ accounts:
     concepts: [revenue, miscellaneous_loss_gain]
   - id: communication_expense
     name: 通信費
-    aliases: [切手代]
-    reading: [つうしんひ, きってだい]
+    reading: [つうしんひ]
     short: 切手、はがき、電話やインターネットの代金
     element: expense
     why: 使ってしまえば財産として残らず、事業のために使った犠牲だからです。
