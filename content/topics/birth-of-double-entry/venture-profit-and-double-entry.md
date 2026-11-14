@@ -54,7 +54,7 @@ wrong_patterns:
     misconception: venture_sales_as_profit
     feedback: 180は売った額の合計です。胡椒を買い、運び、関税を払った分を引かないと、もうけにはなりません。
   - match: 60
-    misconception: incidental_cost_separate
+    misconception: venture_costs_only_price
     feedback: 胡椒の代金120だけを引いています。運賃20と関税10も、この航海の胡椒を売るためにかかった額なので、左に入れて引きます。
   - match: 150
     feedback: 150はかかった額の合計です。売った額180から引きましょう。
