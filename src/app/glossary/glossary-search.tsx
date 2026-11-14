@@ -20,6 +20,13 @@ type GlossarySearchProps = {
 // useSearchParamsは静的生成ではSuspenseの中でしか読めないので、URLを読む部分だけを分ける
 export function GlossarySearchFromUrl(props: GlossarySearchProps) {
   const searchParams = useSearchParams();
+  // 同じオリジンのページからフル遷移すると、ブラウザのアンカー移動がハイドレーションに負けて先頭のまま残ることがある(Issue #281)
+  // 絞り込みで項目が描画されていなければ何もしない
+  useEffect(() => {
+    // idはASCIIなのでデコードしない。壊れたパーセントエンコードでURIErrorを投げてページが落ちるため
+    const hash = window.location.hash.slice(1);
+    if (hash) document.getElementById(hash)?.scrollIntoView();
+  }, []);
   return <GlossarySearch {...props} urlQuery={searchParams.get("q") ?? ""} />;
 }
 
