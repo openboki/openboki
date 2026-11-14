@@ -13,7 +13,7 @@ for (const width of [320, 340, 360, 390]) {
     const help = await page.getByRole("button", { name: "使い方" }).first().boundingBox();
     expect(help!.x + help!.width).toBeLessThanOrEqual(width);
 
-    const title = page.locator("span.truncate", { hasText: "つの要素と仕訳" });
+    const title = page.getByRole("heading", { level: 1, name: "つの要素と仕訳" });
     const { client, scroll } = await title.evaluate((e) => ({ client: e.clientWidth, scroll: e.scrollWidth }));
     expect(client / scroll).toBeGreaterThan(0.5);
   });
