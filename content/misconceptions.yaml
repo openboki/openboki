@@ -282,6 +282,30 @@ misconceptions:
     correct: 報告された支払いはすべて費用になり、小口現金はその合計だけ減る。報告の内訳と仕訳の行を1つずつ突き合わせる
     concepts: [petty_cash, expense]
     remediation: cash-and-deposits/petty-cash
+  - id: petty_report_as_replenishment
+    name: 報告のときに当座預金を減らす
+    description: 担当者から支払いの報告を受けただけなのに、補給の小切手も一緒に振り出したものとして、小口現金ではなく当座預金を減らしてしまう
+    correct: 報告で減るのは担当者の手元の小口現金。当座預金が減るのは、使った分を小切手で補給するとき。報告と同時に補給する場合だけ、費用の相手を当座預金にする
+    concepts: [petty_cash, imprest_system, checking_account]
+    remediation: cash-and-deposits/petty-cash
+  - id: postage_as_supplies
+    name: 切手代も消耗品費
+    description: 切手も文房具と同じように店で買う物なので、切手代を消耗品費で記録してしまう
+    correct: 切手代は郵便を送るための代金なので通信費。消耗品費は、文房具のように使ってなくなる物の代金。費用の科目は買った物の形ではなく使い道で決める
+    concepts: [expense, account_title]
+    remediation: cash-and-deposits/petty-cash
+  - id: asset_transfer_changes_total
+    name: 資産の中の移動で合計が動く
+    description: 当座預金から小口現金へのように資産の中でお金が移っただけなのに、片方の増減だけを見て資産の合計が増えた(減った)と考えている
+    correct: 資産から資産への移動は、増える科目と減る科目が同じ金額なので資産の合計は変わらない。左右の科目がどの要素かを両方見てから、合計がどう動くかを考える
+    concepts: [asset, five_elements]
+    remediation: bookkeeping-basics/five-elements
+  - id: imprest_balance_not_restored
+    name: 補給しても定額に戻らない
+    description: 定額資金前渡法で補給したあとの小口現金を、補給前の残高のままか、渡した金額に補給分を足した金額だと考えている
+    correct: 補給するのは使った分だけなので、小口現金は渡したときの定額に戻る。補給後の残高はいつも定額と同じ
+    concepts: [imprest_system, petty_cash]
+    remediation: cash-and-deposits/petty-cash
   - id: lender_borrower_confused
     name: 貸付金と借入金の取り違え
     description: 貸した側と借りた側を逆に捉えて、貸付金と借入金を入れ替えて使ってしまう
@@ -502,6 +526,12 @@ misconceptions:
     name: 売った額がもうけ
     description: 商いの1口のもうけを、売った額の合計で答えている。買った代金や運賃・関税を引いていない
     correct: もうけは、売った額からその口にかかった額(代金、運賃、関税)を引いた残り
+    concepts: [venture_accounting]
+    remediation: birth-of-double-entry/venture-profit-and-double-entry
+  - id: venture_costs_only_price
+    name: 運賃と関税を引かない
+    description: 商いの1口のもうけを出すとき、売った額から買った代金だけを引き、運賃や関税を引いていない
+    correct: 運賃や関税も、その口の商品を売るためにかかった額。口のページの左に書き、買った代金と一緒に売った額から引く
     concepts: [venture_accounting]
     remediation: birth-of-double-entry/venture-profit-and-double-entry
   - id: profit_is_cash
