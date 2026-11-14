@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-import { type AccountInfo, ELEMENTS, matchesAccountQuery } from "@/lib/accounting";
+import { type AccountInfo, ELEMENTS, findAccountByReading, matchesAccountQuery } from "@/lib/accounting";
 import { ELEMENT_STYLE } from "@/lib/elements";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover";
@@ -117,7 +117,9 @@ export function AccountCombobox({ accounts, value, onChange, onCompositionChange
           onBlur={() => {
             setOpen(false);
             // 読みや漢字の一部のままだと科目として数えられず、金額が合計に入らない(Issue #236)。select()はフォーカスを戻すので使わない
-            if (query && options.length === 1 && options[0].name !== value) onChange(options[0].name);
+            if (!query) return;
+            const account = options.length === 1 ? options[0] : findAccountByReading(query, options);
+            if (account && account.name !== value) onChange(account.name);
           }}
           onKeyDown={onKeyDown}
         />
