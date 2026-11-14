@@ -17,7 +17,7 @@ function recordSaved(page: Page) {
 async function resumeBanner(context: BrowserContext) {
   const c = await context.newPage();
   await c.goto(unit);
-  const banner = c.getByText(/前回はステップ\d+まで進みました。/);
+  const banner = c.getByText(/前回はステップ\d+まで進みました。|この単元は完了しています。/);
   await expect(banner).toBeVisible();
   const text = await banner.textContent();
   await c.close();
@@ -67,7 +67,8 @@ test("古いタブで次へを押しても、別タブで進んだstepと完了�
   await expect(b.getByText("ステップ1 / 9")).toBeVisible();
   expect((await upsertB2).ok()).toBe(true);
   expect(savedB.at(-1)?.body.status).toBe("started");
-  expect(await resumeBanner(context)).toBe("前回はステップ9まで進みました。");
+  // 完了済みの単元は途中扱いの文言にしない(Issue #276)
+  expect(await resumeBanner(context)).toBe("この単元は完了しています。");
   const topic = await context.newPage();
   await topic.goto("/topics/cash-and-deposits");
   await expect(topic.getByRole("listitem").filter({ hasText: "小口現金" })).toContainText("完了");
