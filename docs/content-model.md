@@ -223,6 +223,13 @@ content/
       feedback: 建物は10年使うので、1年分だけを費用にします。
 ```
 
+誤答パターンには原則として`misconception`を付ける(Issue #272)。付けなくてよいのは、貸借不一致(`unbalanced`)と、どの誤解にも当たらない誤答(計算の打ち間違い、桁の読み違いなど)だけ。後者は`no_misconception`に理由を1行で書き、省略と区別する。既存の誤解に当たらないが考え方の誤りである誤答には、新しい誤解を`misconceptions.yaml`に足す。
+```yaml
+    - match: 10000
+      no_misconception: 桁を1つ落とした計算の誤りで、考え方の誤解ではない
+      feedback: 600,000 ÷ 6は100,000です。桁を確かめましょう。
+```
+
 ### 3.6 学習パス(paths/boki-3.yaml)
 ```yaml
 id: boki-3
@@ -250,6 +257,7 @@ sections:
 - `introduces`に挙げた概念が本文で少なくとも1回`[[id]]`として使われている。
 - すべての概念に`short` / `summary` / `example`がある。
 - 誤答パターンの`misconception`が`misconceptions.yaml`に存在し、誤解の`remediation`が実在する単元を指す。
+- 誤答パターンに`misconception`と`no_misconception`を同時に書いていない。
 - journalの誤答パターンが正解と一致しない(正解を誤答として登録していない)。
 
 ## 5. 用語集

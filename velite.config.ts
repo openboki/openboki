@@ -67,8 +67,9 @@ const journalLinePattern = s.object({ account: s.string().optional(), amount: s.
 const effect = s.object({ asset: change, liability: change, equity: change, revenue: change, expense: change });
 const effectPattern = effect.partial();
 
+// no_misconceptionは、どの誤解にも当たらない誤答(計算の打ち間違いなど)で誤解IDを付けない理由を書く欄(Issue #272)
 const wrongPattern = <T extends z.ZodTypeAny>(match: T) =>
-  s.object({ match, misconception: s.string().optional(), feedback: s.string() });
+  s.object({ match, misconception: s.string().optional(), no_misconception: s.string().optional(), feedback: s.string() });
 
 // ステップの課題。種類はdocs/ide-design.md 3章
 const taskBase = { hint: s.string().optional(), success: s.string().optional() };
@@ -372,6 +373,10 @@ export default defineConfig({
     const requireMisconception = (id: string | undefined, where: string) => {
       if (id && !misconceptionIds.has(id)) errors.push(`${where}: 誤解${id}が存在しない`);
     };
+    const checkPatternMisconception = (p: { misconception?: string; no_misconception?: string }, where: string) => {
+      requireMisconception(p.misconception, where);
+      if (p.misconception && p.no_misconception) errors.push(`${where}: 誤答パターンにmisconceptionとno_misconceptionの両方がある`);
+    };
     const checkEntry = (entry: { debit: { account: string; amount: number }[]; credit: { account: string; amount: number }[] }, where: string) => {
       const sum = (lines: { amount: number }[]) => lines.reduce((t, l) => t + l.amount, 0);
       if (sum(entry.debit) !== sum(entry.credit)) errors.push(`${where}: 借方合計と貸方合計が一致しない`);
@@ -458,7 +463,7 @@ export default defineConfig({
           case "post":
             [t.answer, ...t.alternatives].forEach((e) => checkEntry(e, w));
             t.wrong_patterns.forEach((p) => {
-              requireMisconception(p.misconception, w);
+              checkPatternMisconception(p, w);
               [...(p.match.debit ?? []), ...(p.match.credit ?? [])].forEach((l) => l.account && requireAccount(l.account, w));
               if (p.match.debit && p.match.credit) {
                 const full = [...p.match.debit, ...p.match.credit].every((l) => l.account && l.amount);
@@ -468,7 +473,7 @@ export default defineConfig({
             break;
           case "predict":
             checkEntry(t.entry, w);
-            t.wrong_patterns.forEach((p) => requireMisconception(p.misconception, w));
+            t.wrong_patterns.forEach((p) => checkPatternMisconception(p, w));
             if (t.elements) {
               if (new Set(t.elements).size !== t.elements.length) errors.push(`${w}: elementsに同じ要素が重複している`);
               t.wrong_patterns.forEach((p) => {
@@ -498,14 +503,14 @@ export default defineConfig({
             break;
           case "calc":
             t.wrong_patterns.forEach((p) => {
-              requireMisconception(p.misconception, w);
+              checkPatternMisconception(p, w);
               if (p.match === t.answer) errors.push(`${w}: 正解と同じ値が誤答パターンにある`);
             });
             break;
           case "debug":
             debugErrors(t).forEach((e) => errors.push(`${w}: ${e}`));
             [...t.entries, t.answer.entry].forEach((e) => [...e.debit, ...e.credit].forEach((l) => requireAccount(l.account, w)));
-            t.wrong_patterns.forEach((p) => requireMisconception(p.misconception, w));
+            t.wrong_patterns.forEach((p) => checkPatternMisconception(p, w));
             break;
         }
       });
