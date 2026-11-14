@@ -504,6 +504,12 @@ misconceptions:
     correct: もうけは、売った額からその口にかかった額(代金、運賃、関税)を引いた残り
     concepts: [venture_accounting]
     remediation: birth-of-double-entry/venture-profit-and-double-entry
+  - id: venture_costs_only_price
+    name: 運賃と関税を引かない
+    description: 商いの1口のもうけを出すとき、売った額から買った代金だけを引き、運賃や関税を引いていない
+    correct: 運賃や関税も、その口の商品を売るためにかかった額。口のページの左に書き、買った代金と一緒に売った額から引く
+    concepts: [venture_accounting]
+    remediation: birth-of-double-entry/venture-profit-and-double-entry
   - id: profit_is_cash
     name: もうけは現金に書く
     description: 口のもうけを元手や利益と損失のページへ移すときに、相手を現金にしている
