@@ -189,6 +189,8 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
   // 初回バナーの判定。進捗を読み終えるまではfalseにして、記録のある学習者にバナーが一瞬出ないようにする
   const [noRecord, setNoRecord] = useState(false);
   const [resumeStep, setResumeStep] = useState<number | null>(null);
+  // 完了した単元は途中扱いの「前回はステップNまで」にしない(Issue #276)
+  const [resumeCompleted, setResumeCompleted] = useState(false);
   // sessionStorageから戻したときは、DBの進捗で「続きから」を出さない(Issue #83)
   const restoredSession = useRef(false);
   const [sessionLoaded, setSessionLoaded] = useState(false);
@@ -328,6 +330,7 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
               .filter(([i]) => i < saved.step && (p.solved[unit.id]?.includes(i) || unit.steps[i].task.type === "predict")),
           );
           setResumeStep(saved.step);
+          setResumeCompleted(saved.status === "completed");
           setResumeAnswer(answer);
           setResumeWrong(p.wrong[unit.id]?.[saved.step] ?? 0);
           setResumeSolved((p.solved[unit.id]?.includes(saved.step) ?? false) || (unit.steps[saved.step].task.type === "predict" && answer !== undefined));
@@ -1003,7 +1006,7 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
               案内は開いた直後(最初のステップ)だけ出す。自分で進み始めたら学習に集中できるよう消す */}
           {!tourActive && resumeStep !== null && stepIndex === 0 && (
             <div className="mb-3 rounded-md bg-muted/60 p-2 text-sm flex items-center justify-between gap-2">
-              <span>前回はステップ{resumeStep + 1}まで進みました。</span>
+              <span>{resumeCompleted ? "この単元は完了しています。" : `前回はステップ${resumeStep + 1}まで進みました。`}</span>
               <Button
                 size="sm"
                 variant="outline"
@@ -1013,7 +1016,7 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
                   stepHeading.current?.focus();
                 }}
               >
-                続きから
+                {resumeCompleted ? "最後のステップを見る" : "続きから"}
               </Button>
             </div>
           )}
