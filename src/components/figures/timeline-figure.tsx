@@ -9,8 +9,8 @@ export function TimelineFigure({ total, periods, unit, label }: { total: number;
   return (
     <div className="space-y-2 text-sm">
       <div className="flex items-baseline justify-between">
-        <span className="font-medium">{label ?? `合計${formatAmount(total)}円を${periods} ${unit}に分ける`}</span>
-        <span className="text-xs text-muted-foreground">1 {unit}あたり{amount}円</span>
+        <span className="font-medium">{label ?? `合計${formatAmount(total)}円を${periods}${unit}に分ける`}</span>
+        <span className="text-xs text-muted-foreground">1{unit}あたり{amount}円</span>
       </div>
       {/* テーマごとに等幅フォントが違うので、列の最小幅は金額の文字数 + 余白ぶんをchで取り、ペインが狭ければ折り返す */}
       <ol className="grid gap-1 font-mono text-xs" style={{ gridTemplateColumns: `repeat(auto-fit, minmax(${amount.length + 2}ch, 1fr))` }}>
