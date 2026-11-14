@@ -137,6 +137,14 @@ export function matchesAccountQuery(account: AccountInfo, query: string): boolea
   return [account.name, ...account.aliases, ...(account.reading ?? [])].some((text) => normalizeSearchText(text).includes(q));
 }
 
+/** 読みと完全に一致する科目がちょうど1つならそれを返す。「げんきん」は小口現金・現金過不足にも部分一致するので、候補の数では決まらない(Issue #292) */
+export function findAccountByReading(query: string, accounts: Iterable<AccountInfo>): AccountInfo | undefined {
+  const q = normalizeSearchText(query);
+  if (!q) return undefined;
+  const hits = [...accounts].filter((a) => (a.reading ?? []).some((r) => normalizeSearchText(r) === q));
+  return hits.length === 1 ? hits[0] : undefined;
+}
+
 /** 行の順序と分け方を無視して、科目ごとの金額が同じ仕訳か(同じ科目の行は合算して比べる) */
 export function sameEntry(a: JournalEntry, b: JournalEntry): boolean {
   const key = (lines: JournalLine[]) => {
