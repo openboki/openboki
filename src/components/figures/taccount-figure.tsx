@@ -21,9 +21,10 @@ export function TAccountFigure({ account, debit, credit }: { account: AccountInf
       </div>
       <ul className="text-xs font-mono tabular-nums">
         {lines.map((l, i) => (
-          <li key={i} className="flex justify-between gap-2 px-1">
+          // 摘要が金額と並ばないほど長いときは摘要を1行に広げ、金額を次の行の右端に送る
+          <li key={i} className="flex flex-wrap gap-x-2 px-1">
             <span className="min-w-0 break-words">{l.label}</span>
-            <span className="shrink-0">{formatAmount(l.amount)}</span>
+            <span className="ml-auto shrink-0">{formatAmount(l.amount)}</span>
           </li>
         ))}
       </ul>
