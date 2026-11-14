@@ -956,7 +956,7 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
     <HelpControlsContext value={{ openTopic: openHelpTopic, hidden: tourActive, ctx: helpCtx }}>
     <div className="flex flex-col lg:h-[calc(100dvh-49px)]">
       <div className="flex items-center gap-3 border-b px-4 py-2 text-sm">
-        <span className="font-semibold truncate">{unit.title}</span>
+        <h1 className="min-w-0 font-semibold truncate">{unit.title}</h1>
         {/* 点は縮まないので、スマホ幅ではタイトルを潰し行も溢れさせる。進み具合は隣の「ステップn / N」で分かる(Issue #89) */}
         <ol className="hidden sm:flex gap-1" aria-label="ステップの進み具合" data-tour="steps">
           {unit.steps.map((s, i) => (
