@@ -22,6 +22,18 @@ test("新しいタブで用語集のアンカーを開くと項目へスクロ�
   await expect.poll(() => topOf(page, "memorandum_book"), { timeout: 5000 }).toBeLessThan(200);
 });
 
+test("壊れたパーセントエンコードのアンカーで開いても用語集が表示される", async ({ page }) => {
+  const errors: Error[] = [];
+  page.on("pageerror", (e) => errors.push(e));
+  await page.goto("/glossary#%E0%A4%A");
+  // ハイドレーション後に落ちるので、ルーターの準備を待ってから確かめる
+  await expect.poll(() => page.evaluate(() => Boolean(window.history.state?.__NA))).toBe(true);
+  expect(errors).toEqual([]);
+  await expect(page.getByRole("textbox", { name: "用語を検索" })).toBeVisible();
+  await expect(page.locator("#memorandum_book")).toBeAttached();
+  await expect(page.locator("dl > div").first()).toBeVisible();
+});
+
 test("用語集の関連リンクで項目へ移動できる", async ({ page }) => {
   await page.goto("/glossary");
   await expect.poll(() => page.evaluate(() => Boolean(window.history.state?.__NA))).toBe(true);
