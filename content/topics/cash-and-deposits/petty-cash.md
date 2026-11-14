@@ -86,13 +86,16 @@ wrong_patterns:
     misconception: outflow_on_debit
     feedback: 費用は左で増え、小口現金は右で減ります。
   - match: { credit: [{ account: checking_account }] }
+    misconception: petty_report_as_replenishment
     feedback: 支払ったのは担当者の手元の小口現金です。まず小口現金を減らします。補給は次のステップです。
   - match: { credit: [{ account: cash }] }
     misconception: petty_cash_is_cash
     feedback: 担当者の手元のお金は、店の金庫の現金とは分けて小口現金という科目で管理しています。支払いに使ったので、減るのは小口現金です。
   - match: { debit: [{ account: supplies_expense, amount: 4000 }] }
+    misconception: postage_as_supplies
     feedback: 切手代4,000円は、郵便のための代金なので通信費です。消耗品費にするのは文房具代6,500円だけです。
   - match: { debit: [{ account: supplies_expense, amount: 10500 }] }
+    misconception: postage_as_supplies
     feedback: 切手代4,000円は、郵便のための代金なので通信費です。消耗品費にするのは文房具代6,500円だけです。
   - match: { unbalanced: true }
     feedback: 左の3つの費用の合計(12,500)と、右の小口現金がそろっていません。
@@ -134,8 +137,10 @@ wrong_patterns:
     misconception: petty_cash_is_expense
     feedback: 費用は報告を受けたときに記録済みです。補給は、当座預金から小口現金へお金を移すだけです。
   - match: { asset: decrease }
+    misconception: asset_transfer_changes_total
     feedback: 当座預金は減りますが、小口現金が同じだけ増えます。資産の合計は変わりません。
   - match: { asset: increase }
+    misconception: asset_transfer_changes_total
     feedback: 小口現金は増えますが、当座預金が同じだけ減ります。資産の合計は変わりません。
 hint: 当座預金(資産)から小口現金(資産)へ移すだけなので、5つの箱の合計はどれも動きません。
 success: 小口現金が30,000に戻り、当座預金が12,500減りました。資産の中でお金が移動しただけです。
@@ -178,8 +183,10 @@ question: 補給が終わったあとの小口現金の残高はいくらです�
 answer: 30000
 wrong_patterns:
   - match: 17500
+    misconception: imprest_balance_not_restored
     feedback: それは補給する前の金額です。使った12,500円を補給して、元の金額に戻しました。
   - match: 42500
+    misconception: imprest_balance_not_restored
     feedback: 補給は使った分だけです。17,500 + 12,500で、渡したときの金額に戻ります。
 hint: 渡したときの金額に戻ります。
 success: 小口現金は30,000円。定額資金前渡法では、補給のたびにこの金額に戻ります。
