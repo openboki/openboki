@@ -146,10 +146,45 @@ interface SessionSnapshot {
   debugRow?: number | null;
 }
 const sessionKey = (unitId: string) => `ide-session:${unitId}`;
-function readSession(unitId: string): SessionSnapshot | null {
+const isObject = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
+const isStepIndex = (v: unknown, stepCount: number) => Number.isInteger(v) && (v as number) >= 0 && (v as number) < stepCount;
+const isPair = (v: unknown) => Array.isArray(v) && v.length === 2 && Number.isInteger(v[0]);
+function isEntry(v: unknown, accounts: ReadonlyMap<string, AccountInfo>) {
+  const lines = (side: unknown) => Array.isArray(side) && side.every((l) => isObject(l) && accounts.has(l.account as string) && typeof l.amount === "number");
+  return isObject(v) && lines(v.debit) && lines(v.credit);
+}
+function isEditable(v: unknown) {
+  const lines = (side: unknown) => Array.isArray(side) && side.every((l) => isObject(l) && typeof l.accountName === "string" && typeof l.amount === "string");
+  return isObject(v) && lines(v.debit) && lines(v.credit);
+}
+
+// 手で書き換えた値や、形を変えた更新の前から開いていたタブの値で落ちないよう、形が合わなければ丸ごと捨てる(Issue #277)。
+// 科目IDが変わったあとの記帳も、貸借対照表が合わなくなるので捨てる
+function readSession(unitId: string, stepCount: number, accounts: ReadonlyMap<string, AccountInfo>): SessionSnapshot | null {
   try {
     const raw = window.sessionStorage.getItem(sessionKey(unitId));
-    return raw ? (JSON.parse(raw) as SessionSnapshot) : null;
+    const s: unknown = raw ? JSON.parse(raw) : null;
+    if (!isObject(s)) return null;
+    const valid =
+      isStepIndex(s.stepIndex, stepCount) &&
+      isStepIndex(s.reached, stepCount) &&
+      Array.isArray(s.posted) &&
+      s.posted.every((p) => isObject(p) && Number.isInteger(p.step) && typeof p.memo === "string" && isEntry(p.entry, accounts)) &&
+      isEditable(s.draft) &&
+      isObject(s.effect) &&
+      isObject(s.placed) &&
+      typeof s.calcValue === "string" &&
+      isObject(s.params) &&
+      typeof s.attempts === "number" &&
+      Array.isArray(s.answered) &&
+      s.answered.every(isPair) &&
+      Array.isArray(s.stepAttempts) &&
+      s.stepAttempts.every((p) => isPair(p) && typeof p[1] === "number") &&
+      (s.gradedAnswer === null || typeof s.gradedAnswer === "string") &&
+      (s.debugRow === undefined || s.debugRow === null || Number.isInteger(s.debugRow));
+    if (!valid) return null;
+    if (typeof s.gradedAnswer === "string") JSON.parse(s.gradedAnswer);
+    return s as unknown as SessionSnapshot;
   } catch {
     return null;
   }
@@ -559,8 +594,8 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
   // サーバー描画はステップ1なので、復元はマウント後に行う。チュートリアルはツアーがステップ1からの台本なので戻さない
   /* eslint-disable react-hooks/set-state-in-effect -- sessionStorageはマウント後にしか読めない */
   useEffect(() => {
-    const s = isTutorialUnit ? null : readSession(unit.id);
-    if (s && s.stepIndex < unit.steps.length) {
+    const s = isTutorialUnit ? null : readSession(unit.id, unit.steps.length, accountMap);
+    if (s) {
       // 何もしていないステップ1の状態しか無ければ、DBの進捗の「続きから」を出す
       restoredSession.current = s.stepIndex > 0 || s.reached > 0 || s.answered.length > 0;
       answered.current = new Map(s.answered);
