@@ -18,6 +18,8 @@ const GENERIC_WRONG = "まだ合っていません。結果の表で何が動く
 const AMOUNT_WRONG = "科目は合っています。金額をもう一度確かめましょう。";
 // 比較表が全行「同じ」になる誤答。表を見直させても手がかりが無いので、科目へ目を向けさせる
 const SAME_IMPACT = "5つの要素の動きは合っています。使っている科目を見直しましょう。";
+// swappedの誤答パターンが無い課題(debugなど)でも、同じ要素どうしの貸借逆をSAME_IMPACTに落とさない
+const SWAPPED = "科目と金額は合っています。借方と貸方が逆です。";
 const EXTRA_LINES = "正しい行はそろっています。この取引に含まれない余計な行を消しましょう。";
 // 計算問題では記帳しないので、結果の表の動きではなく計算そのものの見直しを促す
 const CALC_WRONG = "まだ合っていません。計算の式と、使う数字をもう一度確かめましょう。";
@@ -61,6 +63,7 @@ export function gradePost(task: TaskOf<"post">, entry: JournalEntry, accounts?: 
     });
   });
   if (pattern) return ng(pattern.feedback, pattern.misconception);
+  if (answers.some((e) => sameEntry({ debit: e.credit, credit: e.debit }, entry))) return ng(SWAPPED);
   const hasAllLines = (e: JournalEntry) => sides.every((side) => e[side].every((c) => entry[side].some((l) => l.account === c.account && l.amount === c.amount)));
   if (answers.some(hasAllLines)) return ng(EXTRA_LINES);
   if (answers.some((e) => sameAccounts(e, entry))) return ng(AMOUNT_WRONG);
