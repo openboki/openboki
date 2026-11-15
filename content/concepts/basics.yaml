@@ -2,6 +2,33 @@ id: basics
 title: 簿記の構造
 order: 1
 concepts:
+  - id: bookkeeping
+    name: 簿記
+    reading: [ぼき]
+    short: お店や会社のお金と物の動きを、決まった書き方で帳簿に記録する技術
+    summary: 帳簿記入を縮めた言葉とされる。取引を決まった書き方で帳簿に記録し、いま何を持っていて、どれだけもうかったかを誰が見ても同じ数字で確かめられるようにする。記録の結果は貸借対照表と損益計算書にまとまる。
+    example: カフェが家賃50,000円を現金で払ったら、その日のうちに「支払家賃50,000 / 現金50,000」と帳簿に書く。
+    requires: []
+    related: [account_books, book_entry, journal_entry]
+    contrasts: []
+  - id: account_books
+    name: 帳簿
+    reading: [ちょうぼ]
+    short: お店や会社のお金と物の動きを書きとめておく記録のノート
+    summary: 取引を記録する帳面の総称。取引を起きた順に書く仕訳帳と、科目ごとに集め直す総勘定元帳が中心になる。紙のノートでも会計ソフトでも、書く内容は変わらない。
+    example: カフェの1か月の取引を仕訳帳に書いていくと、同じ内容が総勘定元帳の現金や売上の欄にも載る。どちらも帳簿。
+    requires: []
+    related: [bookkeeping, journal, general_ledger]
+    contrasts: []
+  - id: book_entry
+    name: 記帳
+    reading: [きちょう]
+    short: 取引を帳簿に書くこと
+    summary: 起きた取引を帳簿に書き入れること。簿記では、取引を仕訳の形にして仕訳帳に書くところから始まる。記帳した内容が集まって、貸借対照表と損益計算書になる。
+    example: コーヒーが80,000円売れたら、「現金80,000 / 売上80,000」と仕訳帳に書く。これが記帳。
+    requires: [account_books]
+    related: [journal_entry, journal]
+    contrasts: []
   - id: transaction
     name: 取引
     reading: [とりひき]
@@ -112,22 +139,50 @@ concepts:
     contrasts: [balance_sheet]
   - id: net_income
     name: 当期純利益
+    aliases: [当期純損失]
     reading: [とうきじゅんりえき]
     short: 一定期間(通常1年)の収益から費用を引いた、最終的なもうけ
-    summary: 収益の合計から費用の合計を引いた金額。損益計算書の結論であり、貸借対照表の純資産を同じ金額だけ増やす。費用が増えれば当期純利益は減り、純資産も減る。
+    summary: 収益の合計から費用の合計を引いた金額。損益計算書の結論であり、貸借対照表の純資産を同じ金額だけ増やす。費用が増えれば当期純利益は減り、純資産も減る。費用のほうが多いときはマイナスになり、当期純損失と呼ぶ。
     example: 売上80万円、支払家賃5万円だけなら、当期純利益は75万円。
     requires: [revenue, expense, equity]
     related: [income_statement, balance_sheet]
     contrasts: []
+  - id: journal
+    name: 仕訳帳
+    reading: [しわけちょう]
+    short: 仕訳を、取引の起きた順に書いていく帳簿
+    summary: 取引が起きるたびに、日付の順に仕訳を書く帳簿。いつ何が起きたかを順にたどれる。科目ごとの増減や残高はここからは読みにくいので、同じ内容を総勘定元帳へ科目ごとに写して確かめる。
+    example: 出資、マシンの購入、借入、売上、家賃の支払いを記帳すると、仕訳帳にはこの5つの仕訳が起きた順に並ぶ。
+    requires: [journal_entry, account_books]
+    related: [general_ledger, book_entry]
+    contrasts: [general_ledger]
   - id: t_account
     name: T勘定
-    aliases: [総勘定元帳, 元帳]
     reading: [てぃーかんじょう]
     short: 科目ごとに左右の増減を並べた帳簿の形
     summary: 仕訳帳は取引を起きた順に書くが、T勘定は同じ仕訳を勘定科目ごとに集め直す。仕訳で左に書いた金額は科目の左側に、右に書いた金額は右側に載り、左右の差がその科目の残高になる。全科目のT勘定を集めた帳簿を総勘定元帳と呼ぶ。
     example: 現金1,000,000の出資と家賃50,000の支払いを記帳すると、現金のT勘定は左に1,000,000、右に50,000が載り、残高は950,000。
     requires: [journal_entry, account_title]
-    related: [debit_credit]
+    related: [debit_credit, general_ledger, balance]
+    contrasts: []
+  - id: general_ledger
+    name: 総勘定元帳
+    aliases: [元帳]
+    reading: [そうかんじょうもとちょう]
+    short: すべての勘定科目のT勘定を集めた帳簿。科目ごとの増減と残高が分かる
+    summary: 仕訳帳に書いた仕訳を、勘定科目ごとのページに写して集めた帳簿。元帳とも呼ぶ。仕訳帳が「いつ何が起きたか」を示すのに対し、総勘定元帳は「現金はいまいくらあるか」のように科目ごとの増減と残高を示す。貸借対照表と損益計算書は、この帳簿の各科目の残高から作る。
+    example: 「現金50,000 / 売上50,000」と記帳すると、総勘定元帳では現金のページの左と売上のページの右に50,000が載る。
+    requires: [t_account, journal]
+    related: [balance, account_books]
+    contrasts: [journal]
+  - id: balance
+    name: 残高
+    reading: [ざんだか]
+    short: ある勘定科目の左の合計と右の合計の差。その科目にいま残っている金額
+    summary: 勘定科目ごとに、借方(左)の合計と貸方(右)の合計を比べた差額。現金なら、入ってきた金額の合計から出ていった金額の合計を引いた、いま手元にあるはずの金額になる。貸借対照表と損益計算書には、各科目の残高が載る。
+    example: 現金の左に1,000,000と300,000、右に600,000と50,000が載っていれば、現金の残高は650,000。
+    requires: [t_account]
+    related: [general_ledger, debit_credit]
     contrasts: []
   - id: closing
     name: 決算
@@ -137,6 +192,26 @@ concepts:
     example: 4月から3月を1期とするカフェなら、3月31日が決算の日。その日までの記録から、1年分の当期純利益と期末の資産・負債・純資産を求める。
     requires: [balance_sheet, income_statement]
     related: [net_income]
+    contrasts: []
+  - id: financial_statements
+    name: 財務諸表
+    aliases: [決算書]
+    reading: [ざいむしょひょう]
+    short: 貸借対照表と損益計算書など、会社の財産ともうけを外に報告する表をまとめた呼び名
+    summary: 帳簿の記録を決算でまとめ、会社の状態を報告するための表の総称。中心は、ある時点の資産・負債・純資産を示す貸借対照表と、ある期間の収益・費用ともうけを示す損益計算書。一般には決算書とも呼ばれる。
+    example: カフェの1年の記帳を決算でまとめると、3月31日時点の貸借対照表と、1年分の損益計算書ができる。この2つが財務諸表。
+    requires: [balance_sheet, income_statement]
+    related: [closing]
+    contrasts: []
+  - id: accounting_period
+    name: 会計期間
+    aliases: [期]
+    reading: [かいけいきかん]
+    short: もうけを計算するために区切った期間。ふつう1年で、初めを期首、終わりを期末、その間を期中と呼ぶ
+    summary: 会社は続いていくので、期間を区切らないともうけを計算できない。この区切りが会計期間で、ふつう1年。期間の最初の日を期首、最後の日を期末(決算の日)、その間を期中と呼ぶ。いまの期間を当期、1つ前を前期、1つ後を次期と呼ぶ。
+    example: 4月1日から3月31日を1期とするカフェなら、4月1日が期首、3月31日が期末。6月の取引は期中の取引。
+    requires: []
+    related: [closing, net_income]
     contrasts: []
   - id: accrual_basis
     name: 発生主義

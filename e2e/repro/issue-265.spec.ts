@@ -21,15 +21,16 @@ async function tabsFromGuideToNext(page: Page, url: string) {
 
 test("observeステップで、ガイド末尾から「次へ →」までTab 6回以内で届く", async ({ page }) => {
   expect(await tabsFromGuideToNext(page, "/units/receivables-and-payables/temporary-and-deposits")).toBeLessThanOrEqual(6);
-  // 科目が無い単元で回数が増えていない
-  expect(await tabsFromGuideToNext(page, "/units/bookkeeping-basics/five-elements")).toBeLessThanOrEqual(3);
+  // 科目が無い単元でも、結果ペインの停止は損益計算書の当期純利益の1つだけ
+  expect(await tabsFromGuideToNext(page, "/units/bookkeeping-basics/five-elements")).toBeLessThanOrEqual(4);
 });
 
+// 当期純利益の行も科目名と同じ並びに入る
 test("結果ペインの科目名は矢印キーで移れる", async ({ page }) => {
   await page.goto("/units/receivables-and-payables/temporary-and-deposits");
   const later = page.getByRole("button", { name: "今はしない" });
   if (await later.isVisible()) await later.click();
-  const terms = page.getByRole("region", { name: "結果" }).locator("[data-account] button.term");
+  const terms = page.getByRole("region", { name: "結果" }).locator("button.term");
   await terms.first().focus();
   await page.keyboard.press("ArrowDown");
   await expect(terms.nth(1)).toBeFocused();

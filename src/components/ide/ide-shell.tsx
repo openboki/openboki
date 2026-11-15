@@ -4,7 +4,7 @@ import Link from "next/link";
 import { type MouseEvent, type ReactNode, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { flushSync } from "react-dom";
 import type { Unit } from "#content";
-import type { GlossaryAccount } from "@/lib/content";
+import type { GlossaryAccount, GlossaryEntry } from "@/lib/content";
 import { type AccountInfo, type Change, type Element, type JournalEntry, type Side, ELEMENT_LABELS, ELEMENTS, computeImpact, toChange } from "@/lib/accounting";
 import { splitAmounts } from "@/lib/task-text";
 import { ElementBadge } from "@/components/element-badge";
@@ -70,6 +70,8 @@ export interface MisconceptionInfo {
 interface Props {
   unit: IdeUnit;
   accounts: GlossaryAccount[];
+  /** 結果ペインの「当期純利益」の行で開く用語 */
+  netIncomeTerm: GlossaryEntry;
   misconceptions: Record<string, MisconceptionInfo>;
   // ステップごとの説明文(サーバーでMarkdownを描画済み)
   narratives: ReactNode[];
@@ -196,7 +198,7 @@ function isRepeatedClick(e: MouseEvent<HTMLElement>) {
   return e.detail > 1;
 }
 
-export function IdeShell({ unit, accounts, misconceptions, narratives, returnTitles }: Props) {
+export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narratives, returnTitles }: Props) {
   const accountMap = useMemo(() => new Map(accounts.map((a) => [a.id, a])), [accounts]);
   const [stepIndex, setStepIndex] = useState(0);
   const [posted, setPosted] = useState<Posted[]>(() => replayEntries(unit.steps, 0));
@@ -1351,7 +1353,7 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
               )}
             </div>
           )}
-          {unit.view === "statements" && <StatementsPane accounts={accountMap} balances={view.balances} diff={view.diff} company={unit.company} />}
+          {unit.view === "statements" && <StatementsPane accounts={accountMap} netIncomeTerm={netIncomeTerm} balances={view.balances} diff={view.diff} company={unit.company} />}
           {unit.view === "ledger" && (
             <div className="space-y-5 text-sm">
               <section aria-label="試算">

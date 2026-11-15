@@ -1,11 +1,12 @@
 "use client";
 
 import { type Element, ELEMENTS, formatAmount } from "@/lib/accounting";
-import type { GlossaryAccount } from "@/lib/content";
+import type { GlossaryAccount, GlossaryEntry } from "@/lib/content";
 import { type Balances, type StatementLine, buildStatements } from "@/lib/ledger";
 import { ELEMENT_STYLE } from "@/lib/elements";
 import { AccountName } from "@/components/account-name";
 import { ElementBadge } from "@/components/element-badge";
+import { Term } from "@/components/term";
 import { useEffect, useRef } from "react";
 import { HelpIcon } from "./help-icon";
 
@@ -13,12 +14,13 @@ import { HelpIcon } from "./help-icon";
 
 interface Props {
   accounts: ReadonlyMap<string, GlossaryAccount>;
+  netIncomeTerm: GlossaryEntry;
   balances: Balances;
   diff: Map<string, number>;
   company: string;
 }
 
-export function StatementsPane({ accounts, balances, diff, company }: Props) {
+export function StatementsPane({ accounts, netIncomeTerm, balances, diff, company }: Props) {
   const st = buildStatements(balances, accounts);
   const balanced = st.totalAssets === st.totalLiabilities + st.totalEquity;
   const changedElements = new Map<Element, number>();
@@ -30,12 +32,14 @@ export function StatementsPane({ accounts, balances, diff, company }: Props) {
   const netIncomeDelta = (changedElements.get("revenue") ?? 0) - (changedElements.get("expense") ?? 0);
   changedElements.set("equity", (changedElements.get("equity") ?? 0) + netIncomeDelta);
   for (const [el, d] of [...changedElements]) if (d === 0) changedElements.delete(el);
+  // 科目名と同じく、当期純利益(損失)の行でも用語の説明を開ける
+  const netIncomeLabel = <Term entry={netIncomeTerm}>{st.netIncome >= 0 ? "当期純利益" : "当期純損失"}</Term>;
   const empty = balances.size === 0 || [...balances.values()].every((v) => v === 0);
   const root = useRef<HTMLDivElement>(null);
   const active = useRef<string | null>(null);
 
-  // 科目名はroving tabindexでTab停止を1つにまとめ、矢印キーで移る。科目の数だけTabで通ると「次へ →」が遠い(Issue #265)
-  const terms = () => [...(root.current?.querySelectorAll<HTMLButtonElement>("[data-account] button.term") ?? [])];
+  // 科目名と当期純利益はroving tabindexでTab停止を1つにまとめ、矢印キーで移る。科目の数だけTabで通ると「次へ →」が遠い(Issue #265)
+  const terms = () => [...(root.current?.querySelectorAll<HTMLButtonElement>("button.term") ?? [])];
   useEffect(() => {
     const list = terms();
     const current = list.find((b) => b.closest("[data-account]")?.getAttribute("data-account") === active.current) ?? list[0];
@@ -78,7 +82,7 @@ export function StatementsPane({ accounts, balances, diff, company }: Props) {
             <Group element="equity" lines={st.equity} diff={diff} accounts={accounts}>
               {st.netIncome !== 0 && (
                 <Row
-                  name={<span>{st.netIncome >= 0 ? "当期純利益" : "当期純損失"}</span>}
+                  name={netIncomeLabel}
                   amount={st.netIncome}
                   delta={netIncomeDelta}
                   magnitude
@@ -96,7 +100,7 @@ export function StatementsPane({ accounts, balances, diff, company }: Props) {
         <div className="rounded-md border p-2">
           <Group element="revenue" lines={st.revenues} diff={diff} accounts={accounts} />
           <Group element="expense" lines={st.expenses} diff={diff} accounts={accounts} />
-          <Total label={st.netIncome >= 0 ? "当期純利益" : "当期純損失"} amount={Math.abs(st.netIncome)} />
+          <Total label={netIncomeLabel} amount={Math.abs(st.netIncome)} />
         </div>
       </section>
 
@@ -197,7 +201,7 @@ function Row({ id, name, amount, delta, magnitude = false }: { id?: string; name
   );
 }
 
-function Total({ label, amount }: { label: string; amount: number }) {
+function Total({ label, amount }: { label: React.ReactNode; amount: number }) {
   return (
     <div className="mt-auto flex flex-wrap items-baseline justify-between gap-x-2 border-t border-foreground/60 pt-1 font-medium">
       <span className="min-w-0">{label}</span>
