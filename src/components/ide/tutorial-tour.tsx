@@ -62,12 +62,14 @@ export function TutorialTour({
   paneLabels,
   onExit,
   onPane,
+  onLeaveUnit,
 }: {
   ctx: TourContext;
   pane: TourPane;
   paneLabels: Record<TourPane, string>;
   onExit: () => void;
   onPane: (pane: TourPane) => void;
+  onLeaveUnit: () => void;
 }) {
   const [index, setIndex] = useState(0);
   const step = STEPS[index];
@@ -168,7 +170,15 @@ export function TutorialTour({
               <Button size="sm" variant="outline" onClick={finish}>
                 閉じる
               </Button>
-              <Button size="sm" asChild onClick={finish}>
+              {/* 次の単元へ送るのでチュートリアル単元も完了にする。startedのまま残るとトップが「続きから」で引き戻す(Issue #310) */}
+              <Button
+                size="sm"
+                asChild
+                onClick={() => {
+                  onLeaveUnit();
+                  finish();
+                }}
+              >
                 <Link href={`/units/${FIRST_UNIT_AFTER_TUTORIAL}`}>3級パスの最初の単元へ</Link>
               </Button>
             </>
