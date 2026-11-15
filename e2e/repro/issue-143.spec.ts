@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
-// 成功文の「商品のもうけ」が次のcalcの正解と同じ金額を指し、120,000と50,000に専用の説明が付くこと
-test("仕入と売上 ステップ4・5: 商品のもうけの金額が食い違わない", async ({ page }) => {
+// 成功文の「売上と仕入の差」が次のcalcの正解と同じ金額を指し、120,000と50,000に専用の説明が付くこと
+test("仕入と売上 ステップ4・5: 売上と仕入の差の金額が食い違わない", async ({ page }) => {
   const work = page.getByRole("region", { name: "ワークスペース" });
   const next = page.getByRole("button", { name: "次へ →" });
   const status = page.getByRole("status");
@@ -29,8 +29,8 @@ test("仕入と売上 ステップ4・5: 商品のもうけの金額が食い違
   await expect(page.getByText("できました", { exact: true })).toBeVisible();
   await next.click();
   await post("現金", "売上", "90000");
-  await expect(status.filter({ hasText: "商品のもうけ" }).filter({ hasText: "今月の豆と菓子の売上90,000" })).toBeVisible();
-  await expect(status.filter({ hasText: "この差が商品のもうけ" }).filter({ hasText: "170,000" })).toHaveCount(0);
+  await expect(status.filter({ hasText: "この差が商品のもうけ" }).filter({ hasText: "今月の豆と菓子の売上90,000" })).toBeVisible();
+  await expect(status.filter({ hasText: "170,000と仕入50,000" })).toHaveCount(0);
 
   await next.click();
   await expect(page.getByText("さきほど記帳した今月の売上90,000")).toBeVisible();
