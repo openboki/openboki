@@ -45,7 +45,7 @@ export function TweakPanel({ formula, params, values, onChange, goal, currency }
               step={p.step}
               value={values[p.id] ?? p.value}
               onChange={(e) => onChange({ ...values, [p.id]: Number(e.target.value) })}
-              className="w-full"
+              className="w-full accent-primary"
               aria-valuetext={`${formatAmount(values[p.id] ?? p.value)} ${p.unit}`}
             />
           </label>
