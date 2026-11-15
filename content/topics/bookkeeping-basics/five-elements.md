@@ -91,6 +91,9 @@ wrong_patterns:
   - match: { asset: decrease }
     misconception: cash_is_only_asset
     feedback: 現金は減りましたが、同じ金額のマシン(備品)が資産として増えました。資産の中身が入れ替わっただけで、合計は変わりません。
+  - match: { asset: increase }
+    misconception: asset_transfer_changes_total
+    feedback: マシン(備品)は増えましたが、同じ600,000の現金が減っています。資産の中で現金が備品に入れ替わっただけで、合計は変わりません。
 hint: 現金(資産)が600,000減り、備品(資産)が600,000増えます。
 success: 資産の合計は1,000,000のまま。結果の表で、現金が減って備品が現れたことを確かめましょう。
 ```
