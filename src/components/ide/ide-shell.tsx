@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { type MouseEvent, type ReactNode, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { flushSync } from "react-dom";
+import type { Unit } from "#content";
 import type { GlossaryAccount } from "@/lib/content";
 import { type AccountInfo, type Change, type Element, type JournalEntry, type Side, ELEMENT_LABELS, ELEMENTS, computeImpact, toChange } from "@/lib/accounting";
 import { splitAmounts } from "@/lib/task-text";
@@ -43,6 +44,8 @@ export interface IdeStep {
 export interface IdeUnit {
   id: string;
   title: string;
+  // 単元の種類。歴史の単元は5要素の比較表を出さず、採点の文言もページの左右で言う
+  kind: Unit["kind"];
   company: string;
   // 時代と舞台(scenario.era)。歴史の単元だけが持つ
   era?: string;
@@ -621,7 +624,7 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
           const graded = JSON.parse(s.gradedAnswer);
           if (t.type === "post") {
             setGradedEntry(graded);
-            setResult(gradePost(t, graded, accountMap));
+            setResult(gradePost(t, graded, accountMap, unit.kind));
           }
           if (t.type === "calc") setResult(gradeCalc(t, graded));
           if (t.type === "classify") {
@@ -630,7 +633,7 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
           }
           if (t.type === "debug") {
             setGradedEntry(graded.index === t.answer.index ? graded.entry : null);
-            setResult(gradeDebug(t, graded, accountMap));
+            setResult(gradeDebug(t, graded, accountMap, unit.kind));
           }
         }
       }
@@ -772,7 +775,7 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
     switch (task.type) {
       case "post": {
         if (!draftReady || alreadyGraded(entryDraft)) return;
-        const r = gradePost(task, entryDraft, accountMap);
+        const r = gradePost(task, entryDraft, accountMap, unit.kind);
         if (r.correct) {
           focusStatus.current = true;
           answeredStep.current = stepIndex;
@@ -800,7 +803,7 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
         if (debugRow === null || !draftReady) return;
         const answer: DebugAnswer = { index: debugRow, entry: entryDraft };
         if (alreadyGraded(answer)) return;
-        const r = gradeDebug(task, answer, accountMap);
+        const r = gradeDebug(task, answer, accountMap, unit.kind);
         if (r.correct) {
           focusStatus.current = true;
           answeredStep.current = stepIndex;
@@ -1401,7 +1404,8 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
                 </p>
               )}
               <p className="whitespace-pre-wrap">{result.feedback}</p>
-              {(task.type === "post" || task.type === "debug") && !result.correct && gradedEntry && (
+              {/* 歴史の単元はページの左右で教えるので、5要素の比較表は出さない(Issue #274) */}
+              {(task.type === "post" || task.type === "debug") && !result.correct && gradedEntry && unit.kind !== "history" && (
                 <div className="rounded bg-background/70 p-2">
                   <ImpactCompare yours={gradedEntry} expected={task.type === "post" ? task.answer : task.answer.entry} accounts={accountMap} />
                 </div>
