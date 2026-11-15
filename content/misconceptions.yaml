@@ -182,7 +182,7 @@ misconceptions:
     remediation: merchandise/returns-and-costs
   - id: purchases_equal_cogs
     name: 仕入の合計がそのまま売上原価
-    description: 1年に仕入れた金額の全部が、売った商品の原価だと思っている
+    description: その期に仕入れた金額の全部が、売った商品の原価だと思っている
     correct: 売れ残った商品の分は、まだ費用ではない。期首の商品と仕入の合計から期末の商品を引いた金額が売上原価で、売れ残りは繰越商品(資産)として次の期に持ち越す
     concepts: [cost_of_goods_sold, ending_inventory]
     remediation: merchandise/cost-of-goods-sold

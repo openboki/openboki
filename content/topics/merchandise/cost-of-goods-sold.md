@@ -1,7 +1,7 @@
 ---
 id: merchandise/cost-of-goods-sold
 title: 売れ残りと売上原価
-summary: カフェの決算の日、前の期から持ち越した商品を仕入に入れ、売れ残った豆と菓子を仕入から取り出して繰越商品にしながら、「売れた分だけが費用」という売上原価の考え方を身につける
+summary: カフェ2年目の決算の日、1年目から持ち越した商品を仕入に入れ、売れ残った豆と菓子を仕入から取り出して繰越商品にしながら、「売れた分だけが費用」という売上原価の考え方を身につける
 level: 2
 order: 4
 introduces: [cost_of_goods_sold, ending_inventory]
@@ -10,22 +10,24 @@ requires: [merchandise/returns-and-costs]
 scenario:
   company: カフェ「マメノキ」
   opening:
-    - { account: cash, amount: 561500 }
-    - { account: bank_deposit, amount: 60000 }
-    - { account: accounts_receivable, amount: 25000 }
+    - { account: cash, amount: 500000 }
+    - { account: bank_deposit, amount: 300000 }
+    - { account: accounts_receivable, amount: 28000 }
     - { account: merchandise_inventory, amount: 15000 }
     - { account: equipment, amount: 600000 }
     - { account: accounts_payable, amount: 40000 }
     - { account: loans_payable, amount: 300000 }
     - { account: capital_stock, amount: 1000000 }
-    - { account: sales, amount: 255000 }
+    - { account: retained_earnings, amount: 40000 }
+    - { account: sales, amount: 800000 }
     - { account: purchases, amount: 132000 }
-    - { account: shipping_expense, amount: 1500 }
-    - { account: rent_expense, amount: 200000 }
+    - { account: shipping_expense, amount: 5000 }
+    - { account: rent_expense, amount: 600000 }
 ---
 
 ## 棚に残った豆
-[[closing|決算]]の日がやってきました。結果の[[income_statement|損益計算書]]には、この期に[[purchase|仕入れ]]た商品の合計132,000円が「仕入」として載っています。[[balance_sheet|貸借対照表]]には「[[merchandise_inventory|繰越商品]]」15,000円があります。前の期の決算の日に売れ残り、この期に持ち越した商品です。期の初めにあった商品なので、期首の商品と呼びます。
+前の単元から時間が進み、カフェ「マメノキ」は2年目の[[closing|決算]]の日を迎えました。1年目のもうけ40,000円は「[[retained_earnings|繰越利益剰余金]]」として[[balance_sheet|貸借対照表]]の[[equity|純資産]]に残っています。
+1年目の決算の日、棚には豆15,000円分が売れ残っていました。これを「[[merchandise_inventory|繰越商品]]」という資産にして2年目に持ち越したのが、貸借対照表の繰越商品15,000円です。期の初めにあった商品なので、期首の商品と呼びます。結果の[[income_statement|損益計算書]]には、この1年に[[purchase|仕入れ]]た商品の合計132,000円が「仕入」として載っています。
 この期に売った商品は、期首の15,000円分と、この期に仕入れた132,000円分の中から出ていきました。でも棚を見ると、豆と焼き菓子が22,000円分(仕入値で数えて)まだ残っています。
 残っている商品は「使った」とは言えません。これから売ってお金に変わる財産です。売れた分の仕入値だけを費用にしたい。その金額を[[cost_of_goods_sold|売上原価]]と呼びます。
 
@@ -55,7 +57,7 @@ wrong_patterns:
     misconception: purchases_equal_cogs
     feedback: 期首の商品と仕入を足したところで止まっています。棚に残っている22,000円分は売れていないので引きます。
   - match: 95000
-    feedback: 期首の商品15,000は引くのではなく足します。前の期から持ち越して、この期に売った商品です。
+    feedback: 期首の商品15,000は引くのではなく足します。1年目から持ち越して、この期に売った商品です。
   - match: 169000
     feedback: 売れ残りは引きます。足してはいけません。
   - match: 22000
@@ -80,14 +82,14 @@ wrong_patterns:
     feedback: それは売れ残りを取り出すときの向きです。期首の商品は繰越商品から仕入へ移すので、左に仕入、右に繰越商品です。
   - match: { debit: [{ account: purchases, amount: 22000 }] }
     misconception: beginning_inventory_forgotten
-    feedback: 22,000は期末の売れ残りです。仕入へ移すのは、前の期から持ち越した期首の商品15,000です。
+    feedback: 22,000は期末の売れ残りです。仕入へ移すのは、1年目から持ち越した期首の商品15,000です。
   - match: { credit: [{ account: sales }] }
     feedback: 売ったわけではありません。期首の商品を仕入の列に入れるだけです。
   - match: { unbalanced: true }
     feedback: 左の合計と右の合計がそろっていません。どちらも15,000にしましょう。
   - match: { credit: [{ account: cash }] }
     misconception: inventory_transfer_as_transaction
-    feedback: 前の期から持ち越した商品を、帳簿の中で別の科目へ移すだけです。お金は払っていないので、右に現金は書きません。
+    feedback: 1年目から持ち越した商品を、帳簿の中で別の科目へ移すだけです。お金は払っていないので、右に現金は書きません。
   - match: { debit: [{ account: cash }] }
     misconception: inventory_transfer_as_transaction
     feedback: 帳簿の中で別の科目へ移すだけなので、お金は入ってきていません。左に現金は書きません。
@@ -144,30 +146,30 @@ success: 左に繰越商品22,000、右に仕入22,000。1本目の「仕入 / �
 
 ## 決算後のもうけ
 2本の仕訳で、損益計算書の費用が変わりました。改めて[[net_income|当期純利益]]を読んでみましょう。
-売上255,000から、売上原価125,000、[[shipping_expense|発送費]]1,500、[[rent_expense|支払家賃]]200,000を引きます。家賃は毎月末に50,000円を払ってきたので、決算の日までの4か月分です。費用の合計が売上を上回ると、損益計算書には当期純利益ではなく当期純損失として載ります。そのときは先頭に「-」を付けて答えます。
+売上800,000から、売上原価125,000、[[shipping_expense|発送費]]5,000、[[rent_expense|支払家賃]]600,000を引きます。家賃は毎月末に50,000円を払ってきたので、この期の12か月分です。1年目のもうけ40,000円(繰越利益剰余金)は前の期のもうけなので、この期の当期純利益には入れません。
 
 ```task
 type: calc
 question: 決算の2本の仕訳のあとの当期純利益はいくらですか(円)
-answer: -71500
+answer: 70000
 wrong_patterns:
-  - match: -78500
+  - match: 63000
     misconception: purchases_equal_cogs
     feedback: それはこの期の仕入132,000を、そのまま売上原価にした金額です。期首の商品15,000を足し、売れ残り22,000を引いた125,000が売上原価です。
-  - match: -56500
+  - match: 85000
     misconception: beginning_inventory_forgotten
     feedback: 売上原価を110,000で計算しています。期首の商品15,000もこの期に売った商品なので、売上原価は125,000です。
-  - match: -93500
+  - match: 48000
     misconception: purchases_equal_cogs
     feedback: 売れ残り22,000まで費用にしています。売れ残りは繰越商品(資産)に移したので、費用ではありません。
-  - match: 71500
-    feedback: 符号が逆です。費用の合計が売上より大きいので、当期純利益はマイナス(損失)になります。
-  - match: 130000
-    feedback: 売上原価だけでなく、発送費1,500と支払家賃200,000も費用です。
-  - match: 78500
-    feedback: 支払家賃を1か月分しか引いていません。家賃は毎月末に払ってきたので、4か月分200,000が費用です。
-hint: 255,000 − 125,000 − 1,500 − 200,000 = −71,500。
-success: 当期純利益は−71,500円。売れた分の仕入値だけを費用にしても、4か月分の家賃には届きませんでした。売れ残りの22,000円は費用ではなく、資産として次の期に持ち越されます。
+  - match: 110000
+    feedback: 1年目のもうけ40,000を足しています。繰越利益剰余金は前の期のもうけなので、この期の当期純利益には入れません。
+  - match: 675000
+    feedback: 売上原価だけでなく、発送費5,000と支払家賃600,000も費用です。
+  - match: 620000
+    feedback: 支払家賃を1か月分しか引いていません。家賃は毎月末に払ってきたので、12か月分600,000が費用です。
+hint: 800,000 − 125,000 − 5,000 − 600,000 = 70,000。
+success: 当期純利益は70,000円。売れた分の仕入値だけが費用になり、売れ残りの22,000円は費用ではなく、資産として次の期に持ち越されます。1年目のもうけ40,000円(繰越利益剰余金)とは別に、この期のもうけとして載ります。
 ```
 
 ## 商品の3つの科目
