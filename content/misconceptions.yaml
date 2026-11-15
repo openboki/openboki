@@ -348,6 +348,12 @@ misconceptions:
     correct: 利息は貸したことで得られたもうけ(受取利息という収益)。元本の返済とは別に記録する
     concepts: [interest, loan]
     remediation: receivables-and-payables/loans
+  - id: interest_income_as_cash
+    name: 受取利息は入ってきたお金
+    description: 受け取った利息を、預金が増えたことだけで捉えて、受取利息という科目を預金と同じ資産だと考えている。入ってきたお金(普通預金)と、その原因を表す科目(受取利息)を取り違えている
+    correct: 利息の入金は、普通預金(資産)が増えると同時に、その原因であるもうけとして受取利息(収益)を記録する。資産の箱に入るのは普通預金で、受取利息は収益の箱
+    concepts: [interest, revenue, asset]
+    remediation: receivables-and-payables/loans
   - id: interest_reduces_principal
     name: 利息を払うと借入金が減る
     description: 支払った利息の分だけ借入金(元本)が減ると考えている

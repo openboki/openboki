@@ -280,6 +280,8 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
   // 採点で押したボタンが消えるときは、フォーカスがbodyに落ちないよう結果へ移す(復元や誤答では動かさない)
   const statusBox = useRef<HTMLDivElement>(null);
   const focusStatus = useRef(false);
+  // tweakは動かしている最中に達成するので、フォーカスはスライダーに残し、達成後の最初のTabだけ状態欄へ渡す(Issue #200, #320)
+  const tabToStatus = useRef(false);
   // 誤答のとき、直す対象を下部パネルの上へ出す(Issue #180)
   const revealWrong = useRef(false);
   // 「答えを見る」で正解を入れた後、確定ボタンを押すまで次の操作を案内する(Issue #195)
@@ -469,8 +471,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
       return;
     }
     if (r.correct) {
-      // 他の課題種別と同じく状態欄へフォーカスを移し、「次へ →」まで結果ペインの用語を通らずに届くようにする(Issue #200)
-      focusStatus.current = true;
+      tabToStatus.current = true;
       setTweakDone(true);
       setResult(r);
       record(r, values);
@@ -564,6 +565,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     setAttempts(stepAttempts.current.get(index) ?? 0);
     setShowHint(false);
     setTweakDone(false);
+    tabToStatus.current = false;
     // 祝福の札は「次へ進める」案内なので、進んだ先のステップに残さない
     setBursts([]);
     setPulseNext(false);
@@ -1155,7 +1157,15 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
             </div>
           )}
           {task.type === "tweak" && (
-            <div data-tour="task-tweak">
+            <div
+              data-tour="task-tweak"
+              onKeyDown={(e) => {
+                if (e.key !== "Tab" || e.shiftKey || !tabToStatus.current || !statusBox.current) return;
+                e.preventDefault();
+                tabToStatus.current = false;
+                statusBox.current.focus();
+              }}
+            >
             <TweakPanel formula={task.formula} params={task.params} values={Object.fromEntries(task.params.map((p) => [p.id, params[p.id] ?? p.value]))} onChange={onTweakChange} goal={task.goal} currency={unit.currency} />
             </div>
           )}
