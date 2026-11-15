@@ -46,9 +46,9 @@ describe("仕訳の既存の判定は変わらない", () => {
     expect(result.feedback).toContain("そろっていません");
   });
 
-  it("ステップ2の右の未払金は誤解IDなしのまま(#121)", () => {
+  it("ステップ2の右の未払金はtrade_as_nontrade(#121、#342)", () => {
     const result = gradePost(task(1, "post"), entry("purchases", "accounts_payable_other", 40000));
-    expect(result.misconception).toBeUndefined();
+    expect(result.misconception).toBe("trade_as_nontrade");
     expect(result.feedback).toContain("商品以外");
   });
 
