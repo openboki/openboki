@@ -11,7 +11,7 @@ test("初めての人にはチュートリアルへのボタンを出し、閲�
   expect((await context.cookies()).filter((c) => c.name.startsWith("sb-"))).toEqual([]);
 
   await main.getByRole("link", { name: "チュートリアルを始める" }).click();
-  await expect(page).toHaveURL(/\/units\/tutorial\/first-entry$/);
+  await expect(page).toHaveURL(/\/units\/tutorial\/first-entry\?tour=1$/);
 });
 
 test("学習中の単元があると「続きから」でその単元へ戻れる", async ({ page }) => {
