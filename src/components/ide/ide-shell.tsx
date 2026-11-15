@@ -1128,7 +1128,8 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
             <div className="space-y-3" data-tour="task-predict">
               <h3 className="text-sm font-semibold">これから記帳する仕訳</h3>
               <JournalEditor accounts={accounts} value={fromJournalEntry(task.entry, accountMap)} readOnly showImpact={result !== null} showElements={unit.kind !== "history"} />
-              <fieldset disabled={result !== null} className="grid gap-2 sm:grid-cols-5">
+              {/* 列数はビューポートでなくペインの幅で決める(3ペインのワークスペースは約430pxで、5列だと「変わらない」が切れる) */}
+              <fieldset disabled={result !== null} className="grid gap-2 grid-cols-[repeat(auto-fit,minmax(8rem,1fr))]">
                 <legend className="text-sm font-semibold mb-1">記帳すると、それぞれどう動くと思いますか</legend>
                 {askedElements.map((el) => (
                   <label key={el} className="text-sm space-y-1">
