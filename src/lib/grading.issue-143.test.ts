@@ -5,7 +5,7 @@ import { gradeCalc } from "./grading";
 // Issue #143: 直前の成功文が誘う170,000 − 50,000と、仕入の合計だけの答えに誤答パターンが無かった
 const GENERIC = "計算の式と、使う数字";
 
-describe("仕入と売上 ステップ5(商品のもうけ)", () => {
+describe("仕入と売上 ステップ5(売上と仕入の差)", () => {
   const task = unitMap.get("merchandise/three-account-method")!.steps[4].task;
   if (task.type !== "calc") throw new Error("calcではない");
 

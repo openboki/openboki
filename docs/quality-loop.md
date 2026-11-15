@@ -220,7 +220,8 @@ Monkeyの人格は「前回起票した領域を避ける」ような賢さは�
 - issue-loopは`ISSUE_PARALLEL=3`で3件まで同時に処理できる(2026-11-08)。ロックはIssueごと、関門のE2Eはワーカーごとのポート(3100 + 枠番号)、
   mainへの統合(取り込み → 関門 → マージ → push → 再検証)だけ`logs/issue-agent/lock`で1件ずつ。同じファイルを触るIssueを同時に進めると統合時にコンフリクトしてneeds-humanに落ちるので、areaが異なる組み合わせが向く。
 - 状況の確認は`scripts/issue-agent.sh status`。止めるのは`scripts/monkey-loop.sh stop` / `scripts/issue-loop.sh stop`。
-- 人が見るもの: `ready-for-human`と`agent:needs-human`のIssue(`gh issue list --label ready-for-human,agent:needs-human`)、
+- 学習者からの質問・報告・提案はGitHub Discussionsに届く。対応が要るものは「Create issue from discussion」で起票して`needs-triage`を付け、トリアージ以降の流れに乗せる。質問への回答だけで済むものはDiscussionsで閉じる。
+- 人が見るもの: 新しいDiscussions、`ready-for-human`と`agent:needs-human`のIssue(`gh issue list --label ready-for-human,agent:needs-human`)、
   統合後のIssueコメント(残ったshould / nit)、週1回の`pnpm db:reset`(夜間に匿名ユーザーが増えるため)。
 - 初回の実測(2026-11-07、1サイクル): 人格型Monkey(impatient-learner、8 step × 2反復、約9分 / 反復)でIssue 4件、
   seed付きMonkey(15 step、15秒)で1件。トリアージは1件70〜100秒・$0.7〜1.0、すべて再現して`ready-for-agent`。

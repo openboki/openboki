@@ -33,7 +33,6 @@ import { FirstTimeNote } from "./first-time-note";
 import { Spotlight } from "./spotlight";
 import { type HelpContext, type HelpTopic, SANDBOX_NOT_SAVED, firstTimeTopic } from "@/lib/help-topics";
 import { FIRST_UNIT_AFTER_TUTORIAL, TUTORIAL_UNIT_ID, markSeen, updateTutorial, useTutorialState } from "@/lib/tutorial-store";
-import { REPO_URL } from "@/lib/repo";
 
 // 会計IDEの本体。ステップの進行、帳簿(記帳済みの仕訳)、課題の確認と記録をまとめて持つ(docs/ide-design.md)
 
@@ -45,8 +44,6 @@ export interface IdeStep {
 export interface IdeUnit {
   id: string;
   title: string;
-  // リポジトリのルートからのMarkdownのパス
-  sourcePath: string;
   // 単元の種類。歴史の単元は5要素の比較表を出さず、採点の文言もページの左右で言う
   kind: Unit["kind"];
   company: string;
@@ -1084,7 +1081,6 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
               )}
             </div>
           )}
-          <ContributeLinks unit={unit} stepNumber={stepIndex + 1} />
         </section>
 
         <section ref={workPane} id="pane-work" role="region" aria-label="ワークスペース" tabIndex={-1} className={`${paneClass("work")} bg-surface-work lg:border-r space-y-4 ${FOCUS_TARGET_CLASS}`}>
@@ -1510,25 +1506,6 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
       </div>
     </div>
     </HelpControlsContext>
-  );
-}
-
-function ContributeLinks({ unit, stepNumber }: { unit: IdeUnit; stepNumber: number }) {
-  // unitはテンプレートの入力欄のid。GitHubがURLの値を初期値として埋める
-  const reportHref = `${REPO_URL}/issues/new?template=content-error.yml&unit=${encodeURIComponent(`/units/${unit.id} ステップ${stepNumber}`)}`;
-  const links = [
-    { href: reportHref, label: "誤りを報告", purpose: "GitHubのIssue作成画面" },
-    { href: `${REPO_URL}/edit/main/${unit.sourcePath}`, label: "この単元を改善", purpose: "GitHubの編集画面" },
-  ];
-  return (
-    <div className="mt-6 flex flex-wrap gap-x-4 text-xs text-muted-foreground">
-      {links.map((l) => (
-        <a key={l.label} href={l.href} target="_blank" rel="noopener noreferrer" className="py-1 underline">
-          {l.label}
-          <span className="sr-only">({l.purpose}を新しいタブで開く)</span>
-        </a>
-      ))}
-    </div>
   );
 }
 
