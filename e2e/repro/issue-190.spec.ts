@@ -4,7 +4,7 @@ import { expect, test } from "@playwright/test";
 const cases = [
   { query: "T 勘定", id: "t_account" },
   { query: "T勘定", id: "t_account" },
-  { query: "総勘定元帳", id: "t_account" },
+  { query: "総勘定元帳", id: "general_ledger" },
   { query: "決算", id: "closing" },
   { query: "逆仕訳", id: "reverse_entry" },
   { query: "仕入諸掛", id: "incidental_costs" },

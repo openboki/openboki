@@ -20,6 +20,25 @@ concepts:
     requires: [cash_over_and_short, expense, revenue]
     related: []
     contrasts: []
+  - id: temporary_account
+    name: 仮勘定
+    reading: [かりかんじょう]
+    short: 正しい科目や金額が決まるまで、金額を一時的に置いておく科目
+    summary: 原因や内容がまだ分からない金額を、分かるまで置いておくための勘定科目。現金過不足が代表。資産でも負債でもなく、分かった時点で本来の科目へ振り替え、決算の財務諸表には残さない。
+    example: 金庫の現金が帳簿より3,000円少ないとき、原因が分かるまで3,000円を現金過不足に置く。切手代と分かれば通信費へ移す。
+    requires: [account_title]
+    related: [cash_over_and_short, transfer_entry]
+    contrasts: []
+  - id: transfer_entry
+    name: 振替
+    aliases: [振り替え, 振替仕訳]
+    reading: [ふりかえ]
+    short: 帳簿の中で、ある科目の金額を別の科目へ移すこと
+    summary: ある勘定科目に記録した金額を、別の勘定科目へ移す仕訳。お金や物は動かず、帳簿の中の置き場所だけが変わる。移す元の科目を減らす側に、移す先の科目を増やす側に、同じ金額を書く。銀行の「口座振替」とは別の言葉。
+    example: 現金過不足の左に置いた2,000円が切手代と分かったら、「通信費2,000 / 現金過不足2,000」と書いて通信費へ振り替える。
+    requires: [journal_entry, account_title]
+    related: [temporary_account, miscellaneous_loss_gain]
+    contrasts: []
   - id: checking_account
     name: 当座預金
     reading: [とうざよきん]
