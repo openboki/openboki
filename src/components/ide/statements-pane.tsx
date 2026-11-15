@@ -136,10 +136,15 @@ function ShapeBars({ st }: { st: ReturnType<typeof buildStatements> }) {
   const pct = (n: number) => `${Math.max(0, (n / scale) * 100)}%`;
   const seg = (label: string, amount: number, cls: string) =>
     amount > 0 && (
-      <div className={`h-full ${cls} motion-safe:transition-[width] motion-safe:duration-500 flex items-center overflow-hidden`} style={{ width: pct(amount) }} title={`${label} ${formatAmount(amount)}`}>
-        <span className="px-1 text-[10px] text-white whitespace-nowrap">{label}</span>
-      </div>
+      <div className={`h-full ${cls} motion-safe:transition-[width] motion-safe:duration-500`} style={{ width: pct(amount) }} title={`${label} ${formatAmount(amount)}`} />
     );
+  // barの色は塗り用で文字とのコントラストを保証しないので、ラベルは帯の外に検査済みのfgで置く
+  const legend = (el: "asset" | "liability" | "equity") => (
+    <span className={`inline-flex items-center gap-1 ${ELEMENT_STYLE[el].text}`}>
+      <span aria-hidden className={`size-2 rounded-sm ${ELEMENT_STYLE[el].bar}`} />
+      {ELEMENT_STYLE[el].label}
+    </span>
+  );
   return (
     <section aria-label="会社のかたち" className="space-y-1" data-tour="shape">
       <div className="flex items-center gap-1">
@@ -151,6 +156,11 @@ function ShapeBars({ st }: { st: ReturnType<typeof buildStatements> }) {
         <div className="h-6 rounded-r bg-muted/60 flex overflow-hidden">
           {seg("負債", st.totalLiabilities, ELEMENT_STYLE.liability.bar)}
           {seg("純資産", st.totalEquity, ELEMENT_STYLE.equity.bar)}
+        </div>
+        <div className="text-[11px]">{legend("asset")}</div>
+        <div className="flex flex-wrap gap-x-2 text-[11px]">
+          {legend("liability")}
+          {legend("equity")}
         </div>
       </div>
       <p className="text-[11px] text-muted-foreground">左の資産は、右の「返すお金(負債)」と「自分のもの(純資産)」でまかなわれています。</p>
