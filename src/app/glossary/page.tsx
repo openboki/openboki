@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { glossary, sortedDomains, conceptList } from "@/lib/content";
 import { GlossarySearch, GlossarySearchFromUrl } from "./glossary-search";
@@ -13,7 +14,7 @@ export default function GlossaryPage() {
     <div className="mx-auto max-w-4xl px-4 py-8 space-y-6">
       <div className="space-y-2">
         <h1 className="text-2xl font-bold">用語集</h1>
-        <p className="text-muted-foreground">概念と勘定科目。暗記するためではなく、「なぜ必要か」「何とつながるか」を確かめるために使ってください。</p>
+        <p className="text-muted-foreground">概念と勘定科目。暗記するためではなく、「なぜ必要か」「何とつながるか」を確かめるために使ってください。概念どうしのつながりは<Link href="/map" className="underline">概念マップ</Link>で図として見られます。</p>
       </div>
       {/* 全件の一覧を初期HTMLに残す。#用語 へのアンカーが読み込み直後に効くように */}
       <Suspense fallback={<GlossarySearch {...searchProps} />}>

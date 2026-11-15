@@ -63,7 +63,8 @@ Markdown拡張:
 ### 1.6 概念マップ
 | 候補 | 評価 |
 |---|---|
-| **React Flow(@xyflow/react)+ elkjs**(推奨) | ノード・エッジの描画、ズーム、クリック、カスタムノードが揃う。自動レイアウトはelkjs(階層レイアウトが前提関係の表現に向く) |
+| **force-graph**(採用。2026-11-15、Issue #34) | canvasに点と線を描き、力学モデルで配置する。ズーム、パン、ドラッグ、ホバーが揃う。OpenWikiの可視化と同じ作りで、72概念を「形とつながり」として見せるのに向く。windowに触るのでブラウザでだけ動的に読み込む |
+| React Flow(@xyflow/react)+ elkjs | 当初の推奨。全ノードを文字入りの箱で階層に並べる形を試したが、72件・174本では線が込み入って読めず、全体を収めると文字が6pxになった |
 | D3 force | 自由度は高いが実装量が多く、前提関係(方向つき階層)には向かない |
 | Cytoscape.js | グラフ解析向き。Reactとの統合がReact Flowより手間 |
 
@@ -116,7 +117,7 @@ Neon + Better Authはベンダーロックを避けたい場合の構成。機�
    ▼
 [ビルド] Next.js 16 静的エクスポート(TypeScript, Tailwind v4, shadcn/ui)
    │  remark-wiki-link → Term(用語ポップオーバー) / ```journal → JournalEditor
-   │  React Flow + elkjs(概念マップ)
+   │  force-graph(概念マップ)
    ▼
 [配信]  Vercel(静的。後に Server Actions / Route Handlers を追加)
    │
@@ -159,7 +160,7 @@ Neon + Better Authはベンダーロックを避けたい場合の構成。機�
 | UI | Tailwind v4 + shadcn/ui | ポップオーバー・シートが揃う。公式MCP |
 | コンテンツ | Velite + remark-wiki-link(+ journalブロック用プラグイン) | zod検証と横断検査のフック。MDX不要 |
 | 状態 | 進捗の正本はSupabase。クライアントはReactの状態で足りる | ブラウザ保存を正本にしない(architecture.md 3.2) |
-| 概念マップ | React Flow + elkjs | 階層レイアウトと操作性 |
+| 概念マップ | force-graph | 点と線の全体図と操作性 |
 | 検索 | なし(配列フィルタ)→ 必要時Pagefind | 規模が小さい |
 | テスト | Vitest / RTL / Playwright | 標準的。Playwright MCPと同じ操作系 |
 | Lint | ESLint(next)+ Prettier | 公式設定 |

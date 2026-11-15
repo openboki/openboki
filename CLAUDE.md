@@ -24,6 +24,7 @@ Next.jsのAPIは学習データと異なる可能性があるので、書く前�
 - 品質確認はローカルが正(ADR 0005)。`git config core.hooksPath .githooks`でpush前にlint・型・テストが走る。GitHub Actionsは最小の1ジョブだけ
 - `src/lib/progress.ts`: 匿名サインインと回答・進捗の保存。`supabase/migrations/`: スキーマとRLS
 - `scripts/`: 無人ループ(`monkey-loop.sh` / `triage-agent.sh` / `issue-agent.sh` / `issue-loop.sh` / `issue-verify.sh` / `quality-night.sh`)、`scripts/monkey/session.mjs`(Monkeyのオラクル)、`scripts/issue-agent/`(プロンプトとスキーマ、PreToolUseのguard)。`.claude/skills/monkey-test/`: 人格と手順。`e2e/repro/`: Issueの回帰テスト(`issue-<n>.spec.ts`)。`logs/`はgitignore
+- `src/app/map/`: 概念マップ(`concept-map.tsx`が一覧・図・説明の3ペイン、`graph-canvas.tsx`がforce-graphで図を描く)。線の組み立ては`src/lib/concept-graph.ts`
 - `src/components/markdown.tsx`: 説明文の描画。`[[id]]` → 用語ポップオーバー、```journal → 仕訳エディタ
 
 ## 使うSkills / MCP

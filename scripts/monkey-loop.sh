@@ -8,7 +8,7 @@
 #
 # 環境変数:
 #   MONKEY_UNTIL        終了時刻(必須)。"22:00" または "2026-11-08T06:00"。時刻だけで過去なら翌日とみなす
-#   MONKEY_PERSONAS     選択候補の人格(空白区切り)。反復ごとにランダムに1つ選ぶ(直前と同じものは選ばない)。既定は全7本
+#   MONKEY_PERSONAS     選択候補の人格(空白区切り)。反復ごとにランダムに1つ選ぶ(直前と同じものは選ばない)。既定は全8本
 #   MONKEY_STEPS        1セッションのstep数(既定20)
 #   MONKEY_ITER_TIMEOUT 1反復の上限秒(既定3600)
 #   MONKEY_MIN_ITER     残り時間がこれを切ったら新しい反復を始めない(既定1500。短いと環境確認だけで終わる)
@@ -33,7 +33,7 @@ if [ "${1:-}" = "stop" ]; then
 fi
 
 UNTIL="${MONKEY_UNTIL:?MONKEY_UNTILを指定してください(例: MONKEY_UNTIL=22:00)}"
-PERSONAS="${MONKEY_PERSONAS:-first-timer impatient-learner error-prone-learner phone-learner term-tapper tab-and-data-fiddler content-auditor}"
+PERSONAS="${MONKEY_PERSONAS:-first-timer impatient-learner error-prone-learner phone-learner term-tapper tab-and-data-fiddler theme-switcher content-auditor}"
 STEPS="${MONKEY_STEPS:-20}"
 ITER_TIMEOUT="${MONKEY_ITER_TIMEOUT:-3600}"
 MIN_ITER="${MONKEY_MIN_ITER:-1500}"

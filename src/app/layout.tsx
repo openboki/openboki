@@ -41,6 +41,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/glossary" className="whitespace-nowrap text-muted-foreground hover:text-foreground">
               用語集
             </Link>
+            {/* 狭い幅ではブランド名が省略されてしまうので出さない。用語集の冒頭からも開ける */}
+            <Link href="/map" className="hidden whitespace-nowrap text-muted-foreground hover:text-foreground sm:inline">
+              概念マップ
+            </Link>
             <span className="flex-1" />
             <ThemeSwitcher />
           </nav>
