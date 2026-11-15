@@ -350,7 +350,7 @@ misconceptions:
     remediation: cash-and-deposits/petty-cash
   - id: asset_transfer_changes_total
     name: 資産の中の移動で合計が動く
-    description: 当座預金から小口現金へのように資産の中でお金が移っただけなのに、片方の増減だけを見て資産の合計が増えた(減った)と考えている
+    description: 現金で備品を買ったときのように資産の中でお金が形を変えただけなのに、片方の増減だけを見て資産の合計が増えた(減った)と考えている
     correct: 資産から資産への移動は、増える科目と減る科目が同じ金額なので資産の合計は変わらない。左右の科目がどの要素かを両方見てから、合計がどう動くかを考える
     concepts: [asset, five_elements]
     remediation: bookkeeping-basics/five-elements
