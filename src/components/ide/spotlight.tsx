@@ -57,11 +57,13 @@ function revealIfCovered(el: HTMLElement) {
   if (top >= 0 && !barAt(top)) window.scrollBy({ top: delta });
 }
 
+// 暗幕はインラインのboxShadowにするとringの枠を上書きするので、ringと合成されるshadowクラスで描く。
+// ダークの背景は暗幕を重ねてもほとんど暗くならないので、黒を濃くし、案内先は主に枠で示す(#314)
 export function SpotlightRing({ rect }: { rect: DOMRect }) {
   return (
     <div
-      className="absolute rounded-md ring-2 ring-primary motion-safe:transition-all motion-safe:duration-300"
-      style={{ left: rect.left - 6, top: rect.top - 6, width: rect.width + 12, height: rect.height + 12, boxShadow: "0 0 0 9999px rgba(15, 23, 42, 0.45)" }}
+      className="absolute rounded-md ring-2 ring-primary shadow-[0_0_0_9999px_rgba(15,23,42,0.45)] dark:shadow-[0_0_0_9999px_rgba(0,0,0,0.7)] motion-safe:transition-all motion-safe:duration-300"
+      style={{ left: rect.left - 6, top: rect.top - 6, width: rect.width + 12, height: rect.height + 12 }}
     />
   );
 }
