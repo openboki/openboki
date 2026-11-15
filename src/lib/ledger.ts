@@ -13,7 +13,8 @@ export interface OpeningLine {
 export function computeBalances(opening: OpeningLine[], entries: JournalEntry[], accounts: ReadonlyMap<string, AccountInfo>): Balances {
   const balances: Balances = new Map();
   const add = (id: string, delta: number) => balances.set(id, (balances.get(id) ?? 0) + delta);
-  for (const l of opening) add(l.account, l.amount);
+  // 開始残高は科目自体が増える側の金額で書く(T勘定・試算表と同じ)。評価勘定は要素から見ると控除なので負にする
+  for (const l of opening) add(l.account, accounts.get(l.account)?.contra ? -l.amount : l.amount);
   for (const e of entries) {
     for (const l of e.debit) {
       const a = accounts.get(l.account);

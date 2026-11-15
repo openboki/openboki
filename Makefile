@@ -1,7 +1,7 @@
 # 開発・ビルド・テスト・起動・品質改善ループの入口。新しいコマンドは原則ここに足す。
 # 実体はpackage.jsonのscriptsとscripts/*.sh。引数は環境変数で渡す(例: make monkey MONKEY_UNTIL=22:00)。
 .DEFAULT_GOAL := help
-.PHONY: help install hooks setup dev db-start db-stop db-reset services-up services-down services-status \
+.PHONY: help install hooks setup env-local dev db-start db-stop db-reset services-up services-down services-status \
         content lint typecheck test test-watch e2e check build start icons \
         monkey monkey-stop monkey-scripted triage issue issue-loop issue-stop issue-status issue-verify quality-night labels
 
@@ -14,6 +14,9 @@ hooks: ## push前にlint・型・テストを走らせるgit hookを有効にす
 	git config core.hooksPath .githooks
 
 setup: install hooks ## 初回セットアップ(install + hooks)。Supabaseのキーは`make db-start`の出力を .env.localに書く
+
+env-local: ## 起動中のローカルSupabaseから .env.localを作る(worktree用。既にあれば何もしない)
+	scripts/env-local.sh
 
 ##@ 開発
 

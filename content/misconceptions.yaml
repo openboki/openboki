@@ -114,6 +114,54 @@ misconceptions:
     correct: 車は車両運搬具という別の勘定科目。備品も車両運搬具も有形固定資産だが、何を買ったかで科目を分ける
     concepts: [tangible_fixed_assets, account_title]
     remediation: depreciation/straight-line
+  - id: book_value_is_market_price
+    name: 帳簿価額は売れる値段
+    description: 帳簿価額を、いま売ればいくらになるかという値段だと思っている
+    correct: 帳簿価額は取得原価から減価償却累計額を引いた計算上の金額。耐用年数の見積もりで減らしてきた数字なので、実際に売れる値段とは一致しないのがふつう
+    concepts: [book_value, gain_or_loss_on_sale]
+    remediation: depreciation/sale-of-fixed-assets
+  - id: accumulated_depreciation_left_on_sale
+    name: 売っても累計額を残す
+    description: 固定資産を売ったとき、資産の科目から帳簿価額の分だけを減らし、減価償却累計額を帳簿に残してしまう
+    correct: 間接法では、資産は取得原価のまま、減った分は累計額として別に載っている。売ったら取得原価の全額を貸方で、累計額の全額を借方で消す
+    concepts: [sale_of_fixed_assets, indirect_method]
+    remediation: depreciation/sale-of-fixed-assets
+  - id: asset_removed_at_sale_price
+    name: 売った金額の分だけ資産を消す
+    description: 固定資産を売ったとき、受け取った代金と同じ金額だけ資産の科目を減らしてしまう
+    correct: 消すのは売った金額ではなく、帳簿に載っている金額(取得原価と減価償却累計額)。売った金額との差は固定資産売却損益になる
+    concepts: [sale_of_fixed_assets, gain_or_loss_on_sale]
+    remediation: depreciation/sale-of-fixed-assets
+  - id: sale_gain_loss_vs_cost
+    name: 売った金額を取得原価と比べる
+    description: 固定資産を売ったもうけや損を、売った金額と買った値段(取得原価)の差で計算してしまう
+    correct: 比べる相手は帳簿価額(取得原価 − 減価償却累計額)。使った分はすでに減価償却費として費用にしているので、売ったときの損益に重ねて入れない
+    concepts: [gain_or_loss_on_sale, book_value]
+    remediation: depreciation/sale-of-fixed-assets
+  - id: sale_proceeds_is_gain
+    name: 売った金額がそのまま売却益
+    description: 固定資産を売って受け取る代金の全額を、固定資産売却益として記録してしまう
+    correct: 代金と引き換えに、帳簿価額の分の資産を手放している。もうけは売った金額から帳簿価額を引いた差だけ
+    concepts: [gain_or_loss_on_sale, book_value]
+    remediation: depreciation/sale-of-fixed-assets
+  - id: sale_gain_loss_confused
+    name: 売却益と売却損の取り違え
+    description: 帳簿価額より高く売れたのに固定資産売却損、安く売れたのに固定資産売却益と書いてしまう
+    correct: 売った金額が帳簿価額より高ければ固定資産売却益(収益)で貸方、安ければ固定資産売却損(費用)で借方に書く
+    concepts: [gain_or_loss_on_sale]
+    remediation: depreciation/sale-of-fixed-assets
+  - id: contra_always_credit
+    name: 累計額はいつも右
+    description: 減価償却累計額は貸方に書く科目だと覚えていて、資産を売って累計額を消すときも貸方に書いてしまう
+    correct: 貸方に書くのは累計額を積むとき。売った資産の累計額は消すので、積んだときの反対側の借方に書く
+    concepts: [contra_account, sale_of_fixed_assets]
+    remediation: depreciation/sale-of-fixed-assets
+  - id: sale_difference_as_depreciation
+    name: 売却の差額を減価償却費にする
+    description: 固定資産を帳簿価額より安く売った差額を、減価償却費として記録してしまう
+    correct: 減価償却費は使った期間に配分する費用で、決算で計上する。売った金額と帳簿価額の差は、固定資産売却損という別の費用で記録する
+    concepts: [gain_or_loss_on_sale, depreciation]
+    remediation: depreciation/sale-of-fixed-assets
   - id: purchase_is_asset
     name: 仕入は資産
     description: 売るための商品を買ったとき、備品と同じように資産として記録すると思っている
