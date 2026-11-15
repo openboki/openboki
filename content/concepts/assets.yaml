@@ -119,3 +119,22 @@ concepts:
     requires: [straight_line_method, accrual_basis]
     related: [useful_life]
     contrasts: []
+  - id: sale_of_fixed_assets
+    name: 固定資産の売却
+    reading: [こていしさんのばいきゃく]
+    short: 使ってきた建物や備品、車などを売り、帳簿から消すこと
+    summary: 有形固定資産を売ったときは、その資産の取得原価と減価償却累計額の両方を帳簿から消し、受け取った代金(後で受け取るなら未収入金)を記録する。売った金額と帳簿価額の差は固定資産売却損益になる。
+    example: 取得原価120万円、減価償却累計額30万円の軽バンを85万円で売ったら、車両運搬具120万円と累計額30万円を消し、現金85万円と固定資産売却損5万円を記録する。
+    requires: [book_value, indirect_method]
+    related: [gain_or_loss_on_sale]
+    contrasts: []
+  - id: gain_or_loss_on_sale
+    name: 固定資産売却損益
+    aliases: [売却損益]
+    reading: [こていしさんばいきゃくそんえき]
+    short: 固定資産を売った金額と帳簿価額の差
+    summary: 帳簿価額より高く売れた差は固定資産売却益(収益)、安く売れた差は固定資産売却損(費用)になる。帳簿価額は耐用年数の見積もりから計算した数字で、売れる値段とは一致しないので、その差を売った期に記録する。
+    example: 帳簿価額45万円のコーヒーマシンを48万円で売れば固定資産売却益3万円。40万円でしか売れなければ固定資産売却損5万円。
+    requires: [sale_of_fixed_assets]
+    related: [book_value]
+    contrasts: []
