@@ -148,7 +148,7 @@ export function unitAccountList(local: Unit["scenario"]["accounts"]): GlossaryAc
         short: a.why,
         summary: "この単元だけで使う勘定科目です。用語集には載っていません。",
         element: a.element,
-        related: [],
+        related: a.concepts.map((id) => ({ id, name: nameOf(id) })),
         local: true,
       },
     })),
