@@ -53,6 +53,9 @@ test("用語集のスキップリンクはフォーカスを本文へ移し、�
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/\/glossary#main$/);
   await waitForRouterState(page);
+  // 本文の最初のフォーカス先は冒頭の「概念マップ」へのリンク(Issue #34)、次が検索欄
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("main").getByRole("link", { name: "概念マップ" })).toBeFocused();
   await page.keyboard.press("Tab");
   await expect(page.getByLabel("用語を検索")).toBeFocused();
 

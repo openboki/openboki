@@ -63,7 +63,7 @@ Markdown拡張:
 ### 1.6 概念マップ
 | 候補 | 評価 |
 |---|---|
-| **React Flow(@xyflow/react)+ elkjs**(推奨) | ノード・エッジの描画、ズーム、クリック、カスタムノードが揃う。自動レイアウトはelkjs(階層レイアウトが前提関係の表現に向く) |
+| **React Flow(@xyflow/react)+ elkjs**(推奨) | ノード・エッジの描画、ズーム、クリック、カスタムノードが揃う。自動レイアウトはelkjs(階層レイアウトが前提関係の表現に向く)。elkjsは展開後8MBあるのでdevDependenciesに置き、`/map`の静的生成のときだけ動かして座標をHTMLに埋める。クライアントに送るのはReact Flowだけ |
 | D3 force | 自由度は高いが実装量が多く、前提関係(方向つき階層)には向かない |
 | Cytoscape.js | グラフ解析向き。Reactとの統合がReact Flowより手間 |
 
