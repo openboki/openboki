@@ -123,7 +123,12 @@ export function JournalEditor({ accounts, value, onChange, readOnly = false, sho
                     <span className="mt-px leading-4 text-muted-foreground">{account.short}</span>
                   </div>
                 ) : line.accountName.trim() && !composing && !accounts.some((a) => matchesAccountQuery(a, line.accountName)) ? (
-                  <span className="text-error-fg">候補から選ぶか、漢字の一部を入れてください</span>
+                  // 漢字で入れたなら入力の仕方ではなく科目名の思い違いなので、読み・ローマ字向けの案内と分ける(Issue #293)
+                  /\p{Script=Han}/u.test(line.accountName) ? (
+                    <span className="text-error-fg">「{line.accountName.trim()}」という科目はありません。候補から選んでください</span>
+                  ) : (
+                    <span className="text-error-fg">候補から選ぶか、漢字の一部を入れてください</span>
+                  )
                 ) : accountMissing ? (
                   <span className="text-error-fg">科目を選んでください</span>
                 ) : null}
