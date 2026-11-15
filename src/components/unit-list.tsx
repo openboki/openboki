@@ -31,13 +31,18 @@ export function UnitList({ units }: { units: UnitListItem[] }) {
         <li key={u.id} className="flex items-baseline gap-3 rounded-md border px-3 py-2">
           <span className="w-6 text-right text-sm text-muted-foreground">{i + 1}</span>
           <div className="flex-1 min-w-0">
-            <Link href={`/units/${u.id}`} className="underline-offset-4 hover:underline">
-              {u.title}
-            </Link>
+            {/* バッジは見出しの行に置き、説明文の幅を学習状況で変えない(#346) */}
+            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+              <Link href={`/units/${u.id}`} className="underline-offset-4 hover:underline">
+                {u.title}
+              </Link>
+              <span className="ml-auto flex gap-2">
+                <Badge variant="outline">{u.level}</Badge>
+                {status[u.id] && <Badge variant={status[u.id] === "completed" ? "default" : "secondary"}>{STATUS_LABELS[status[u.id]]}</Badge>}
+              </span>
+            </div>
             {u.summary && <p className="text-xs text-muted-foreground">{u.summary}</p>}
           </div>
-          <Badge variant="outline">{u.level}</Badge>
-          {status[u.id] && <Badge variant={status[u.id] === "completed" ? "default" : "secondary"}>{STATUS_LABELS[status[u.id]]}</Badge>}
         </li>
       ))}
     </ol>
