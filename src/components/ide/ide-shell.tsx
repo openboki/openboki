@@ -236,6 +236,8 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
   const [resumeWrong, setResumeWrong] = useState(0);
   // 再開地点より前の、達成済みのステップとその保存済みの答え。「続きから」でansweredに渡す(Issue #175)
   const resumeAnswered = useRef(new Map<number, unknown>());
+  // 保存済みの進捗をanswered・postedに取り込んだか。案内は「続きから」を押すまで残すので、取り込みは1回だけにする
+  const resumeAdopted = useRef(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   // 保存の成功で消えるsaveErrorとは分ける。読み込み直すまで「続きから」が出ないことを知らせ続ける
   const [loadError, setLoadError] = useState(false);
@@ -523,8 +525,25 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
     }
   };
 
+  // 保存済みの進捗をこのセッションの状態に取り込む。案内を押さずに「次へ →」で進んでも、正解済みのステップを達成状態で開く(Issue #282)
+  const adoptResume = (from: number) => {
+    const replayed = replayEntries(unit.steps, resumeSolved ? from + 1 : from);
+    // 案内はステップ1にいる間は残るので、先に解いた答えがあればそちらを優先する。読み込み時点の保存に無い仕訳も帳簿に残す(Issue #185)
+    setPosted((prev) => [...replayed, ...prev.filter((p) => !replayed.some((r) => r.step === p.step))].sort((a, b) => a.step - b.step));
+    answered.current = new Map([...resumeAnswered.current, ...answered.current]);
+    if (!answered.current.has(from)) {
+      // restoreStepは誤答や答えの無いときに模範解答で戻す。tweakは模範解答が無いので達成時の値を使う
+      if (resumeSolved) answered.current.set(from, resumeAnswer ?? null);
+      else if (!stepAttempts.current.has(from)) stepAttempts.current.set(from, resumeWrong);
+    }
+    // reachedは上げない。歩いて進む経路なので、各ステップの達成で「次へ →」を判定する
+    resumeAdopted.current = true;
+  };
+
   const goTo = (index: number) => {
     const target = unit.steps[index];
+    // ツアーはステップ1からの台本なので、案内と同じくツアー中は取り込まない
+    if (!tourActive && resumeStep !== null && !resumeAdopted.current && index > 0) adoptResume(resumeStep);
     setStepIndex(index);
     setDraft(emptyEntry());
     setGradedEntry(null);
@@ -569,26 +588,12 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
     if (!tourActive) stepHeading.current?.focus();
   };
 
-  // 再開するステップを正解済みなら、その答えで達成状態まで戻す(離脱前の「できました」を保つ)
+  // 再開するステップを正解済みなら、その答えで達成状態まで戻す(離脱前の「できました」を保つ)。取り込みと復元はgoToが行う
   const resume = () => {
     if (resumeStep === null) return;
-    const replayed = replayEntries(unit.steps, resumeSolved ? resumeStep + 1 : resumeStep);
-    // 案内はステップ1にいる間は残るので、先に解いた答えがあればそちらを優先する。読み込み時点の保存に無い仕訳も帳簿に残す(Issue #185)
-    setPosted((prev) => [...replayed, ...prev.filter((p) => !replayed.some((r) => r.step === p.step))].sort((a, b) => a.step - b.step));
-    answered.current = new Map([...resumeAnswered.current, ...answered.current]);
-    const solvedInSession = answered.current.has(resumeStep);
     goTo(resumeStep);
     setReached(resumeStep);
     setResumeStep(null);
-    // goToがセッション中の答えで達成状態まで戻している。読み込み時点の誤答回数や答えで上書きしない
-    if (solvedInSession) return;
-    if (!resumeSolved) {
-      setAttempts(resumeWrong);
-      return;
-    }
-    // post / calc / classifyは模範解答で戻せる。predictは保存した予想(誤答でも)、tweakは模範解答が無いので達成時の値で戻す
-    const type = unit.steps[resumeStep].task.type;
-    restoreStep(resumeStep, type === "predict" || type === "tweak" ? resumeAnswer : undefined);
   };
 
   // サーバー描画はステップ1なので、復元はマウント後に行う。チュートリアルはツアーがステップ1からの台本なので戻さない
