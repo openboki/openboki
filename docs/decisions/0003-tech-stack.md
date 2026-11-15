@@ -15,7 +15,7 @@
 - 採点は純粋関数としてクライアントで完結させる。コンテンツはリポジトリで管理しDBに置かない(architecture.md 3章)。
 - Tailwind CSS v4 + shadcn/ui。
 - コンテンツはVeliteでzod検証し、横断検査を`complete`フックで行う。用語参照はremark-wiki-link、仕訳ブロックは自作rehypeプラグイン1つ。MDXは使わない。
-- 概念マップはReact Flow + elkjs。用語集の検索はライブラリなし。
+- 概念マップはReact Flow + elkjs。用語集の検索はライブラリなし。(2026-11-15変更: 概念マップはforce-graphにした。OpenWikiの可視化と同じ、点と線を力学モデルで配置する図にしたため。Issue #34)
 - テストはVitest / React Testing Library / Playwright。Supabaseはローカルスタックで検証する。LintはESLint(eslint-config-next)+ Prettier。CIはGitHub Actions。
 - ホスティングは当初未決。2026-11-07にVPS 1台(さくらのVPS + Coolify)へ決定(ADR 0006)。
 - Skills / MCP: next-devtools-mcp、vercel-labsのReact / Next.js Skills、shadcn MCP、Context7、Playwright MCP、Chrome DevTools MCP、Supabase MCP(read_only既定)。Vercel MCPはホスト決定後。

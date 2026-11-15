@@ -9,6 +9,24 @@
 @import "../themes/ledger-paper.css";
 @import "../themes/workbench.css";
 
+/* 分類の色(概念マップの分野)。5要素の色とは別系統で、全テーマ共通。点の塗りにだけ使い、文字には使わない(docs/design-system.md 2.6) */
+:root {
+  --cat-1: #2a78d6;
+  --cat-2: #eb6834;
+  --cat-3: #1baf7a;
+  --cat-4: #eda100;
+  --cat-5: #e87ba4;
+  --cat-6: #008300;
+}
+[data-mode="dark"] {
+  --cat-1: #3987e5;
+  --cat-2: #d95926;
+  --cat-3: #199e70;
+  --cat-4: #c98500;
+  --cat-5: #d55181;
+  --cat-6: #0ca30c;
+}
+
 @custom-variant dark (&:where([data-mode="dark"], [data-mode="dark"] *));
 
 @theme inline {
