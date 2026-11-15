@@ -30,7 +30,8 @@ async function fillEntry(page: Page, entry: Entry) {
   for (let guard = 0; guard < 10; guard++) {
     const enabled = await removable.evaluateAll((els) => els.filter((e) => !(e as HTMLButtonElement).disabled).length);
     if (enabled === 0) break;
-    await removable.filter({ hasNot: page.locator("[disabled]") }).first().click();
+    // 借方が1行(削除不可)で貸方が複数行のとき、先頭の「行を削除」は無効なので、有効なボタンだけを選ぶ
+    await work.getByRole("button", { name: "行を削除", disabled: false }).first().click();
   }
   for (const side of ["借方", "貸方"]) {
     await work.getByLabel(`${side}の科目1`).fill("");
