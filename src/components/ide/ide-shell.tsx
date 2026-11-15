@@ -953,7 +953,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
   const misIds = result && "misconceptions" in result ? result.misconceptions : result?.misconception ? [result.misconception] : [];
   const misList = misIds.flatMap((id) => misconceptions[id] ?? []);
   const classify = task.type === "classify" ? classifyBoard(task, accountMap) : null;
-  const helpCtx: HelpContext = { taskType: task.type, postedCount: visiblePosted.length, isLast, hasHint: Boolean(hint), view: unit.view };
+  const helpCtx: HelpContext = { taskType: task.type, postedCount: visiblePosted.length, isLast, hasHint: Boolean(hint), view: unit.view, currency: unit.currency };
   const openHelpTopic = (id: string, returnTo: HTMLElement | null) => {
     helpReturnTo.current = returnTo;
     setHelpFocus(id);
