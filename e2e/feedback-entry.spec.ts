@@ -7,7 +7,7 @@ test("フッターからGitHub Discussionsを新しいタブで開ける", async
   await expect(link).toHaveAttribute("href", "https://github.com/openboki/openboki/discussions");
   await expect(link).toHaveAttribute("target", "_blank");
   await expect(link).toHaveAttribute("rel", "noopener noreferrer");
-  await expect(link).toContainText("GitHubアカウントが要ります");
+  await expect(page.getByRole("contentinfo").getByText("GitHubアカウントが要ります")).toBeVisible();
 });
 
 test("単元のガイドにGitHubへのリンクを置かない", async ({ page }) => {
