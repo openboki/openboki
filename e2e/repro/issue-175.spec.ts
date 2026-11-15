@@ -97,22 +97,29 @@ test("正解したあとに誤答を重ねたステップは、最後の誤答�
   const { work, next, prev, done } = ide(page);
   await page.goto(UNIT);
   await next.click();
+  // 先に誤答して匿名サインインし、別タブも同じユーザーで答えられるようにする
+  await Promise.all([
+    page.waitForResponse((r) => r.url().includes("/unit_progress") && r.request().method() === "POST"),
+    post(page, ["現金", "1000000"], ["売上", "1000000"]),
+  ]);
+
+  // 正解する前に開いた別タブでは、ステップ2がまだ未正解なので答えられる
+  const other = await page.context().newPage();
+  await other.goto(UNIT);
+  await expect(other.getByRole("button", { name: "続きから" })).toBeVisible();
+  await ide(other).next.click();
+  await expect(other.getByText("ステップ2 / 10")).toBeVisible();
+
   await post(page, ["現金", "1000000"], ["資本金", "1000000"]);
   await expect(done).toBeVisible();
   await nextAndSave(page);
   await expect(page.getByText("ステップ3 / 10")).toBeVisible();
 
-  // 「続きから」を押さず手で進めると、正解済みのステップにも答えられる
-  await page.evaluate(() => sessionStorage.clear());
-  await page.reload();
-  await expect(page.getByRole("button", { name: "続きから" })).toBeVisible();
-  await next.click();
-  await expect(page.getByText("ステップ2 / 10")).toBeVisible();
   await Promise.all([
-    page.waitForResponse((r) => r.url().includes("/attempts") && r.request().method() === "POST"),
-    post(page, ["現金", "1000000"], ["売上", "1000000"]),
+    other.waitForResponse((r) => r.url().includes("/attempts") && r.request().method() === "POST"),
+    post(other, ["現金", "1000000"], ["売上", "1000000"]),
   ]);
-  await expect(page.getByRole("status").filter({ hasText: "もう一歩" })).toBeVisible();
+  await expect(other.getByRole("status").filter({ hasText: "もう一歩" })).toBeVisible();
 
   await resumeAfterReload(page, "ステップ3 / 10");
   await prev.click();
