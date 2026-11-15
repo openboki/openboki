@@ -536,12 +536,14 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
       if (resumeSolved) answered.current.set(from, resumeAnswer ?? null);
       else if (!stepAttempts.current.has(from)) stepAttempts.current.set(from, resumeWrong);
     }
+    // reachedは上げない。歩いて進む経路なので、各ステップの達成で「次へ →」を判定する
     resumeAdopted.current = true;
   };
 
   const goTo = (index: number) => {
     const target = unit.steps[index];
-    if (resumeStep !== null && !resumeAdopted.current && index > 0) adoptResume(resumeStep);
+    // ツアーはステップ1からの台本なので、案内と同じくツアー中は取り込まない
+    if (!tourActive && resumeStep !== null && !resumeAdopted.current && index > 0) adoptResume(resumeStep);
     setStepIndex(index);
     setDraft(emptyEntry());
     setGradedEntry(null);
