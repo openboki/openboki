@@ -1363,7 +1363,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
                   max={visiblePosted.length}
                   value={viewUpto ?? visiblePosted.length}
                   onChange={(e) => setViewUpto(Number(e.target.value) >= visiblePosted.length ? null : Number(e.target.value))}
-                  className="flex-1"
+                  className="flex-1 accent-primary"
                   aria-valuetext={viewUpto === null || viewUpto >= visiblePosted.length ? "最新" : `${viewUpto}件目まで`}
                 />
               </label>
