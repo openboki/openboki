@@ -1,17 +1,14 @@
 import { expect, test } from "@playwright/test";
 
+// Issue #126: predictで定義外の誤答をすると、やり直せないのに「もう一度試して」と出ていた。
+// 5つの要素と仕訳 ステップ3は誤答が全部定義済みになった(Issue #333)ので、定義外の誤答が残る減価償却の単元で確かめる
 test("predictの定義外の誤答で、やり直せないのに「もう一度試して」と案内しない", async ({ page }) => {
-  await page.goto("/units/bookkeeping-basics/five-elements");
+  await page.goto("/units/depreciation/what-is-depreciation");
+  await page.getByRole("button", { name: "今はしない" }).click().catch(() => {});
   const work = page.getByRole("region", { name: "ワークスペース" });
   await page.getByRole("button", { name: "次へ →" }).click();
-  await work.getByLabel("借方の科目1").fill("現金");
-  await work.getByLabel("借方の金額1").fill("1000000");
-  await work.getByLabel("貸方の科目1").fill("資本金");
-  await work.getByLabel("貸方の金額1").fill("1000000");
-  await work.getByRole("button", { name: "記帳する" }).click();
-  await expect(page.getByRole("status")).toContainText("できました");
-  await page.getByRole("button", { name: "次へ →" }).click();
-  for (const [element, label] of [["資産", "増える"]]) {
+  // 資産「増える」はwrong_patternsのどれにも当たらない。他は正解の動き
+  for (const [element, label] of [["資産", "増える"], ["負債", "変わらない"], ["純資産", "減る"], ["収益", "変わらない"], ["費用", "増える"]]) {
     await work.getByRole("combobox", { name: `${element}の予想`, exact: true }).selectOption({ label });
   }
   await work.getByRole("button", { name: "予想して記帳する" }).click();
