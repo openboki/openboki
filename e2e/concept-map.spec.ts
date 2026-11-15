@@ -50,9 +50,20 @@ test("図の点を押すと、その概念の説明が開く", async ({ page }) 
   for (let y = box.y + box.height * 0.2; y < box.y + box.height * 0.8 && !clicked; y += 8) {
     for (let x = box.x + box.width * 0.1; x < box.x + box.width * 0.9 && !clicked; x += 8) {
       await page.mouse.move(x, y);
-      if ((await page.locator("[data-ready]").evaluate((el) => (el as HTMLElement).style.cursor)) !== "pointer") continue;
+      // force-graphは当たり判定を次の描画フレームで行う。待たずに読むと、負荷が高いときに1つ前の位置の結果を見て空振りする
+      const cursor = await page
+        .locator("[data-ready]")
+        .evaluate(
+          (el) =>
+            new Promise<string>((resolve) =>
+              requestAnimationFrame(() => requestAnimationFrame(() => resolve((el as HTMLElement).style.cursor))),
+            ),
+        );
+      if (cursor !== "pointer") continue;
       await page.mouse.click(x, y);
-      clicked = (await detail(page).getByRole("heading", { level: 2 }).textContent()) !== before;
+      clicked = await expect(detail(page).getByRole("heading", { level: 2 }))
+        .not.toHaveText(before!, { timeout: 2000 })
+        .then(() => true, () => false);
     }
   }
   expect(clicked).toBe(true);
