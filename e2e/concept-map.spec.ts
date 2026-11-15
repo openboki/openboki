@@ -10,11 +10,17 @@ test("最初から起点の概念が開いていて、図が描かれる", async
   await page.goto("/map");
   await expect(detail(page).getByRole("heading", { level: 2 })).toHaveText("簿記");
   await expect(graph(page)).toBeVisible();
-  // 広い画面では、図がヘッダーの下から画面の下端までを使う(フッターはその下)
+  // 広い画面では、図がヘッダーの下から画面の下端までを使う。フッターは出さず、ページ全体はスクロールしない
   const box = (await graph(page).boundingBox())!;
   const viewport = page.viewportSize()!;
   expect(box.y).toBeLessThan(60);
   expect(Math.abs(box.y + box.height - viewport.height)).toBeLessThanOrEqual(1);
+  await expect(page.getByRole("contentinfo")).toBeHidden();
+  expect(await page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight)).toBeLessThanOrEqual(0);
+
+  // 狭い画面では縦に積んでページをスクロールするので、フッターを残す
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByRole("contentinfo")).toBeVisible();
 });
 
 test("一覧から概念を選ぶと説明が替わり、説明のつながりから別の概念へ移れる", async ({ page }) => {
