@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { type AccountInfo, accountIncreaseSide, formatAmount } from "@/lib/accounting";
 import { ELEMENT_STYLE } from "@/lib/elements";
 
@@ -8,7 +9,8 @@ interface Line {
   amount: number;
 }
 
-export function TAccountFigure({ account, debit, credit }: { account: AccountInfo; debit: Line[]; credit: Line[] }) {
+/** nameはIDEの結果ペインで科目名を用語のトリガーに差し替えるときに渡す */
+export function TAccountFigure({ account, name, debit, credit }: { account: AccountInfo; name?: ReactNode; debit: Line[]; credit: Line[] }) {
   const s = ELEMENT_STYLE[account.element];
   const inc = accountIncreaseSide(account);
   const sum = (lines: Line[]) => lines.reduce((t, l) => t + l.amount, 0);
@@ -34,7 +36,7 @@ export function TAccountFigure({ account, debit, credit }: { account: AccountInf
     <div className="text-sm">
       <div className={`inline-flex items-center gap-1 rounded-t-md border border-b-0 px-2 py-0.5 text-xs font-semibold ${s.bg} ${s.border} ${s.text}`}>
         <span aria-hidden>{s.symbol}</span>
-        {account.name}
+        {name ?? account.name}
       </div>
       <div className="flex divide-x border-t-2 border-foreground/70">
         {side("借方", debit, inc === "debit")}
