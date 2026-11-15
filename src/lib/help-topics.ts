@@ -11,6 +11,8 @@ export interface HelpContext {
   hasHint: boolean;
   // 結果ペインの段階(scenario.view)。noneの単元には記帳の場が無い
   view: "none" | "ledger" | "statements";
+  // 金額の単位(scenario.currency)
+  currency: string;
 }
 
 export interface HelpTopic {
@@ -173,7 +175,7 @@ export const HELP_TOPICS: HelpTopic[] = [
     target: "task-calc",
     pane: "work",
     short: "問題文を読んで金額を入力し、「確認する」を押します。",
-    body: "問題文を読んで金額を入力し、「確認する」を押します(Enterでも可)。桁区切りのカンマや「円」は付けても付けなくても構いません。",
+    body: (c) => `問題文を読んで金額を入力し、「確認する」を押します(Enterでも可)。桁区切りのカンマや「${c.currency}」は付けても付けなくても構いません。`,
     when: (c) => c.taskType === "calc",
   },
   {

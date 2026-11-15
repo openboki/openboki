@@ -210,6 +210,54 @@ misconceptions:
     correct: 代金を受け取る権利(売掛金・未収入金)は、売ったときに記録済み。回収では権利(資産)が現金や預金(資産)に変わるだけで、売上は増えない
     concepts: [accounts_receivable, revenue]
     remediation: merchandise/credit-transactions
+  - id: uncollectible_receivable_kept
+    name: 回収できない売掛金を資産に残す
+    description: 相手が倒産して受け取れないと決まった売掛金を、帳簿に載せたままにしてしまう
+    correct: 受け取れないと決まった権利は、もう財産ではない。売掛金から消して、その分を貸倒損失(費用)にする
+    concepts: [bad_debt, accounts_receivable]
+    remediation: bad-debts/bad-debt-loss
+  - id: bad_debt_cancels_sales
+    name: 貸倒れは売上の取り消し
+    description: 売掛金が回収できなくなったとき、売上を減らして帳消しにしてしまう
+    correct: 商品を渡して売った事実は変わらないので、売上は取り消さない。回収できなかった損は、貸倒損失という別の費用で記録する
+    concepts: [bad_debt, revenue]
+    remediation: bad-debts/bad-debt-loss
+  - id: partial_bad_debt_full_loss
+    name: 一部を回収しても全額を貸倒損失にする
+    description: 売掛金の一部を回収できたのに、売掛金の全額を貸倒損失にしてしまう
+    correct: 貸倒損失にするのは、受け取れなかった分だけ。回収できた分は、ふつうの回収と同じく現金や預金の増加として記録する
+    concepts: [bad_debt]
+    remediation: bad-debts/bad-debt-loss
+  - id: partial_collection_leaves_receivable
+    name: 貸倒れの分しか売掛金を消さない
+    description: 一部を回収し残りが貸倒れになったとき、売掛金を貸倒れの金額しか減らさず、回収した分を消し忘れる
+    correct: 回収した分も、貸倒れになった分も、どちらも売掛金を消す。その相手への売掛金は全額がなくなる
+    concepts: [bad_debt, accounts_receivable]
+    remediation: bad-debts/bad-debt-loss
+  - id: bad_debt_as_miscellaneous_loss
+    name: 貸倒れを雑損にする
+    description: 売掛金を回収できなかった損を、雑損として記録してしまう
+    correct: 雑損は原因の分からない現金の不足などに使う。売掛金を回収できなかった損は原因がはっきりしているので、貸倒損失を使う
+    concepts: [bad_debt]
+    remediation: bad-debts/bad-debt-loss
+  - id: bad_debt_is_cash_outflow
+    name: 貸倒れでお金が出ていく
+    description: 貸倒れの損を、現金や預金が減る取引として記録してしまう
+    correct: 貸倒れは、入ってくるはずだったお金が入らなかっただけで、お金は出ていかない。減るのは売掛金
+    concepts: [bad_debt, accounts_receivable]
+    remediation: bad-debts/bad-debt-loss
+  - id: late_payment_is_bad_debt
+    name: 支払いが遅れたら貸倒れ
+    description: 得意先の支払いが遅れているだけの売掛金を、貸倒れとして処理してしまう
+    correct: 遅れているだけなら、受け取る権利はまだ生きているので資産のまま。貸倒れは、回収できないと決まったときに処理する
+    concepts: [bad_debt]
+    remediation: bad-debts/bad-debt-loss
+  - id: return_as_bad_debt
+    name: 返品も貸倒れ
+    description: 返品で売掛金が減ることと、貸倒れで売掛金が減ることを同じものと考えている
+    correct: 返品は売ったこと自体の取り消しで、売上と売掛金を逆に書いて消す。貸倒れは売った事実を残したまま、回収できなかった損を費用にする
+    concepts: [bad_debt, returns]
+    remediation: bad-debts/bad-debt-loss
   - id: payable_payment_is_purchase
     name: 支払いのときにもう一度仕入
     description: 買掛金を支払ったときに、仕入をもう一度記録してしまう
