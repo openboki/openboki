@@ -7,8 +7,11 @@ import { HashHistorySync } from "@/components/hash-history-sync";
 import { ThemeBoot } from "@/components/theme-boot";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { SiteFooter } from "@/components/site-footer";
+import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  openGraph: { siteName: "Open簿記", locale: "ja_JP", type: "website" },
   title: { template: "%s | Open簿記", default: "Open簿記" },
   description: "Open簿記(オープン簿記)。会計を原理から、手を動かして学ぶ",
 };
