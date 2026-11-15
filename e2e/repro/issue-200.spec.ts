@@ -11,7 +11,8 @@ async function tabsToNext(page: Page) {
   return tabs;
 }
 
-test("条件を変えるの達成後、状態欄へフォーカスが移り「次へ →」までTab 3回以内で届く", async ({ page }) => {
+// Issue #320: 達成してもフォーカスはスライダーに残し、最初のTabで状態欄へ渡す
+test("条件を変えるの達成後、スライダーから「次へ →」までTab 3回以内で届く", async ({ page }) => {
   await page.goto("/units/depreciation/straight-line");
   const later = page.getByRole("button", { name: "今はしない" });
   if (await later.isVisible()) await later.click();
@@ -33,8 +34,10 @@ test("条件を変えるの達成後、状態欄へフォーカスが移り「�
   await page.keyboard.press("ArrowRight");
   await expect(life).toHaveValue("6");
   await expect(page.getByText("できました", { exact: true })).toBeVisible();
+  await expect(life).toBeFocused();
+  await page.keyboard.press("Tab");
   await expect(page.getByRole("status").filter({ hasText: "できました" })).toBeFocused();
-  expect(await tabsToNext(page)).toBeLessThanOrEqual(3);
+  expect(await tabsToNext(page)).toBeLessThanOrEqual(2);
 
   // ステップ4: 残存価額を0 → 300,000円(後ろに耐用年数のスライダーがある)
   await page.getByRole("button", { name: "次へ →" }).click();
@@ -44,6 +47,8 @@ test("条件を変えるの達成後、状態欄へフォーカスが移り「�
   for (let i = 0; i < 6; i++) await page.keyboard.press("ArrowRight");
   await expect(residual).toHaveValue("300000");
   await expect(page.getByText("できました", { exact: true })).toBeVisible();
+  await expect(residual).toBeFocused();
+  await page.keyboard.press("Tab");
   await expect(page.getByRole("status").filter({ hasText: "できました" })).toBeFocused();
-  expect(await tabsToNext(page)).toBeLessThanOrEqual(3);
+  expect(await tabsToNext(page)).toBeLessThanOrEqual(2);
 });
