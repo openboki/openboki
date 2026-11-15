@@ -482,8 +482,8 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     const t = unit.steps[index].task;
     answeredStep.current = index;
     if (t.type === "post") {
-      const saved = answer as JournalEntry | undefined;
-      const entry = saved && gradePost(t, saved).correct ? saved : t.answer;
+      // 内容の改訂でステップの種類が入れ替わると、別の種類の答えが届くので、仕訳の形でなければ模範解答で戻す(Issue #308)
+      const entry = isEntry(answer, accountMap) && gradePost(t, answer as JournalEntry).correct ? (answer as JournalEntry) : t.answer;
       answered.current.set(index, entry);
       setDraft(fromJournalEntry(entry, accountMap));
       setResult(gradePost(t, entry));
@@ -509,7 +509,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     }
     if (t.type === "debug") {
       const saved = answer as DebugAnswer | undefined;
-      const fixed = saved && gradeDebug(t, saved).correct ? saved : t.answer;
+      const fixed = isObject(saved) && Number.isInteger(saved.index) && isEntry(saved.entry, accountMap) && gradeDebug(t, saved).correct ? saved : t.answer;
       answered.current.set(index, fixed);
       setDebugRow(fixed.index);
       setDraft(fromJournalEntry(fixed.entry, accountMap));

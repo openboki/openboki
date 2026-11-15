@@ -51,7 +51,8 @@ export function HomeStart({ units }: { units: Record<string, HomeStartUnit> }) {
           </Button>
         ) : (
           <Button size="lg" asChild>
-            <Link href={`/units/${TUTORIAL_UNIT_ID}`}>チュートリアルを始める</Link>
+            {/* スキップ済みでもツアーを始めるため、「使い方」のやり直しと同じ?tour=1で開く(Issue #311) */}
+            <Link href={`/units/${TUTORIAL_UNIT_ID}?tour=1`}>チュートリアルを始める</Link>
           </Button>
         )}
         <Button size="lg" variant="outline" asChild>
