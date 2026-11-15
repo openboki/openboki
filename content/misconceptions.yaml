@@ -162,6 +162,18 @@ misconceptions:
     correct: 減価償却費は使った期間に配分する費用で、決算で計上する。売った金額と帳簿価額の差は、固定資産売却損という別の費用で記録する
     concepts: [gain_or_loss_on_sale, depreciation]
     remediation: depreciation/sale-of-fixed-assets
+  - id: sale_ignores_current_depreciation
+    name: 期中に売っても今年の分を計上しない
+    description: 会計期間の途中で固定資産を売るとき、期首から売った日までの減価償却費を計上せず、売った金額を期首の帳簿価額と比べてしまう
+    correct: 売った日まで使った分は、その期の減価償却費として月割りで計上する。売った金額と比べるのは、その分まで引いた売る日の帳簿価額
+    concepts: [sale_during_period, monthly_proration]
+    remediation: depreciation/sale-during-period
+  - id: proration_counts_remaining_months
+    name: 売った後の月数で月割りする
+    description: 期中に売った固定資産の減価償却費を、売った日から期末までの残りの月数で計算してしまう
+    correct: 費用にするのは使った期間の分。売る年は、期首から売った月までの月数で月割りする
+    concepts: [sale_during_period, monthly_proration]
+    remediation: depreciation/sale-during-period
   - id: purchase_is_asset
     name: 仕入は資産
     description: 売るための商品を買ったとき、備品と同じように資産として記録すると思っている
