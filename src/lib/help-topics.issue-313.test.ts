@@ -3,7 +3,7 @@ import { currentTopics, helpTopic, topicBody } from "./help-topics";
 
 // Issue #313: view: ledgerの単元で、画面に無い「会社のかたち」と財務諸表前提の「帳簿をさかのぼる」を案内していた
 
-const ctx = { taskType: "calc", postedCount: 2, isLast: false, hasHint: true } as const;
+const ctx = { taskType: "calc", postedCount: 2, isLast: false, hasHint: true, currency: "円" } as const;
 
 describe("issue 313", () => {
   it("view: ledgerでは会社のかたちを出さず、さかのぼるは試算と元帳を説明する", () => {

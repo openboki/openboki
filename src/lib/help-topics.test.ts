@@ -3,7 +3,7 @@ import { HELP_CATEGORIES, HELP_TOPICS, SANDBOX_NOT_SAVED, currentTopics, firstTi
 
 // 「いまの画面でできること」は、現在のステップで画面に出ている機能だけに絞る(docs/help-design.md 4章)
 
-const base = { postedCount: 0, isLast: false, hasHint: false, view: "statements" } as const;
+const base = { postedCount: 0, isLast: false, hasHint: false, view: "statements", currency: "円" } as const;
 
 describe("help topics", () => {
   it("idは重複せず、分類は登録済みのものだけ", () => {
