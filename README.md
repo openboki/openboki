@@ -74,7 +74,10 @@ make test        # 採点エンジンなどの単体テスト
 make content     # コンテンツ検査だけ実行
 make e2e         # E2E(開発サーバーとローカルSupabaseを使う。コンテンツを読んで全単元を自動で解く)
 make check       # lint / 型 / テスト / ビルド / E2Eを一括(統合前の関門)
+make docker-build  # 本番用のDockerイメージ(Dockerfile)
 ```
+
+本番用のイメージは`Dockerfile`で作る。Supabaseの接続先、`CONTENT_VERSION`、`SITE_URL`はビルド時に焼き込まれるのでbuild-argで渡す。Dockerのビルドには`.git`が入らないため、`CONTENT_VERSION`を渡し忘れると回答ログの版が`uncommitted`になる。`make docker-build`はgitのコミットを渡し、Supabaseの値は環境変数`NEXT_PUBLIC_SUPABASE_URL`と`NEXT_PUBLIC_SUPABASE_ANON_KEY`から取る。
 
 品質確認はローカルで完結させる(ADR 0005)。E2E(`make e2e`)はコンテンツやUIを変えたときにローカルで回す。GitHub Actionsはlint・型・単体テスト・ビルドの1ジョブ(約45秒)だけ。
 
