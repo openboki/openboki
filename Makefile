@@ -2,7 +2,7 @@
 # 実体はpackage.jsonのscriptsとscripts/*.sh。引数は環境変数で渡す(例: make monkey MONKEY_UNTIL=22:00)。
 .DEFAULT_GOAL := help
 .PHONY: help install hooks setup dev db-start db-stop db-reset services-up services-down services-status \
-        content lint typecheck test test-watch e2e check build start \
+        content lint typecheck test test-watch e2e check build start icons \
         monkey monkey-stop monkey-scripted triage issue issue-loop issue-stop issue-status issue-verify quality-night labels
 
 ##@ セットアップ
@@ -68,6 +68,9 @@ build: ## 本番ビルド(Velite → next build。standalone出力)
 
 start: ## 本番ビルドを起動する(先にmake build)
 	pnpm start
+
+icons: ## src/app/icon.svgからfavicon.icoとapple-icon.pngを書き出す(icon.svgを変えたら回す)
+	node scripts/icons.mjs
 
 ##@ 品質改善ループ(docs/quality-loop.md)
 
