@@ -8,11 +8,11 @@ test("損益計算書は常に見えているので、本文は「開いて」�
   expect(src).toContain("結果の「損益計算書」を見てみましょう");
 });
 
-// 開閉のUIが付いたら、本文の言い方を見直す合図になる
+// 開閉のUIが付いたら、本文の言い方を見直す合図になる。当期純利益の用語ポップオーバー(button.term)は開閉ではないので数えない
 test("PC幅: 結果ペインの損益計算書に押せる要素が無い", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/units/bookkeeping-basics/five-elements");
   const section = page.getByRole("region", { name: "結果" }).locator('section[aria-label="損益計算書"]');
   await expect(section).toBeVisible();
-  await expect(section.locator("button, a, summary, [role=tab], [role=button]")).toHaveCount(0);
+  await expect(section.locator("button:not(.term), a, summary, [role=tab], [role=button]")).toHaveCount(0);
 });
