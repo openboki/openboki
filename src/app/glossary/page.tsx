@@ -2,9 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { glossary, sortedDomains, conceptList } from "@/lib/content";
+import { pageMetadata } from "@/lib/site";
 import { GlossarySearch, GlossarySearchFromUrl } from "./glossary-search";
 
-export const metadata: Metadata = { title: "用語集" };
+export const metadata: Metadata = pageMetadata({
+  path: "/glossary",
+  title: "用語集",
+  description: "簿記の概念と勘定科目を、定義、具体例、関連する用語とあわせて引ける用語集。",
+});
 
 export default function GlossaryPage() {
   const domainTitles = Object.fromEntries(sortedDomains.map((d) => [d.id, d.title]));
