@@ -59,6 +59,7 @@ wrong_patterns:
     misconception: debit_means_increase
     feedback: 仕入は費用なので左、払う義務である買掛金は右です。左右を入れ替えてみましょう。
   - match: { credit: [{ account: cash }] }
+    misconception: credit_purchase_paid_in_cash
     feedback: 代金はまだ払っていないので、現金は減りません。「後で払う義務」を右に書きます。
   - match: { credit: [{ account: loans_payable }] }
     feedback: 借入金は銀行から借りたお金です。商品の代金を後で払う義務は買掛金を使います。
@@ -71,6 +72,7 @@ wrong_patterns:
     misconception: receivable_payable_confused
     feedback: 売掛金は商品を売って後で受け取る権利(資産)です。問屋に後で払う義務は買掛金(負債)なので、右は買掛金です。
   - match: { credit: [{ account: accounts_payable_other }] }
+    misconception: trade_as_nontrade
     feedback: 未払金は商品以外の物を買ったときの義務です。商品の代金を後で払う義務は買掛金を使います。
   - match: { credit: [{ account: sales }] }
     feedback: 売上は商品を売ったときの収益です。ここでは豆を買っただけで、まだ何も売っていません。右には「後で払う義務」の買掛金を書きます。
@@ -98,6 +100,7 @@ wrong_patterns:
     misconception: receivable_is_cash
     feedback: 現金は増えませんが、「後で代金を受け取る権利」が増えます。この権利は資産です。
   - match: { liability: increase }
+    misconception: receivable_payable_confused
     feedback: 増えたのは受け取る権利で、払う義務ではありません。負債は動きません。
   - match: { equity: none }
     feedback: 売上が増えると当期純利益が増え、そのぶん純資産も増えます。
