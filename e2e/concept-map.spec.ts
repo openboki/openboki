@@ -40,11 +40,12 @@ test("図の点を押すと、その概念の説明が開く", async ({ page }) 
   const box = (await graph(page).boundingBox())!;
   const before = await detail(page).getByRole("heading", { level: 2 }).textContent();
   let clicked = false;
-  for (let y = 0.2; y < 0.8 && !clicked; y += 0.04) {
-    for (let x = 0.1; x < 0.9 && !clicked; x += 0.02) {
-      await page.mouse.move(box.x + box.width * x, box.y + box.height * y);
+  // 格子は点の直径より細かくする。粗いと、当たるかどうかが配置しだいになる
+  for (let y = box.y + box.height * 0.2; y < box.y + box.height * 0.8 && !clicked; y += 8) {
+    for (let x = box.x + box.width * 0.1; x < box.x + box.width * 0.9 && !clicked; x += 8) {
+      await page.mouse.move(x, y);
       if ((await page.locator("[data-ready]").evaluate((el) => (el as HTMLElement).style.cursor)) !== "pointer") continue;
-      await page.mouse.click(box.x + box.width * x, box.y + box.height * y);
+      await page.mouse.click(x, y);
       clicked = (await detail(page).getByRole("heading", { level: 2 }).textContent()) !== before;
     }
   }
