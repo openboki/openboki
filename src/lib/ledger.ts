@@ -1,4 +1,4 @@
-import { type AccountInfo, type Element, type JournalEntry, accountIncreaseSide, increaseSide } from "./accounting";
+import { type AccountInfo, type Element, type JournalEntry, ELEMENTS, accountIncreaseSide, increaseSide } from "./accounting";
 
 // 帳簿(記帳済みの仕訳)から残高と財務諸表を組み立てる純粋関数。結果ペインと差分表示が使う
 
@@ -102,7 +102,14 @@ export interface TrialBalance {
   credit: number;
 }
 
-/** 合計試算表。科目ごとの借方合計と貸方合計。開始残高はT勘定と同じく科目が増える側に置く。行順はマスタの順 */
+/** 試算表と元帳(T勘定)が共有する科目の並び。5要素の順、同じ要素の中はマスタの順(Issue #349) */
+export function orderAccountIds(ids: Iterable<string>, accounts: ReadonlyMap<string, AccountInfo>): string[] {
+  const master = [...accounts.keys()];
+  const rank = (id: string) => ELEMENTS.indexOf(accounts.get(id)!.element) * master.length + master.indexOf(id);
+  return [...ids].filter((id) => accounts.has(id)).sort((a, b) => rank(a) - rank(b));
+}
+
+/** 合計試算表。科目ごとの借方合計と貸方合計。開始残高はT勘定と同じく科目が増える側に置く。行順はorderAccountIds */
 export function buildTrialBalance(opening: OpeningLine[], entries: JournalEntry[], accounts: ReadonlyMap<string, AccountInfo>): TrialBalance {
   const sums = new Map<string, { debit: number; credit: number }>();
   const add = (id: string, side: "debit" | "credit", amount: number) => {
@@ -119,9 +126,6 @@ export function buildTrialBalance(opening: OpeningLine[], entries: JournalEntry[
     e.debit.forEach((l) => add(l.account, "debit", l.amount));
     e.credit.forEach((l) => add(l.account, "credit", l.amount));
   }
-  const lines = [...accounts].flatMap(([id, a]) => {
-    const s = sums.get(id);
-    return s ? [{ account: id, name: a.name, ...s }] : [];
-  });
+  const lines = orderAccountIds(sums.keys(), accounts).map((id) => ({ account: id, name: accounts.get(id)!.name, ...sums.get(id)! }));
   return { lines, debit: lines.reduce((t, l) => t + l.debit, 0), credit: lines.reduce((t, l) => t + l.credit, 0) };
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { type JournalEntry, accountIncreaseSide, formatAmount } from "@/lib/accounting";
-import { type OpeningLine, buildTrialBalance } from "@/lib/ledger";
+import { type OpeningLine, buildTrialBalance, orderAccountIds } from "@/lib/ledger";
 import { TAccountFigure } from "@/components/figures/taccount-figure";
 import { AccountName } from "@/components/account-name";
 import type { GlossaryAccount } from "@/lib/content";
@@ -27,7 +27,7 @@ export function LedgerTab({ opening, posted, accounts }: { opening: OpeningLine[
     p.entry.debit.forEach((l) => of(l.account).debit.push({ label: p.memo, amount: l.amount }));
     p.entry.credit.forEach((l) => of(l.account).credit.push({ label: p.memo, amount: l.amount }));
   }
-  const ids = [...lines.keys()].filter((id) => accounts.has(id));
+  const ids = orderAccountIds(lines.keys(), accounts);
   if (ids.length === 0) return <p className="text-xs text-muted-foreground">まだ記帳がありません。記帳すると科目ごとのT勘定がここに並びます。</p>;
   return (
     // grid-cols-1(minmax(0, 1fr))がないと、暗黙のauto列がT勘定の中身の幅まで広がる。
