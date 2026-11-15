@@ -19,11 +19,13 @@ interface Props {
   readOnly?: boolean;
   // predictでは予想を送るまで5要素の増減を見せない(答えが見えてしまう。Issue #11)
   showImpact?: boolean;
+  // 歴史の単元はページの左右で教えるので、5要素の増減を出さず貸借の合計だけを出す(Issue #300)
+  showElements?: boolean;
   // 金額の単位。末尾に付けて入れても読む(単元のscenario.currency)
   currency?: string;
 }
 
-export function JournalEditor({ accounts, value, onChange, readOnly = false, showImpact = true, currency }: Props) {
+export function JournalEditor({ accounts, value, onChange, readOnly = false, showImpact = true, showElements = true, currency }: Props) {
   const idPrefix = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const focusLine = useRef<string | null>(null);
@@ -162,37 +164,39 @@ export function JournalEditor({ accounts, value, onChange, readOnly = false, sho
         {renderSide("debit", "借方")}
         {renderSide("credit", "貸方")}
       </div>
-      {showImpact && <ImpactPanel impact={impact} />}
+      {showImpact && <ImpactPanel impact={impact} showElements={showElements} />}
     </div>
   );
 }
 
-function ImpactPanel({ impact }: { impact: ReturnType<typeof computeImpact> }) {
+function ImpactPanel({ impact, showElements }: { impact: ReturnType<typeof computeImpact>; showElements: boolean }) {
   const sign = (n: number) => (n > 0 ? `+${formatAmount(n)}` : n < 0 ? `−${formatAmount(-n)}` : "±0");
   return (
     <div className="rounded-md bg-muted/50 p-2 text-sm" data-tour="impact">
-      <div className="flex flex-wrap gap-1.5">
-        {ELEMENTS.map((el) => {
-          const value = el === "equity" ? impact.equityTotal : impact[el];
-          const s = ELEMENT_STYLE[el];
-          return (
-            <span key={el} className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs transition-colors ${value !== 0 ? `${s.bg} ${s.border} ${s.text}` : "text-muted-foreground"}`}>
-              <span aria-hidden>{s.symbol}</span>
-              {s.label} <span className="font-mono tabular-nums font-medium">{sign(value)}</span>
-            </span>
-          );
-        })}
-        <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs ${impact.netIncome !== 0 ? "font-medium" : "text-muted-foreground"}`}>
-          当期純利益 <span className="ml-1 font-mono tabular-nums">{sign(impact.netIncome)}</span>
-        </span>
-        <HelpIcon topic="impact" />
-      </div>
-      <div className="mt-1 text-xs text-muted-foreground">
+      {showElements && (
+        <div className="flex flex-wrap gap-1.5">
+          {ELEMENTS.map((el) => {
+            const value = el === "equity" ? impact.equityTotal : impact[el];
+            const s = ELEMENT_STYLE[el];
+            return (
+              <span key={el} className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs transition-colors ${value !== 0 ? `${s.bg} ${s.border} ${s.text}` : "text-muted-foreground"}`}>
+                <span aria-hidden>{s.symbol}</span>
+                {s.label} <span className="font-mono tabular-nums font-medium">{sign(value)}</span>
+              </span>
+            );
+          })}
+          <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs ${impact.netIncome !== 0 ? "font-medium" : "text-muted-foreground"}`}>
+            当期純利益 <span className="ml-1 font-mono tabular-nums">{sign(impact.netIncome)}</span>
+          </span>
+          <HelpIcon topic="impact" />
+        </div>
+      )}
+      <div className={`text-xs text-muted-foreground ${showElements ? "mt-1" : ""}`}>
         借方合計{formatAmount(impact.debitTotal)} / 貸方合計{formatAmount(impact.creditTotal)}
         {impact.debitTotal + impact.creditTotal > 0 && (
           <span className={impact.balanced ? " text-ok-fg" : " text-error-fg"}>{impact.balanced ? " 一致" : " 不一致"}</span>
         )}
-        <span className="ml-2">純資産は当期純利益による増減を含みます。</span>
+        {showElements && <span className="ml-2">純資産は当期純利益による増減を含みます。</span>}
       </div>
     </div>
   );
