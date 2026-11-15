@@ -630,13 +630,15 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
       const answer = answered.current.get(s.stepIndex);
       if (answer !== undefined) restoreStep(s.stepIndex, answer);
       else {
+        const t = unit.steps[s.stepIndex].task;
+        // 選択肢に無い予想や箱に無い配置は、画面に出ないまま採点されるので未選択・未配置に戻す(Issue #335)
+        const boxIds = t.type === "classify" ? classifyBoard(t, accountMap).boxes.map((b) => b.id) : [];
         setDraft(s.draft);
-        setEffect(s.effect);
-        setPlaced(s.placed);
+        setEffect(Object.fromEntries(Object.entries(s.effect).filter(([, v]) => typeof v === "string" && Object.hasOwn(CHANGE_LABELS, v))));
+        setPlaced(Object.fromEntries(Object.entries(s.placed).filter(([, v]) => typeof v === "string" && boxIds.includes(v))));
         setCalcValue(s.calcValue);
         setParams(s.params);
         setDebugRow(s.debugRow ?? null);
-        const t = unit.steps[s.stepIndex].task;
         if (s.gradedAnswer && (t.type === "post" || t.type === "calc" || t.type === "classify" || t.type === "debug")) {
           gradedAnswer.current = s.gradedAnswer;
           const graded = JSON.parse(s.gradedAnswer);
