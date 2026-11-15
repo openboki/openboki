@@ -78,7 +78,7 @@ entry:
 answer: { asset: decrease, liability: decrease, equity: none, revenue: none, expense: none }
 wrong_patterns:
   - match: { asset: none }
-    misconception: check_is_cash
+    misconception: check_reduces_deposit_at_clearing
     feedback: 銀行で引き落とされる前でも、小切手を渡した日に帳簿の当座預金を減らします。資産(当座預金)が減ります。
   - match: { expense: increase }
     misconception: payable_payment_is_purchase
