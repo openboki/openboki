@@ -1223,6 +1223,11 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
                               setDebugRow(i);
                               setDraft(editableRow(task.entries[i], accountMap));
                               setRevealed(false);
+                              // 前の行への採点結果を残すと、選び直した行への案内に読める(Issue #337)。
+                              // 結果を消すので、前の行に戻して同じ答えで押しても採点し直す
+                              setResult(null);
+                              gradedAnswer.current = null;
+                              setRepeated(0);
                             }}
                           />
                           <span className="min-w-0 flex-1">

@@ -59,6 +59,6 @@ describe("nextUnit", () => {
     expect(nextUnit(unitMap.get(pacioli)!)).toBeUndefined();
   });
   it("3級の最後の単元から歴史の単元へはつながない", () => {
-    expect(nextUnit(unitMap.get("depreciation/straight-line")!)).toBeUndefined();
+    expect(nextUnit(unitMap.get("depreciation/sale-of-fixed-assets")!)).toBeUndefined();
   });
 });
