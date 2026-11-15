@@ -17,7 +17,7 @@ export interface AttemptRecord {
 export interface Progress {
   userId: string;
   isAnonymous: boolean;
-  units: Record<string, { status: UnitStatus; step: number }>;
+  units: Record<string, { status: UnitStatus; step: number; updatedAt: string }>;
   // 単元ごとの正解済みステップindex(attemptsのcorrect行のexercise_id = `${unitId}#${index}`)
   solved: Record<string, number[]>;
   // 単元 → ステップindex → 最後の回答(正誤を問わない)。predictは間違えても進めるので、再開時の復元に使う
@@ -185,7 +185,7 @@ async function queryAttempts() {
 }
 
 function queryProgress() {
-  return Promise.all([supabase.from("unit_progress").select("unit_id,status,step"), queryAttempts()]);
+  return Promise.all([supabase.from("unit_progress").select("unit_id,status,step,updated_at"), queryAttempts()]);
 }
 
 /** セッションが無ければnull(まだ何も回答していない閲覧者) */
@@ -203,7 +203,7 @@ export async function fetchProgress(): Promise<Progress | null> {
   if (unitsRes.error) throw new Error(unitsRes.error.message);
   if (attemptsRes.error) throw new Error(attemptsRes.error.message);
   const units: Progress["units"] = {};
-  for (const row of unitsRes.data) units[row.unit_id] = { status: row.status as UnitStatus, step: row.step as number };
+  for (const row of unitsRes.data) units[row.unit_id] = { status: row.status as UnitStatus, step: row.step as number, updatedAt: row.updated_at as string };
   const misconceptions: Record<string, number> = {};
   const solved: Progress["solved"] = {};
   const answers: Progress["answers"] = {};
