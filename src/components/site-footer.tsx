@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ExternalLink, MessagesSquare } from "lucide-react";
 import { REPO_URL } from "@/lib/repo";
+import { cn } from "@/lib/utils";
 
 // LucideはブランドのアイコンをもたないのでGitHubのマークだけ自前で持つ(docs/design-system.md 3.3)
 function GitHubMark({ className }: { className?: string }) {
@@ -20,10 +21,12 @@ const minorLink = "inline-flex min-h-6 items-center hover:text-foreground";
 
 // 会計IDE(/units/*)は上下の固定バーで画面を使い切るので出さない。
 // 出すと低い画面(844×390など)でページが伸び、固定バーが「記帳する」に重なる
+// 概念マップ(/map)は広い画面でヘッダーの下を使い切り、ペインの中だけをスクロールさせるので、そのときは出さない
 export function SiteFooter() {
-  if (usePathname().startsWith("/units/")) return null;
+  const pathname = usePathname();
+  if (pathname.startsWith("/units/")) return null;
   return (
-    <footer className="border-t">
+    <footer className={cn("border-t", pathname === "/map" && "lg:hidden")}>
       <div className="mx-auto max-w-4xl px-4 py-8 text-sm text-muted-foreground">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-1">
