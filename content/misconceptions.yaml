@@ -234,6 +234,12 @@ misconceptions:
     correct: 自分が振り出した小切手は当座預金から引き落とされるので、減るのは当座預金。逆に、他人が振り出した小切手を受け取ったときは、すぐ換金できるので現金として扱う
     concepts: [check, checking_account]
     remediation: cash-and-deposits/checking-account
+  - id: check_reduces_deposit_at_clearing
+    name: 引き落とされるまで当座預金は減らない
+    description: 小切手を振り出しただけでは当座預金は減らず、相手が銀行に持ち込んで引き落とされた日に帳簿へ記録すると考えている
+    correct: 帳簿は小切手を渡した日に当座預金を減らす。渡した時点で支払いは確定し、相手はいつでも換金できるので、銀行の残高が実際に減る日とは別に記録する
+    concepts: [check, checking_account]
+    remediation: cash-and-deposits/checking-account
   - id: issued_check_leaves_payable
     name: 小切手を渡しても支払いは済んでいない
     description: 小切手は後で引き落とされるので、振り出しただけでは支払いが済まず、買掛金が残る(増える)と考えている
