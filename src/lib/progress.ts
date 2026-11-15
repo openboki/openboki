@@ -117,22 +117,23 @@ async function existingUserId(): Promise<string | null> {
 }
 
 // 401はトークンが無効という合図。再読み込みしても同じCookieが読まれるだけなので、ここでセッションを立て直して1回やり直す。
-// ユーザーが無ければ書かずにnullを返す
+// ユーザーが無ければ書かずにnullを返す。書いたユーザーも返し、呼び出し側がゲストの入れ替わりに気づけるようにする(Issue #325)
 async function writeAsUser<T extends { status: number }>(
   write: (userId: string) => PromiseLike<T>,
   getUserId: () => Promise<string | null> = ensureUserId,
-): Promise<T | null> {
+): Promise<{ userId: string; result: T } | null> {
   const userId = await getUserId();
   if (!userId) return null;
   const result = await write(userId);
-  if (result.status !== 401) return result;
+  if (result.status !== 401) return { userId, result };
   await recoverSession();
   const retryId = await getUserId();
-  return retryId ? write(retryId) : null;
+  return retryId ? { userId: retryId, result: await write(retryId) } : null;
 }
 
-export async function recordAttempt(record: AttemptRecord): Promise<void> {
-  const result = await writeAsUser((userId) =>
+/** 回答を書いたユーザーのIDを返す */
+export async function recordAttempt(record: AttemptRecord): Promise<string> {
+  const written = await writeAsUser((userId) =>
     supabase.from("attempts").insert({
       user_id: userId,
       unit_id: record.unitId,
@@ -143,20 +144,22 @@ export async function recordAttempt(record: AttemptRecord): Promise<void> {
       content_version: process.env.NEXT_PUBLIC_CONTENT_VERSION ?? "unknown",
     }),
   );
-  if (result?.error) throw new Error(`回答の保存に失敗しました: ${result.error.message}`);
+  if (!written) throw new Error("回答の保存に失敗しました: セッションを立て直せませんでした");
+  if (written.result.error) throw new Error(`回答の保存に失敗しました: ${written.result.error.message}`);
+  return written.userId;
 }
 
-/** まだ回答していない閲覧者(セッションが無い)の進捗は保存せずfalseを返す */
-export async function setUnitProgress(unitId: string, status: UnitStatus, step: number): Promise<boolean> {
-  const result = await writeAsUser(
+/** 進捗を書いたユーザーのIDを返す。まだ回答していない閲覧者(セッションが無い)の進捗は保存せずnullを返す */
+export async function setUnitProgress(unitId: string, status: UnitStatus, step: number): Promise<string | null> {
+  const written = await writeAsUser(
     (userId) =>
       supabase
         .from("unit_progress")
         .upsert({ user_id: userId, unit_id: unitId, status, step, updated_at: new Date().toISOString() }),
     existingUserId,
   );
-  if (result?.error) throw new Error(`進捗の保存に失敗しました: ${result.error.message}`);
-  return result !== null;
+  if (written?.result.error) throw new Error(`進捗の保存に失敗しました: ${written.result.error.message}`);
+  return written?.userId ?? null;
 }
 
 // 後退防止のトリガーがあるので、ステップを減らした単元の範囲外のstepはupsertでは下げられない(Issue #197)
