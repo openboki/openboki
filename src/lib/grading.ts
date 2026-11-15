@@ -1,5 +1,6 @@
 import type { Unit } from "#content";
 import { type AccountInfo, type Change, type Element, type JournalEntry, ELEMENTS, ELEMENT_LABELS, computeImpact, sameEntry } from "./accounting";
+import { evaluateFormula } from "./formulas";
 
 // ステップの課題の採点(純粋関数)。正誤だけでなく「どの誤解か」を返す(docs/architecture.md 6章)
 
@@ -126,6 +127,36 @@ export function gradeCalc(task: TaskOf<"calc">, value: number): GradeResult {
 
 export function gradeTweak(task: TaskOf<"tweak">, outputs: Record<string, number>, currency = "円"): GradeResult {
   return outputs[task.goal.output] === task.goal.equals ? ok(task) : ng(`いまの${task.goal.label}は${outputs[task.goal.output]?.toLocaleString("ja-JP")}${currency}です。条件を動かして${task.goal.equals.toLocaleString("ja-JP")}${currency}にしてみましょう。`);
+}
+
+/** スライダーで取れる値か。範囲外や刻みから外れた値は、入力の位置がブラウザに丸められて表示と計算が食い違う(Issue #326) */
+function onSlider(p: TaskOf<"tweak">["params"][number], v: unknown): v is number {
+  if (typeof v !== "number" || !Number.isFinite(v) || v < p.min || v > p.max) return false;
+  const n = (v - p.min) / p.step;
+  return Math.abs(n - Math.round(n)) < 1e-9;
+}
+
+/**
+ * 達成済みのtweakを戻す値。保存値が全パラメータともスライダーで取れて目標を満たすならそれを使う。
+ * tweakには模範解答が無いので、そうでなければ初期値から1つのパラメータだけ動かして目標に届く値を探し、無ければ初期値を返す
+ */
+export function tweakRestoreValues(task: TaskOf<"tweak">, saved: unknown): Record<string, number> {
+  const reaches = (values: Record<string, number>) => evaluateFormula(task.formula, values).outputs[task.goal.output] === task.goal.equals;
+  if (typeof saved === "object" && saved !== null && !Array.isArray(saved)) {
+    const values = saved as Record<string, unknown>;
+    if (task.params.every((p) => onSlider(p, values[p.id]))) {
+      const picked = Object.fromEntries(task.params.map((p) => [p.id, values[p.id] as number]));
+      if (reaches(picked)) return picked;
+    }
+  }
+  const initial = Object.fromEntries(task.params.map((p) => [p.id, p.value]));
+  for (const p of task.params) {
+    for (let i = 0; p.min + i * p.step <= p.max; i++) {
+      const values = { ...initial, [p.id]: p.min + i * p.step };
+      if (reaches(values)) return values;
+    }
+  }
+  return initial;
 }
 
 export interface ClassifyResult extends GradeResult {
