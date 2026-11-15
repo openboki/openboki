@@ -21,11 +21,11 @@ scenario:
   currency: ドゥカート
   view: ledger
   accounts:
-    - { id: giovanni, name: ジョヴァンニ, element: asset, why: 彼がこちらに負う残高を置く人名勘定です。 }
-    - { id: matteo, name: マッテオ, element: asset, why: 彼がこちらに負う残高を置く人名勘定です。 }
-    - { id: pepper_voyage, name: 胡椒(アレクサンドリア航海), element: asset, why: 航海1口にかかった額と売った額を集め、差がもうけになる口別の勘定です。 }
-    - { id: wine_voyage, name: ワイン(クレタ航海), element: asset, why: 航海1口にかかった額と売った額を集め、差がもうけになる口別の勘定です。 }
-    - { id: owner_capital, name: 元手, element: equity, why: 商人が店に入れた財産と、そこに積み上がったもうけです。 }
+    - { id: giovanni, name: ジョヴァンニ, element: asset, why: 彼がこちらに負う残高を置く人名勘定です。, concepts: [personal_account] }
+    - { id: matteo, name: マッテオ, element: asset, why: 彼がこちらに負う残高を置く人名勘定です。, concepts: [personal_account] }
+    - { id: pepper_voyage, name: 胡椒(アレクサンドリア航海), element: asset, why: 航海1口にかかった額と売った額を集め、差がもうけになる口別の勘定です。, concepts: [venture_accounting] }
+    - { id: wine_voyage, name: ワイン(クレタ航海), element: asset, why: 航海1口にかかった額と売った額を集め、差がもうけになる口別の勘定です。, concepts: [venture_accounting] }
+    - { id: owner_capital, name: 元手, element: equity, why: 商人が店に入れた財産と、そこに積み上がったもうけです。, concepts: [equity] }
   opening:
     - { account: cash, amount: 300 }
     - { account: giovanni, amount: 70 }

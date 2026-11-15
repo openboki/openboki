@@ -324,7 +324,7 @@ accounts:
     element: revenue
     why: 売却によって純資産が増えた分だからです。
     example: 帳簿価額30万円の備品を35万円で売ったときの差額5万円。
-    concepts: [revenue, book_value]
+    concepts: [revenue, book_value, gain_or_loss_on_sale]
   - id: loss_on_sale_of_fixed_assets
     name: 固定資産売却損
     reading: [こていしさんばいきゃくそん]
@@ -332,7 +332,7 @@ accounts:
     element: expense
     why: 売却によって純資産が減った分だからです。
     example: 帳簿価額30万円の備品を25万円で売ったときの差額5万円。
-    concepts: [expense, book_value]
+    concepts: [expense, book_value, gain_or_loss_on_sale]
   - id: shipping_expense
     name: 発送費
     reading: [はっそうひ]

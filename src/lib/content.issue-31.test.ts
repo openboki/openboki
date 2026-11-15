@@ -11,7 +11,7 @@ describe("nextUnit", () => {
     expect(nextUnit(unitMap.get(from)!)?.id).toBe(to);
   });
   it("最後のテーマの最後の単元には次が無い", () => {
-    expect(nextUnit(unitMap.get("depreciation/straight-line")!)).toBeUndefined();
+    expect(nextUnit(unitMap.get("depreciation/sale-of-fixed-assets")!)).toBeUndefined();
   });
   it("非表示テーマ(チュートリアル)の末尾から通常のテーマへはつながない", () => {
     expect(nextUnit(unitMap.get("tutorial/first-entry")!)).toBeUndefined();
