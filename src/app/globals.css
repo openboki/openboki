@@ -94,6 +94,14 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* スクロールバーが出たページだけ、その幅のぶん中身を右へ寄せて中央を揃える(ページ間でヘッダーがずれないように) */
+  @media (min-width: 64rem) {
+    body > header,
+    body > main,
+    body > footer {
+      padding-left: calc(100vw - 100%);
+    }
+  }
   h1,
   h2,
   h3 {
