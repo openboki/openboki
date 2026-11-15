@@ -1,1 +1,5 @@
 blank_issues_enabled: true
+contact_links:
+  - name: 質問・相談
+    url: https://github.com/openboki/openboki/discussions
+    about: 質問や、Issueにするか迷う報告・提案はDiscussionsへ。対応が要るものは運営がIssueにします
