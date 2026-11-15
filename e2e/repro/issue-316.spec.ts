@@ -15,7 +15,8 @@ test("選択中の明るさボタンが、どのテーマ・明るさでも背�
       await page.mouse.move(0, 400);
       const selected = modes.getByRole("button", { name: label });
       await expect(selected).toHaveAttribute("aria-pressed", "true");
-      const ratio = await selected.evaluate((el) => {
+      // Buttonのtransition-allで枠線の色が遅れて変わるので、落ち着くまで測り直す
+      const ratio = () => selected.evaluate((el) => {
         const px = (c: string) => {
           const cv = document.createElement("canvas").getContext("2d")!;
           cv.fillStyle = c;
@@ -38,7 +39,7 @@ test("選択中の明るさボタンが、どのテーマ・明るさでも背�
         const b = L(px(getComputedStyle(x).backgroundColor));
         return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
       });
-      expect(ratio, `${t.name}・${label}`).toBeGreaterThanOrEqual(3);
+      await expect.poll(ratio, { message: `${t.name}・${label}` }).toBeGreaterThanOrEqual(3);
     }
   }
 });
