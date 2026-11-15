@@ -950,7 +950,8 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
   const onTaskAmount = task.type === "post" && !result?.correct ? insertAmount : undefined;
 
   // min-w-0: スマホ幅(1列のgrid)で、ペインの中身のmin-content幅が列を押し広げないようにする(Issue #28)
-  const paneClass = (p: Pane) => `${pane === p ? "block" : "hidden"} lg:block min-h-0 min-w-0 lg:overflow-y-auto p-4`;
+  // relative: 中のsr-only(absolute)の基準をペインにする。無いと文書基準で置かれ、ペインの下にはみ出して文書が縦にスクロールできてしまう(Issue #280)
+  const paneClass = (p: Pane) => `${pane === p ? "block" : "hidden"} lg:block relative min-h-0 min-w-0 lg:overflow-y-auto p-4`;
 
   return (
     <HelpControlsContext value={{ openTopic: openHelpTopic, hidden: tourActive, ctx: helpCtx }}>
