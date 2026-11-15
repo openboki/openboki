@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { topics } from "#content";
 import { LEVEL_LABELS, unitsOfTopic } from "@/lib/content";
+import { pageMetadata } from "@/lib/site";
 import { UnitList } from "@/components/unit-list";
 
 export function generateStaticParams() {
@@ -11,7 +12,8 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ topic: string }> }): Promise<Metadata> {
   const { topic: topicId } = await params;
   const topic = topics.find((t) => t.id === topicId);
-  return topic ? { title: topic.title } : {};
+  // 非表示のテーマ(チュートリアル)の一覧はどこからもリンクしないので、検索にも出さない
+  return topic ? pageMetadata({ path: `/topics/${topic.id}`, title: topic.title, description: topic.summary, noindex: topic.hidden }) : {};
 }
 
 export default async function TopicPage({ params }: { params: Promise<{ topic: string }> }) {
