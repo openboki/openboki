@@ -18,6 +18,8 @@ const GENERIC_WRONG = "まだ合っていません。結果の表で何が動く
 const AMOUNT_WRONG = "科目は合っています。金額をもう一度確かめましょう。";
 // 比較表が全行「同じ」になる誤答。表を見直させても手がかりが無いので、科目へ目を向けさせる
 const SAME_IMPACT = "5つの要素の動きは合っています。使っている科目を見直しましょう。";
+// 歴史の単元は5要素ではなくページの左右で教えるので、同じ状況を左右の言葉で言う(Issue #274)
+const SAME_IMPACT_HISTORY = "左右に書く金額は合っています。どのページに書くかを見直しましょう。";
 // swappedの誤答パターンが無い課題(debugなど)でも、同じ要素どうしの貸借逆をSAME_IMPACTに落とさない
 const SWAPPED = "科目と金額は合っています。借方と貸方が逆です。";
 const EXTRA_LINES = "正しい行はそろっています。この取引に含まれない余計な行を消しましょう。";
@@ -43,7 +45,7 @@ function sameAccounts(a: JournalEntry, b: JournalEntry): boolean {
   return key(a.debit) === key(b.debit) && key(a.credit) === key(b.credit);
 }
 
-export function gradePost(task: TaskOf<"post">, entry: JournalEntry, accounts?: ReadonlyMap<string, AccountInfo>): GradeResult {
+export function gradePost(task: TaskOf<"post">, entry: JournalEntry, accounts?: ReadonlyMap<string, AccountInfo>, kind: Unit["kind"] = "lesson"): GradeResult {
   const answers = [task.answer, ...task.alternatives];
   if (answers.some((e) => sameEntry(e, entry))) return ok(task);
   const sum = (lines: { amount: number }[]) => lines.reduce((t, l) => t + l.amount, 0);
@@ -71,7 +73,7 @@ export function gradePost(task: TaskOf<"post">, entry: JournalEntry, accounts?: 
     // 比較表と同じくtask.answerとだけ比べる
     const yours = computeImpact(entry, accounts);
     const expected = computeImpact(task.answer, accounts);
-    if (ELEMENTS.every((el) => yours[el] === expected[el])) return ng(SAME_IMPACT);
+    if (ELEMENTS.every((el) => yours[el] === expected[el])) return ng(kind === "history" ? SAME_IMPACT_HISTORY : SAME_IMPACT);
   }
   return ng();
 }
@@ -85,12 +87,12 @@ export interface DebugAnswer {
 }
 
 /** debug: 選んだ行と直した仕訳を採点する。行の選び間違いはwrong_patternsで、行が合っていれば仕訳をpostと同じく比べる(Issue #263) */
-export function gradeDebug(task: TaskOf<"debug">, answer: DebugAnswer, accounts?: ReadonlyMap<string, AccountInfo>): GradeResult {
+export function gradeDebug(task: TaskOf<"debug">, answer: DebugAnswer, accounts?: ReadonlyMap<string, AccountInfo>, kind: Unit["kind"] = "lesson"): GradeResult {
   if (answer.index !== task.answer.index) {
     const pattern = task.wrong_patterns.find((p) => p.match.index === answer.index);
     return ng(pattern?.feedback ?? DEBUG_ROW_BALANCED, pattern?.misconception);
   }
-  const r = gradePost({ type: "post", transaction: "", answer: task.answer.entry, alternatives: [], wrong_patterns: [] }, answer.entry, accounts);
+  const r = gradePost({ type: "post", transaction: "", answer: task.answer.entry, alternatives: [], wrong_patterns: [] }, answer.entry, accounts, kind);
   return r.correct ? ok(task) : r;
 }
 

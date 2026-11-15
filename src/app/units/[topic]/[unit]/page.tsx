@@ -41,6 +41,7 @@ export default async function UnitPage({ params }: { params: Promise<{ topic: st
         id: unit.id,
         title: unit.title,
         sourcePath: `content/${unit.path}.md`,
+        kind: unit.kind,
         company: unit.scenario.company,
         era: unit.scenario.era,
         currency: unit.scenario.currency,
