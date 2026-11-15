@@ -18,4 +18,4 @@ sections:
   - title: 固定資産
     units: [depreciation/what-is-depreciation, depreciation/straight-line, depreciation/sale-of-fixed-assets, depreciation/sale-during-period]
   - title: 貸倒れ
-    units: [bad-debts/bad-debt-loss]
+    units: [bad-debts/bad-debt-loss, bad-debts/allowance-for-doubtful-accounts]

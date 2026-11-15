@@ -41,6 +41,8 @@ describe("貸借対照表の行順", () => {
       "checking_account",
       "bank_deposit",
       "accounts_receivable",
+      // 貸倒引当金は売掛金から差し引く評価勘定なので、売掛金の直後に並べる
+      "allowance_for_doubtful_accounts",
       "merchandise_inventory",
       "loans_receivable",
       "accounts_receivable_other",

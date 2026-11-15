@@ -52,6 +52,16 @@ accounts:
     why: 後で現金を受け取る権利であり、将来お金に変わる財産だからです。
     example: 商品を3万円で売り、代金は来月末に受け取ると約束したときの3万円。
     concepts: [asset]
+  - id: allowance_for_doubtful_accounts
+    name: 貸倒引当金
+    aliases: [貸し倒れ引当金]
+    reading: [かしだおれひきあてきん]
+    short: 売掛金のうち回収できない見込みの金額を、前もって見積もって差し引いておく科目
+    element: asset
+    contra: true
+    why: 売掛金を直接減らさず、回収できない見込みの金額を別に示して差し引くための、資産のマイナスだからです。
+    example: 売掛金20万円の2%が回収できないと見積もって積んだ4,000円。
+    concepts: [allowance_for_doubtful_accounts, contra_account]
   - id: merchandise_inventory
     name: 繰越商品
     aliases: [商品]
@@ -359,6 +369,15 @@ accounts:
     why: 受け取るはずだった代金が入らず、会社の財産が減った分で、純資産を減らす原因だからです。
     example: 得意先が倒産して回収できなくなった売掛金3万円。
     concepts: [expense, bad_debt]
+  - id: provision_for_doubtful_accounts
+    name: 貸倒引当金繰入
+    aliases: [貸倒引当金繰入額]
+    reading: [かしだおれひきあてきんくりいれ]
+    short: 決算で貸倒れを見積もり、貸倒引当金に積んだ金額。その年の費用になる
+    element: expense
+    why: 今年売った分から出る見込みの貸倒れの損で、純資産を減らす原因だからです。
+    example: 貸倒引当金の残高4,000円を見積額6,000円に合わせるために積んだ2,000円。
+    concepts: [expense, allowance_for_doubtful_accounts, replenishment_method]
   - id: miscellaneous_gain
     name: 雑益
     reading: [ざつえき]
@@ -393,3 +412,12 @@ accounts:
     why: お金を貸したことで得られたもうけで、純資産を増やす原因だからです。返してもらう元本とは別です。
     example: 取引先に貸した50万円に対して、1年分として受け取る1万円。
     concepts: [revenue, interest]
+  - id: reversal_of_allowance
+    name: 貸倒引当金戻入
+    aliases: [貸倒引当金戻入益]
+    reading: [かしだおれひきあてきんもどしいれ]
+    short: 貸倒引当金が見積額より多いとき、多すぎる分を取り除いて収益に戻した金額
+    element: revenue
+    why: 前の年までに費用にしすぎていた分を戻すもので、純資産を増やす原因だからです。
+    example: 貸倒引当金の残高6,000円を見積額3,000円に合わせるために戻した3,000円。
+    concepts: [revenue, allowance_for_doubtful_accounts, replenishment_method]

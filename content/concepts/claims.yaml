@@ -86,3 +86,21 @@ concepts:
     requires: [accounts_receivable, expense]
     related: [credit_transaction]
     contrasts: [returns]
+  - id: allowance_for_doubtful_accounts
+    name: 貸倒引当金
+    reading: [かしだおれひきあてきん]
+    short: 売掛金のうち回収できない見込みの金額を、前もって見積もって差し引いておく科目
+    summary: 決算の日に、売掛金の残高に過去の実績の割合を掛けて貸倒れを見積もり、その金額を貸倒引当金として積む。売った年の売上と、その売上から出る貸倒れの損を同じ年にそろえるためにある。売掛金を直接は減らさず、資産のマイナス(評価勘定)として差し引いて見せる。
+    example: 売掛金200,000円の2%が回収できないと見積もったら、貸倒引当金繰入4,000円(費用)を記録し、貸倒引当金4,000円を積む。
+    requires: [bad_debt, contra_account, closing]
+    related: [replenishment_method, accounts_receivable]
+    contrasts: []
+  - id: replenishment_method
+    name: 差額補充法
+    reading: [さがくほじゅうほう]
+    short: 決算で、貸倒引当金の残高と今年の見積額の差だけを足したり戻したりする方法
+    summary: 貸倒引当金に前の年の残高があるときは、見積額をまるごと積まず、残高を見積額に合わせるための差額だけを記帳する。足りなければ貸倒引当金繰入(費用)で足し、多ければ貸倒引当金戻入(収益)で戻す。
+    example: 見積額が6,000円で残高が4,000円なら、2,000円だけを貸倒引当金繰入で足す。
+    requires: [allowance_for_doubtful_accounts]
+    related: []
+    contrasts: []
