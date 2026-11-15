@@ -1,0 +1,17 @@
+# ビルドに要らないもの・入れてはいけないもの。.env*はキーを含むので必ず除く
+.env*
+.git
+.claude
+.agents
+node_modules
+.next
+.velite
+public/static
+logs
+coverage
+test-results
+playwright-report
+supabase/.branches
+supabase/.temp
+*.tsbuildinfo
+next-env.d.ts
