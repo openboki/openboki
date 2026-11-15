@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "プライバシーポリシー" };
 
-// 運営者名と問い合わせ先は正式名称の決定(#76)で置き換える。法的な文言は運営者が最終確認する
-const ISSUES_URL = "https://github.com/openboki/openboki/issues";
+import { REPO_URL } from "@/lib/repo";
+
+// 非公開の連絡先は未定(#76)。決まったら「問い合わせ先」に足す。法的な文言は運営者が最終確認する
+const DISCUSSIONS_URL = `${REPO_URL}/discussions`;
 
 export default function PrivacyPage() {
   return (
@@ -11,7 +13,7 @@ export default function PrivacyPage() {
       <div className="space-y-2">
         <h1 className="text-2xl font-bold">プライバシーポリシー</h1>
         <p className="text-muted-foreground">
-          Open簿記の運営者(以下「運営者」)が、学習者の情報をどう取得し、何に使い、いつ消すかを定めます。
+          Open簿記運営(以下「運営者」)が、学習者の情報をどう取得し、何に使い、いつ消すかを定めます。
         </p>
       </div>
 
@@ -67,10 +69,11 @@ export default function PrivacyPage() {
         <h2>問い合わせ先</h2>
         <p>
           このポリシーと情報の扱いについての問い合わせは、
-          <a href={ISSUES_URL} className="underline underline-offset-2 hover:text-foreground">
-            GitHub Issues
+          <a href={DISCUSSIONS_URL} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">
+            GitHub Discussions
+            <span className="sr-only">(新しいタブで開く)</span>
           </a>
-          で受け付けます。Issueは公開されるので、個人を特定できる情報は書かないでください。
+          で受け付けます。書いた内容は公開されるので、個人を特定できる情報は書かないでください。
         </p>
       </section>
 
@@ -80,6 +83,7 @@ export default function PrivacyPage() {
           内容を変えるときは、このページを更新し、改定日を書き換えます。取得する情報や利用目的が広がる変更は、施行の前にこのページとリポジトリで告知します。
         </p>
         <p className="text-muted-foreground">制定: 2026年11月13日</p>
+        <p className="text-muted-foreground">改定: 2026年11月15日(運営者名を定め、問い合わせ先をGitHub Discussionsに変更)</p>
       </section>
     </article>
   );
