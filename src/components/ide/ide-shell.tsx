@@ -103,6 +103,9 @@ function readReturnFrom(): string | null {
   return new URLSearchParams(window.location.search).get("from");
 }
 
+// 「自由に試す」の記帳の見出し。案内(SANDBOX_NOT_SAVED)のとおり再読み込みで消すため、sessionStorageに書かない(Issue #319)
+const FREE_POST_MEMO = "自由に記帳";
+
 /** ステップを飛ばして再開するとき、そこまでの仕訳を課題の答えから復元する */
 function replayEntries(steps: IdeStep[], upto: number): Posted[] {
   const posted: Posted[] = [];
@@ -653,7 +656,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     const snapshot: SessionSnapshot = {
       stepIndex,
       reached,
-      posted,
+      posted: posted.filter((p) => p.memo !== FREE_POST_MEMO),
       draft,
       effect,
       placed,
@@ -910,7 +913,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
   const postFreely = () => {
     if (!canPostFreely || freePostedDraft.current === draft) return;
     freePostedDraft.current = draft;
-    setPosted((prev) => [...prev, { step: stepIndex, memo: "自由に記帳", entry: entryDraft }]);
+    setPosted((prev) => [...prev, { step: stepIndex, memo: FREE_POST_MEMO, entry: entryDraft }]);
     setViewUpto(null);
     markSeen("sandbox");
     setDraft(emptyEntry());
