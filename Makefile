@@ -2,7 +2,7 @@
 # 実体はpackage.jsonのscriptsとscripts/*.sh。引数は環境変数で渡す(例: make monkey MONKEY_UNTIL=22:00)。
 .DEFAULT_GOAL := help
 .PHONY: help install hooks setup env-local dev db-start db-stop db-reset services-up services-down services-status \
-        content lint typecheck test test-watch e2e check build start icons \
+        content lint typecheck test test-watch e2e check build start docker-build icons \
         monkey monkey-stop monkey-scripted triage issue issue-loop issue-stop issue-status issue-verify quality-night labels
 
 ##@ セットアップ
@@ -71,6 +71,14 @@ build: ## 本番ビルド(Velite → next build。standalone出力)
 
 start: ## 本番ビルドを起動する(先にmake build)
 	pnpm start
+
+docker-build: ## 本番用のDockerイメージを作る(DOCKER_IMAGE=openboki:latest。Supabaseの値は環境変数NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEYから、SITE_URLは任意)
+	docker build \
+		--build-arg CONTENT_VERSION=$$(git rev-parse --short HEAD) \
+		--build-arg NEXT_PUBLIC_SUPABASE_URL \
+		--build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY \
+		$(if $(SITE_URL),--build-arg SITE_URL=$(SITE_URL)) \
+		-t $(or $(DOCKER_IMAGE),openboki:latest) .
 
 icons: ## src/app/icon.svgからfavicon.ico、apple-icon.png、OG画像を書き出す(icon.svgを変えたら回す)
 	node scripts/icons.mjs
