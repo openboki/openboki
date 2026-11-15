@@ -1487,6 +1487,8 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
           )}
           <span className="flex-1" />
           {!done && !revealNote && <span className="text-xs text-muted-foreground">課題ができると次へ進めます</span>}
+          {/* 狭い幅で折り返すときも「次へ →」を右下に残すため、前後のボタンはひとまとまりで次の段の右端へ回す */}
+          <div className="ml-auto flex items-center gap-2">
           {stepIndex > 0 && (
             <Button
               variant="ghost"
@@ -1533,6 +1535,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
               <Link href="/">トップへ戻る</Link>
             </Button>
           )}
+          </div>
         </div>
       </div>
     </div>
