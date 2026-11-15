@@ -549,7 +549,7 @@ misconceptions:
   - id: profit_is_cash
     name: もうけは現金に書く
     description: 口のもうけを元手や利益と損失のページへ移すときに、相手を現金にしている
-    correct: 現金は代金を受け取ったときにすでに動いている。もうけを移しても現金は動かず、積み上がるのは元手(または利益と損失)
+    correct: もうけは現金が増えたことではなく、元手(または利益と損失)が増えたこと。代金を現金で受け取ったかどうかとは別で、もうけを移しても現金は動かない
     concepts: [venture_accounting, double_entry]
     remediation: birth-of-double-entry/venture-profit-and-double-entry
   - id: closing_side_confused

@@ -165,7 +165,7 @@ wrong_patterns:
     feedback: 胡椒のページは右に30残っています。それを消すには反対の左に30を書き、相手の元手は右です。
   - match: { credit: [{ account: cash }] }
     misconception: profit_is_cash
-    feedback: もうけは現金のページには書きません。現金は売った代金を受け取ったときに、すでに動いています。もうけが積み上がるのは元手です。
+    feedback: もうけは現金のページには書きません。胡椒の代金180はジョヴァンニとマッテオがこちらに負う分のままで、現金はまだ受け取っていません。もうけは現金が増えたことではなく、元手が増えたことなので、積み上がるのは元手です。
   - match: { debit: [{ amount: 180 }] }
     misconception: venture_sales_as_profit
     feedback: 180は売った額です。もうけは、かかった150を引いた30です。
