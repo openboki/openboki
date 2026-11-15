@@ -1,8 +1,10 @@
 "use client";
 
-import { type AccountInfo, type JournalEntry, accountIncreaseSide, formatAmount } from "@/lib/accounting";
+import { type JournalEntry, accountIncreaseSide, formatAmount } from "@/lib/accounting";
 import { type OpeningLine, buildTrialBalance } from "@/lib/ledger";
 import { TAccountFigure } from "@/components/figures/taccount-figure";
+import { AccountName } from "@/components/account-name";
+import type { GlossaryAccount } from "@/lib/content";
 
 // 総勘定元帳タブ。開始残高と記帳済みの仕訳から、科目ごとのT勘定を組み立てる
 
@@ -11,7 +13,7 @@ interface Posted {
   entry: JournalEntry;
 }
 
-export function LedgerTab({ opening, posted, accounts }: { opening: OpeningLine[]; posted: Posted[]; accounts: ReadonlyMap<string, AccountInfo> }) {
+export function LedgerTab({ opening, posted, accounts }: { opening: OpeningLine[]; posted: Posted[]; accounts: ReadonlyMap<string, GlossaryAccount> }) {
   const lines = new Map<string, { debit: { label: string; amount: number }[]; credit: { label: string; amount: number }[] }>();
   const of = (id: string) => {
     if (!lines.has(id)) lines.set(id, { debit: [], credit: [] });
@@ -34,7 +36,8 @@ export function LedgerTab({ opening, posted, accounts }: { opening: OpeningLine[
       <div className="grid grid-cols-1 gap-3 @xl:grid-cols-2">
         {ids.map((id) => {
           const t = lines.get(id)!;
-          return <TAccountFigure key={id} account={accounts.get(id)!} debit={t.debit} credit={t.credit} />;
+          const account = accounts.get(id)!;
+          return <TAccountFigure key={id} account={account} name={<AccountName account={account} />} debit={t.debit} credit={t.credit} />;
         })}
       </div>
     </div>
@@ -42,7 +45,7 @@ export function LedgerTab({ opening, posted, accounts }: { opening: OpeningLine[
 }
 
 /** 試算(合計試算表)。scenario.view: ledgerの結果ペインで、全科目の左右の合計が一致するかを見せる */
-export function TrialBalanceTable({ opening, posted, accounts }: { opening: OpeningLine[]; posted: Posted[]; accounts: ReadonlyMap<string, AccountInfo> }) {
+export function TrialBalanceTable({ opening, posted, accounts }: { opening: OpeningLine[]; posted: Posted[]; accounts: ReadonlyMap<string, GlossaryAccount> }) {
   const tb = buildTrialBalance(opening, posted.map((p) => p.entry), accounts);
   if (tb.lines.length === 0) return <p className="text-xs text-muted-foreground">まだ記帳がありません。</p>;
   const balanced = tb.debit === tb.credit;
@@ -59,7 +62,9 @@ export function TrialBalanceTable({ opening, posted, accounts }: { opening: Open
         <tbody className="font-mono tabular-nums">
           {tb.lines.map((l) => (
             <tr key={l.account}>
-              <td className="px-1 font-sans">{l.name}</td>
+              <td className="px-1 font-sans">
+                <AccountName account={accounts.get(l.account)!} />
+              </td>
               <td className="px-1 text-right">{formatAmount(l.debit)}</td>
               <td className="px-1 text-right">{formatAmount(l.credit)}</td>
             </tr>
