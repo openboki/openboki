@@ -19,7 +19,7 @@ describe("ふりかえりの予告", () => {
   });
   it("次の単元が無い単元は「次」を予告しない", () => {
     const noNext = units.filter((u) => !nextUnit(u));
-    expect(noNext.map((u) => u.id)).toContain("depreciation/sale-during-period");
+    expect(noNext.map((u) => u.id)).toContain("bad-debts/bad-debt-loss");
     for (const u of noNext) expect(closing(u.id), u.id).not.toMatch(/次の単元|次のテーマ|次は/);
   });
 });
