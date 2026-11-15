@@ -25,13 +25,14 @@ describe("問屋から掛けで仕入れる(ステップ2)", () => {
     expect(result.feedback).not.toContain(GENERIC);
   });
 
-  it("右に未払金と書くと、誤解IDなしで商品の代金は買掛金だと示す", () => {
+  // #121では未払金の誤解が無く誤解IDなしだったが、#342でtrade_as_nontradeを付けた(ステップ6と同じ扱い)
+  it("右に未払金と書くとtrade_as_nontradeで商品の代金は買掛金だと示す", () => {
     const result = gradePost(task, {
       debit: [{ account: "purchases", amount: 40000 }],
       credit: [{ account: "accounts_payable_other", amount: 40000 }],
     });
     expect(result.correct).toBe(false);
-    expect(result.misconception).toBeUndefined();
+    expect(result.misconception).toBe("trade_as_nontrade");
     expect(result.feedback).toContain("商品以外");
     expect(result.feedback).toContain("買掛金");
     expect(result.feedback).not.toContain(GENERIC);
