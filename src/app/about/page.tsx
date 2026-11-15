@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { REPO_URL } from "@/lib/repo";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = { title: "このサイトについて" };
+export const metadata: Metadata = pageMetadata({
+  path: "/about",
+  title: "このサイトについて",
+  description: "Open簿記が目指していること、運営者、ライセンス、参加の方法、問い合わせ先。すべての教材を無料で、ログインなしで使えます。",
+});
 
 // 非公開の連絡先は未定(#76)。決まったら「問い合わせ先」に足す
 const DISCUSSIONS_URL = `${REPO_URL}/discussions`;
