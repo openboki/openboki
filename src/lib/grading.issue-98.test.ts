@@ -20,13 +20,14 @@ describe("計算問題の定義外の誤答", () => {
     expect(calcSteps.length).toBeGreaterThan(0);
   });
 
-  it.each(calcSteps)("$name: 結果の表の動きを問わず、式と数字の見直しを促す", ({ task }) => {
+  // 桁違い・符号違いは式ではなく桁や符号を見直させる(Issue #332)
+  it.each(calcSteps)("$name: 結果の表の動きを問わず、式・桁・符号の見直しを促す", ({ task }) => {
     for (const value of undefinedWrongValues(task)) {
       const result = gradeCalc(task, value);
       expect(result.correct).toBe(false);
       expect(result.misconception).toBeUndefined();
       expect(result.feedback).not.toContain(GENERIC);
-      expect(result.feedback).toContain("式");
+      expect(result.feedback).toMatch(/式|桁|符号/);
     }
   });
 
