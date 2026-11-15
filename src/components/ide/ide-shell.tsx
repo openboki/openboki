@@ -953,7 +953,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
   const misIds = result && "misconceptions" in result ? result.misconceptions : result?.misconception ? [result.misconception] : [];
   const misList = misIds.flatMap((id) => misconceptions[id] ?? []);
   const classify = task.type === "classify" ? classifyBoard(task, accountMap) : null;
-  const helpCtx: HelpContext = { taskType: task.type, postedCount: visiblePosted.length, isLast, hasHint: Boolean(hint), view: unit.view };
+  const helpCtx: HelpContext = { taskType: task.type, postedCount: visiblePosted.length, isLast, hasHint: Boolean(hint), view: unit.view, currency: unit.currency };
   const openHelpTopic = (id: string, returnTo: HTMLElement | null) => {
     helpReturnTo.current = returnTo;
     setHelpFocus(id);
@@ -1363,7 +1363,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
                   max={visiblePosted.length}
                   value={viewUpto ?? visiblePosted.length}
                   onChange={(e) => setViewUpto(Number(e.target.value) >= visiblePosted.length ? null : Number(e.target.value))}
-                  className="flex-1"
+                  className="flex-1 accent-primary"
                   aria-valuetext={viewUpto === null || viewUpto >= visiblePosted.length ? "最新" : `${viewUpto}件目まで`}
                 />
               </label>

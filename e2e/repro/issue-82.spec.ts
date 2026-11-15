@@ -7,7 +7,8 @@ for (const name of ["売掛金", "買掛金"]) {
     await page.goto("/glossary");
     await page.getByPlaceholder("用語を検索").fill(name);
     await expect(page.locator("main div[id]").first()).toContainText(name);
-    await expect(page.locator("main div[id]")).toHaveCount(1);
+    // 説明文に「売掛金」を含む別の用語(貸倒れなど)も検索に掛かるので、見出しがその名前の項目を数える
+    await expect(page.locator("main div[id] dt").filter({ hasText: name })).toHaveCount(1);
   });
 }
 
