@@ -11,7 +11,7 @@ import { ElementBadge } from "@/components/element-badge";
 import { AccountName } from "@/components/account-name";
 import { CheckCircle2, CircleAlert } from "lucide-react";
 import { type EditableEntry, emptyEntry, fromJournalEntry, isIncompleteLine, parseAmount, toJournalEntry } from "@/lib/journal-editable";
-import { type ClassifyResult, type DebugAnswer, type EffectAnswer, type GradeResult, type PredictResult, type Task, canRevealAnswer, classifyBoard, gradeCalc, gradeClassify, gradeDebug, gradePost, gradePredict, gradeTweak, predictElements } from "@/lib/grading";
+import { type ClassifyResult, type DebugAnswer, type EffectAnswer, type GradeResult, type PredictResult, type Task, canRevealAnswer, classifyBoard, gradeCalc, gradeClassify, gradeDebug, gradePost, gradePredict, gradeTweak, predictElements, tweakRestoreValues } from "@/lib/grading";
 import { evaluateFormula } from "@/lib/formulas";
 import { type OpeningLine, computeBalances, diffBalances } from "@/lib/ledger";
 import { CookieBlockedError, fetchProgress, recordAttempt, resetOutOfRangeStep, setUnitProgress } from "@/lib/progress";
@@ -493,7 +493,9 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
       setResult(gradePost(t, entry));
     }
     if (t.type === "predict") {
-      const predicted = (answer as EffectAnswer | undefined) ?? (t.answer as EffectAnswer);
+      // predictは誤答でも進めるので保存値を使うが、問われた要素が揃った形でなければ模範解答で戻す(Issue #326)
+      const saved = answer as EffectAnswer | undefined;
+      const predicted = isObject(saved) && predictElements(t).every((el) => Object.hasOwn(CHANGE_LABELS, saved[el] as string)) ? saved : (t.answer as EffectAnswer);
       answered.current.set(index, predicted);
       setEffect(predicted);
       setResult(gradePredict(t, predicted));
@@ -522,12 +524,10 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     }
     if (t.type === "tweak") {
       setTweakDone(true);
-      const values = answer as Record<string, number> | undefined;
-      if (values) {
-        answered.current.set(index, values);
-        setParams(values);
-        setResult(gradeTweak(t, evaluateFormula(t.formula, values).outputs, unit.currency));
-      }
+      const values = tweakRestoreValues(t, answer);
+      answered.current.set(index, values);
+      setParams(values);
+      setResult(gradeTweak(t, evaluateFormula(t.formula, values).outputs, unit.currency));
     }
   };
 
