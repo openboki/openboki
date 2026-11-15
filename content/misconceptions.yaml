@@ -258,6 +258,54 @@ misconceptions:
     correct: 返品は売ったこと自体の取り消しで、売上と売掛金を逆に書いて消す。貸倒れは売った事実を残したまま、回収できなかった損を費用にする
     concepts: [bad_debt, returns]
     remediation: bad-debts/bad-debt-loss
+  - id: bad_debt_expense_only_when_default
+    name: 貸倒れが起きるまで費用にしない
+    description: 貸倒れの損は、実際に回収できなくなった年の費用にすればよいと考え、決算で見積もらない
+    correct: 売った年の売上と、その売上から出る貸倒れの損は同じ年にそろえる。決算で見積額を貸倒引当金繰入として、売った年の費用にしておく
+    concepts: [allowance_for_doubtful_accounts, bad_debt]
+    remediation: bad-debts/allowance-for-doubtful-accounts
+  - id: allowance_as_liability
+    name: 貸倒引当金は負債
+    description: 貸倒引当金が貸方に増えることから、負債だと思っている
+    correct: 貸倒引当金は誰かに払う義務ではない。売掛金から差し引く金額を表す評価勘定で、資産のマイナスとして貸借対照表に載る
+    concepts: [allowance_for_doubtful_accounts, contra_account]
+    remediation: bad-debts/allowance-for-doubtful-accounts
+  - id: allowance_leaves_assets_unchanged
+    name: 貸倒引当金を積んでも資産は変わらない
+    description: 売掛金の金額が変わらないので、貸倒引当金を積んだり戻したりしても資産の合計は動かないと考えている
+    correct: 売掛金はそのままでも、貸倒引当金が資産のマイナスとして並ぶ。積めば資産の合計は減り、戻せば増える
+    concepts: [allowance_for_doubtful_accounts, contra_account]
+    remediation: bad-debts/allowance-for-doubtful-accounts
+  - id: allowance_direction_confused
+    name: 貸倒引当金と資産が同じ向きに動く
+    description: 貸倒引当金が増えると資産も増え、減ると資産も減ると考えている
+    correct: 貸倒引当金は資産のマイナス。増えれば差し引く金額が大きくなって資産は減り、減れば資産は増える
+    concepts: [allowance_for_doubtful_accounts, contra_account]
+    remediation: bad-debts/allowance-for-doubtful-accounts
+  - id: allowance_direct_writeoff
+    name: 見積もりで売掛金を直接減らす
+    description: 決算で見積もった貸倒れの金額を、売掛金から直接減らしてしまう
+    correct: どの得意先の分が回収できないかは、まだ分からない。売掛金はそのまま残し、見積額は貸倒引当金という別の科目に積む
+    concepts: [allowance_for_doubtful_accounts, accounts_receivable]
+    remediation: bad-debts/allowance-for-doubtful-accounts
+  - id: estimate_as_bad_debt_loss
+    name: 見積もりを貸倒損失にする
+    description: 決算で見積もった貸倒れの金額を、貸倒損失として記録してしまう
+    correct: 貸倒損失は、貸倒れが実際に起きたときに使う。決算で見積もった分は、貸倒引当金繰入という費用で記録する
+    concepts: [allowance_for_doubtful_accounts, bad_debt]
+    remediation: bad-debts/allowance-for-doubtful-accounts
+  - id: allowance_full_amount_each_year
+    name: 毎年見積額をまるごと積む
+    description: 貸倒引当金に前の年の残高が残っているのに、今年の見積額の全額を貸倒引当金繰入にしてしまう
+    correct: 差額補充法では、残高を今年の見積額に合わせるための差額だけを記帳する。見積額6,000で残高4,000なら、積むのは2,000
+    concepts: [replenishment_method]
+    remediation: bad-debts/allowance-for-doubtful-accounts
+  - id: allowance_reversal_reduces_expense
+    name: 戻すときは費用を減らす
+    description: 貸倒引当金が多すぎて戻すとき、貸倒引当金繰入(費用)を減らす取引だと考えている
+    correct: 多すぎる分は前の年までに費用にしたもの。今年の費用を減らすのではなく、貸倒引当金戻入という収益で記録する
+    concepts: [replenishment_method]
+    remediation: bad-debts/allowance-for-doubtful-accounts
   - id: payable_payment_is_purchase
     name: 支払いのときにもう一度仕入
     description: 買掛金を支払ったときに、仕入をもう一度記録してしまう
