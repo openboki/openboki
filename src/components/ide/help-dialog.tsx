@@ -19,11 +19,13 @@ interface Props {
   ctx: HelpContext;
   stepLabel: string;
   onRestartTour?: () => void;
+  // チュートリアル単元の外から「最初から」を押したとき、ツアーを抜けたあとの戻り先にする(Issue #312)
+  unitId: string;
   // 「場所を示す」: ダイアログを閉じて対象を光らせる
   onShowTarget: (topic: HelpTopic) => void;
 }
 
-export function HelpDialog({ open, onOpenChange, focusTopic, returnToRef, ctx, stepLabel, onRestartTour, onShowTarget }: Props) {
+export function HelpDialog({ open, onOpenChange, focusTopic, returnToRef, ctx, stepLabel, onRestartTour, unitId, onShowTarget }: Props) {
   const state = useTutorialState();
   const current = currentTopics(ctx);
   const focusCategory = focusTopic ? helpTopic(focusTopic).category : null;
@@ -125,7 +127,7 @@ export function HelpDialog({ open, onOpenChange, focusTopic, returnToRef, ctx, s
                 </DialogClose>
               ) : (
                 <Button size="sm" asChild>
-                  <Link href={`/units/${TUTORIAL_UNIT_ID}?tour=1`}>チュートリアルを最初から</Link>
+                  <Link href={`/units/${TUTORIAL_UNIT_ID}?tour=1&from=${encodeURIComponent(unitId)}`}>チュートリアルを最初から</Link>
                 </Button>
               )}
               <label className="flex items-center gap-2 text-xs text-muted-foreground">
