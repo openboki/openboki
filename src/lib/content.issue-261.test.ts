@@ -35,18 +35,20 @@ describe("試算", () => {
     );
     const line = (id: string) => tb.lines.find((l) => l.account === id);
     expect(line("cash")).toMatchObject({ debit: 300, credit: 120 });
-    expect(line("owner_capital")).toMatchObject({ debit: 0, credit: 300 });
+    // 人名勘定の開始残高(ジョヴァンニ70、マッテオ20)の分、元手も390から始まる(Issue #275)
+    expect(line("giovanni")).toMatchObject({ debit: 130, credit: 0 });
+    expect(line("owner_capital")).toMatchObject({ debit: 0, credit: 390 });
     // 口別の勘定は売った額がかかった額を上回り、貸方が多くなる
     expect(line("pepper_voyage")).toMatchObject({ debit: 120, credit: 150 });
-    expect(tb.debit).toBe(570);
-    expect(tb.credit).toBe(570);
+    expect(tb.debit).toBe(660);
+    expect(tb.credit).toBe(660);
   });
   it("片方のページにしか写さなければ左右が合わない", () => {
     const unit = unitMap.get(venture)!;
     const accounts = new Map(unitAccountList(unit.scenario.accounts).map((a) => [a.id, a]));
     const tb = buildTrialBalance(unit.scenario.opening, [{ debit: [{ account: "wine_voyage", amount: 80 }], credit: [] }], accounts);
-    expect(tb.debit).toBe(380);
-    expect(tb.credit).toBe(300);
+    expect(tb.debit).toBe(470);
+    expect(tb.credit).toBe(390);
   });
 });
 
