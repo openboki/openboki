@@ -76,3 +76,13 @@ concepts:
     requires: [asset, liability]
     related: []
     contrasts: []
+  - id: bad_debt
+    name: 貸倒れ
+    aliases: [貸し倒れ, 貸倒]
+    reading: [かしだおれ]
+    short: 売掛金などの「受け取る権利」が、相手の倒産などで回収できなくなること
+    summary: 掛けで売った代金は、相手が倒産すると受け取れなくなることがある。回収できないと決まった売掛金は、もう財産ではないので帳簿から消し、その分を貸倒損失という費用にする。売った事実は変わらないので、売上は取り消さない。
+    example: 30,000円分の豆を掛けで納めた事務所が倒産したら、売掛金30,000円を消して、貸倒損失30,000円を記録する。
+    requires: [accounts_receivable, expense]
+    related: [credit_transaction]
+    contrasts: [returns]
