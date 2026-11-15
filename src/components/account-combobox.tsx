@@ -15,11 +15,13 @@ interface Props {
   onChange: (value: string) => void;
   onCompositionChange?: (composing: boolean) => void;
   "aria-label": string;
+  "aria-invalid"?: boolean;
+  "aria-describedby"?: string;
   placeholder?: string;
   className?: string;
 }
 
-export function AccountCombobox({ accounts, value, onChange, onCompositionChange, placeholder, className, "aria-label": ariaLabel }: Props) {
+export function AccountCombobox({ accounts, value, onChange, onCompositionChange, placeholder, className, "aria-label": ariaLabel, "aria-invalid": ariaInvalid, "aria-describedby": ariaDescribedBy }: Props) {
   const id = useId();
   const listId = `${id}-list`;
   const optionId = (accountId: string) => `${id}-${accountId}`;
@@ -94,6 +96,8 @@ export function AccountCombobox({ accounts, value, onChange, onCompositionChange
           ref={inputRef}
           role="combobox"
           aria-label={ariaLabel}
+          aria-invalid={ariaInvalid}
+          aria-describedby={ariaDescribedBy}
           aria-autocomplete="list"
           aria-expanded={shown}
           aria-controls={listId}
