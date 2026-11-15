@@ -1382,6 +1382,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
           paneLabels={PANE_LABELS}
           onExit={exitTour}
           onPane={setPane}
+          onLeaveUnit={() => saveProgress(unit.steps.length - 1)}
         />
       )}
       <div ref={bottomBar} className="border-t bg-background px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] text-sm flex flex-col gap-2 sticky bottom-0 max-h-[50dvh]">
