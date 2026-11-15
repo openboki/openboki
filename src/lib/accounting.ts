@@ -128,8 +128,8 @@ export function findAccountByName(name: string, accounts: Iterable<AccountInfo>)
 
 export const toHiragana = (text: string) => text.replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x60));
 
-/** 検索語と候補を比べられる形に揃える。全角・半角の違いと空白の有無を無視し、カタカナはひらがなにする */
-export const normalizeSearchText = (text: string) => toHiragana(text.normalize("NFKC").replace(/\s/g, ""));
+/** 検索語と候補を比べられる形に揃える。全角・半角、英字の大文字・小文字、空白の有無を無視し、カタカナはひらがなにする */
+export const normalizeSearchText = (text: string) => toHiragana(text.normalize("NFKC").toLowerCase().replace(/\s/g, ""));
 
 /** 入力途中の文字が科目名・別名・読みのどこかに部分一致するか */
 export function matchesAccountQuery(account: AccountInfo, query: string): boolean {
