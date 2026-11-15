@@ -350,6 +350,15 @@ accounts:
     why: 会社の財産が理由の分からないまま減った分で、純資産を減らす原因だからです。
     example: 決算の日まで原因が分からなかった、現金の不足分1,000円。
     concepts: [expense, miscellaneous_loss_gain]
+  - id: bad_debt_loss
+    name: 貸倒損失
+    aliases: [貸し倒れ損失]
+    reading: [かしだおれそんしつ]
+    short: 売掛金などの代金を回収できなくなったときの損
+    element: expense
+    why: 受け取るはずだった代金が入らず、会社の財産が減った分で、純資産を減らす原因だからです。
+    example: 得意先が倒産して回収できなくなった売掛金3万円。
+    concepts: [expense, bad_debt]
   - id: miscellaneous_gain
     name: 雑益
     reading: [ざつえき]
