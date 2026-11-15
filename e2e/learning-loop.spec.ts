@@ -14,7 +14,7 @@ type Task =
   | { type: "classify"; accounts?: string[]; labels?: Record<string, string>; items?: { id: string; label: string; answer: string }[] }
   | { type: "calc"; answer: number }
   | { type: "debug"; answer: { index: number; entry: Entry } };
-type Unit = { id: string; title: string; scenario: { accounts: { id: string; name: string }[] }; steps: { title: string; task: Task }[] };
+type Unit = { id: string; title: string; kind: string; scenario: { accounts: { id: string; name: string }[] }; steps: { title: string; task: Task }[] };
 
 const units: Unit[] = JSON.parse(readFileSync(".velite/units.json", "utf8"));
 const accounts: { id: string; name: string; element: string }[] = JSON.parse(readFileSync(".velite/accounts.json", "utf8")).accounts;
@@ -83,7 +83,9 @@ for (const unit of units) {
             await fillEntry(page, { debit: task.answer.credit, credit: task.answer.debit });
             await work.getByRole("button", { name: "記帳する" }).click();
             await expect(page.getByText("もう一歩", { exact: true })).toBeVisible();
-            await expect(page.getByText("あなたの仕訳")).toBeVisible();
+            // 歴史の単元はページの左右で教えるので、5要素の比較表を出さない(Issue #274)
+            if (unit.kind === "history") await expect(page.getByText("あなたの仕訳")).toHaveCount(0);
+            else await expect(page.getByText("あなたの仕訳")).toBeVisible();
             triedWrong = true;
           }
           await fillEntry(page, task.answer);
