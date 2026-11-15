@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { units } from "#content";
 import { dependsOnUnit, glossaryMap, misconceptionMap, nextUnit, sortedTopics, unitAccountList, unitMap } from "@/lib/content";
 import { Markdown } from "@/components/markdown";
+import { pageMetadata } from "@/lib/site";
 import { IdeShell, type MisconceptionInfo } from "@/components/ide/ide-shell";
 
 export function generateStaticParams() {
@@ -16,7 +17,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ topic: string; unit: string }> }): Promise<Metadata> {
   const { topic, unit: unitSlug } = await params;
   const unit = unitMap.get(`${topic}/${unitSlug}`);
-  return unit ? { title: unit.title } : {};
+  return unit ? pageMetadata({ path: `/units/${unit.id}`, title: unit.title, description: unit.summary }) : {};
 }
 
 export default async function UnitPage({ params }: { params: Promise<{ topic: string; unit: string }> }) {

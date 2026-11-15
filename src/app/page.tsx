@@ -2,7 +2,10 @@ import Link from "next/link";
 import { units } from "#content";
 import { LEVEL_LABELS, nextUnit, sortedDomains, sortedPaths, sortedTopics, unitsOfTopic } from "@/lib/content";
 import { HomeStart, type HomeStartUnit } from "@/components/home-start";
+import { pageMetadata } from "@/lib/site";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+export const metadata = pageMetadata({ path: "/" });
 
 export default function Home() {
   const startUnits: Record<string, HomeStartUnit> = Object.fromEntries(units.map((u) => [u.id, { title: u.title, nextId: nextUnit(u)?.id }]));

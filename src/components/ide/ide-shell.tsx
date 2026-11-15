@@ -265,6 +265,8 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
   // 保存済みのstep。見直しや案内前の「次へ」で保存するstepを下げないために持つ
   const savedStep = useRef(0);
   const unsavedProgress = useRef(false);
+  // このタブが進捗を書いたユーザー。Cookieが消えて回答が別のゲストで保存されたら、その人にもいまの位置を残す(Issue #325)
+  const progressUser = useRef<string | null>(null);
   // 失敗した回答と進捗は最新の1件ずつ持ち、次の保存で再送する。進捗は後勝ちのupsertなので、新しい進捗を送るときは古い方を捨てる
   const failedAttempt = useRef<(() => Promise<void>) | null>(null);
   const failedProgress = useRef<(() => Promise<void>) | null>(null);
@@ -362,6 +364,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     fetchProgress()
       .then((p) => {
         setNoRecord(!p || (Object.keys(p.units).length === 0 && Object.keys(p.answers).length === 0));
+        if (p) progressUser.current ??= p.userId;
         const saved = p?.units[unit.id];
         // ステップを減らした単元では保存値が範囲外になる。そのまま持つと最後に着いても完了にならないので無視し、DBの値も戻す(再開できるように)
         if (saved && saved.step < unit.steps.length) savedStep.current = saved.step;
@@ -449,14 +452,22 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
   const saveProgress = (top: number) =>
     save(async () => {
       const last = top === unit.steps.length - 1;
-      unsavedProgress.current = !(await setUnitProgress(unit.id, last ? "completed" : "started", top));
+      const userId = await setUnitProgress(unit.id, last ? "completed" : "started", top);
+      unsavedProgress.current = !userId;
+      if (userId) progressUser.current = userId;
     });
   // 回答前の進捗は保存されない(Issue #214)ので、最初の回答でサインインしたら、いまの位置もそのユーザーで残す
   // 回答した時点で記録のある学習者になる。別タブのlocalStorage.clearでtutorialがpendingに戻っても初回バナーを出さない(Issue #246)
   const record = (r: GradeResult, answer: unknown) => {
     setNoRecord(false);
-    return save(() => recordAttempt({ unitId: unit.id, exerciseId: `${unit.id}#${stepIndex}`, correct: r.correct, misconceptionId: r.misconception, answer }), true).then(() => {
-      if (unsavedProgress.current) saveProgress(savedStep.current);
+    let attemptUser: string | null = null;
+    const attempt = async () => {
+      attemptUser = await recordAttempt({ unitId: unit.id, exerciseId: `${unit.id}#${stepIndex}`, correct: r.correct, misconceptionId: r.misconception, answer });
+    };
+    return save(attempt, true).then(() => {
+      const switched = attemptUser !== null && progressUser.current !== null && attemptUser !== progressUser.current;
+      if (attemptUser) progressUser.current ??= attemptUser;
+      if (unsavedProgress.current || switched) saveProgress(savedStep.current);
     });
   };
 
