@@ -78,9 +78,10 @@ export function JournalEditor({ accounts, value, onChange, readOnly = false, sho
           const accountMissing = !readOnly && !account && !composing && line.amount.trim();
           return (
             <div key={i} data-journal-line={`${side}-${i}`} className={`rounded-md border p-1.5 transition-colors ${style ? `${style.border} ${style.bg}` : "bg-background"}`}>
-              <div className="flex gap-1 items-center">
+              {/* 縦積みの幅では科目欄に1行を全部使わせ、金額と「行を削除」を次の行へ落とす。12文字の科目名(減価償却累計額など)と1,000,000,000は390pxの1行に並ばない(Issue #116, #324) */}
+              <div className="flex flex-wrap @lg:flex-nowrap gap-1 items-center">
                 {readOnly ? (
-                  <Input aria-label={`${label}の科目${i + 1}`} placeholder="科目" value={line.accountName} readOnly className="min-w-24 flex-[6] @lg:flex-[3] px-1.5 bg-background" />
+                  <Input aria-label={`${label}の科目${i + 1}`} placeholder="科目" value={line.accountName} readOnly className="min-w-24 basis-full @lg:flex-[3] px-1.5 bg-background" />
                 ) : (
                   <AccountCombobox
                     accounts={accounts}
@@ -89,7 +90,7 @@ export function JournalEditor({ accounts, value, onChange, readOnly = false, sho
                     value={line.accountName}
                     onChange={(accountName) => update(side, i, { accountName })}
                     onCompositionChange={(composing) => setComposingLine(composing ? `${side}-${i}` : null)}
-                    className="min-w-24 flex-[6] @lg:flex-[3] px-1.5 bg-background"
+                    className="min-w-24 basis-full @lg:flex-[3] px-1.5 bg-background"
                   />
                 )}
                 <Input
@@ -106,8 +107,8 @@ export function JournalEditor({ accounts, value, onChange, readOnly = false, sho
                     const p = parseAmount(e.target.value, false, currency);
                     if ("value" in p) update(side, i, { amount: formatAmount(p.value) });
                   }}
-                  // 借方・貸方が縦積みの幅では390pxでも1,000,000,000と7文字の科目名の両方が入る比にする。横並びは1行が狭く、科目名を優先する(Issue #116)
-                  className="min-w-24 flex-[7] @lg:flex-[2] px-1.5 text-right bg-background font-mono tabular-nums"
+                  // 横並びは1行が狭く、科目名を優先する(Issue #116)
+                  className="min-w-24 flex-1 @lg:flex-[2] px-1.5 text-right bg-background font-mono tabular-nums"
                 />
                 {!readOnly && (
                   <Button type="button" variant="ghost" size="icon" className="shrink-0" aria-label="行を削除" disabled={value[side].length <= 1} onClick={() => removeLine(side, i)}>
