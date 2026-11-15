@@ -85,9 +85,12 @@ entry:
   credit: [{ account: interest_income, amount: 2000 }]
 answer: { asset: increase, liability: none, equity: increase, revenue: increase, expense: none }
 wrong_patterns:
-  - match: { revenue: none }
+  - match: { asset: none, revenue: none }
     misconception: interest_is_loan_return
     feedback: 利息は貸したことで得たもうけです。貸付金が減るのではなく、受取利息という収益が増えます。
+  - match: { asset: increase, revenue: none }
+    misconception: interest_income_as_cash
+    feedback: 普通預金が増えるのは合っています。その原因は貸したことで得たもうけなので、受取利息という収益も同時に増えます。
   - match: { asset: none }
     feedback: 利息が預金に振り込まれたので、資産は増えます。貸付金は減りませんが、普通預金が増えます。
   - match: { equity: none }
@@ -231,7 +234,7 @@ type: classify
 accounts: [loans_receivable, loans_payable, interest_income, interest_expense]
 misconceptions:
   interest_income:
-    asset: interest_is_loan_return
+    asset: interest_income_as_cash
   loans_receivable:
     liability: lender_borrower_confused
   loans_payable:
