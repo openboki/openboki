@@ -76,6 +76,8 @@ export function JournalEditor({ accounts, value, onChange, readOnly = false, sho
           // 科目を選んだ直後は普通の入力の途中なので、赤字にせず次にすることとして添える(Issue #71)
           const amountMissing = !readOnly && account && !line.amount.trim();
           const accountMissing = !readOnly && !account && !composing && line.amount.trim();
+          const accountUnknown = !account && line.accountName.trim() && !composing && !accounts.some((a) => matchesAccountQuery(a, line.accountName));
+          const accountErrorId = `${idPrefix}-${side}-${i}-account-error`;
           return (
             <div key={i} data-journal-line={`${side}-${i}`} className={`rounded-md border p-1.5 transition-colors ${style ? `${style.border} ${style.bg}` : "bg-background"}`}>
               {/* 縦積みの幅では科目欄に1行を全部使わせ、金額と「行を削除」を次の行へ落とす。12文字の科目名(減価償却累計額など)と1,000,000,000は390pxの1行に並ばない(Issue #116, #324) */}
@@ -86,6 +88,8 @@ export function JournalEditor({ accounts, value, onChange, readOnly = false, sho
                   <AccountCombobox
                     accounts={accounts}
                     aria-label={`${label}の科目${i + 1}`}
+                    aria-invalid={accountUnknown || accountMissing ? true : undefined}
+                    aria-describedby={accountUnknown || accountMissing ? accountErrorId : undefined}
                     placeholder="科目"
                     value={line.accountName}
                     onChange={(accountName) => update(side, i, { accountName })}
@@ -125,15 +129,15 @@ export function JournalEditor({ accounts, value, onChange, readOnly = false, sho
                     </span>
                     <span className="mt-px leading-4 text-muted-foreground">{account.short}</span>
                   </div>
-                ) : line.accountName.trim() && !composing && !accounts.some((a) => matchesAccountQuery(a, line.accountName)) ? (
+                ) : accountUnknown ? (
                   // 漢字で入れたなら入力の仕方ではなく科目名の思い違いなので、読み・ローマ字向けの案内と分ける(Issue #293)
                   /\p{Script=Han}/u.test(line.accountName) ? (
-                    <span className="text-error-fg">「{line.accountName.trim()}」という科目はありません。候補から選んでください</span>
+                    <span id={accountErrorId} className="text-error-fg">「{line.accountName.trim()}」という科目はありません。候補から選んでください</span>
                   ) : (
-                    <span className="text-error-fg">候補から選ぶか、漢字の一部を入れてください</span>
+                    <span id={accountErrorId} className="text-error-fg">候補から選ぶか、漢字の一部を入れてください</span>
                   )
                 ) : accountMissing ? (
-                  <span className="text-error-fg">科目を選んでください</span>
+                  <span id={accountErrorId} className="text-error-fg">科目を選んでください</span>
                 ) : null}
                 {amountMissing && (
                   <span id={errorId} className="ml-auto shrink-0 text-muted-foreground">
