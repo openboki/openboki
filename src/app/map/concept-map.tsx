@@ -184,6 +184,7 @@ function ConceptDetail({
   const dependents = concepts.filter((c) => c.requires.includes(concept.id)).map((c) => c.id);
   const listed = new Set([...concept.requires, ...dependents]);
   const contrasts = mutual("contrasts").filter((id) => !listed.has(id));
+  const heading = useRef<HTMLHeadingElement>(null);
   // 図の線は1種類なので、関係の種類はここで読む。1つの概念は1か所にだけ並べる
   const groups = [
     { title: "先に学ぶ概念", ids: concept.requires },
@@ -196,7 +197,9 @@ function ConceptDetail({
     <div className="max-w-2xl space-y-4">
       <div>
         <p className="text-xs text-muted-foreground">{domainTitle}</p>
-        <h2 className="text-2xl font-bold">{concept.name}</h2>
+        <h2 ref={heading} tabIndex={-1} className="text-2xl font-bold">
+          {concept.name}
+        </h2>
         {concept.aliases.length > 0 && <p className="text-xs text-muted-foreground">別名: {concept.aliases.join("、")}</p>}
       </div>
       <p className="text-lg">{concept.short}</p>
@@ -219,7 +222,15 @@ function ConceptDetail({
           <ul className="flex flex-wrap gap-1.5">
             {g.ids.map((id) => (
               <li key={id}>
-                <button type="button" className="rounded-full border px-2.5 py-0.5 text-sm hover:bg-accent" onClick={() => onSelect(id)}>
+                <button
+                  type="button"
+                  className="rounded-full border px-2.5 py-0.5 text-sm hover:bg-accent"
+                  onClick={() => {
+                    onSelect(id);
+                    // 押したボタンは描き直しで消えてフォーカスがbodyに落ちるので、説明の見出しに移して読む位置を残す
+                    heading.current?.focus();
+                  }}
+                >
                   {byId.get(id)!.name}
                 </button>
               </li>
