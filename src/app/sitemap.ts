@@ -8,6 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/",
     "/about",
     "/glossary",
+    "/map",
     "/privacy",
     ...sortedPaths.map((p) => `/paths/${p.id}`),
     ...sortedTopics.map((t) => `/topics/${t.id}`),
