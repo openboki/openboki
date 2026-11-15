@@ -988,6 +988,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
           ctx={helpCtx}
           stepLabel={`ステップ${stepIndex + 1}「${step.title}」`}
           onRestartTour={isTutorialUnit ? restartTour : undefined}
+          unitId={unit.id}
           onShowTarget={showTarget}
         />
       </div>
