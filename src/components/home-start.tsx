@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { fetchProgress } from "@/lib/progress";
-import { FIRST_UNIT_AFTER_TUTORIAL, TUTORIAL_UNIT_ID } from "@/lib/tutorial-store";
+import { FIRST_UNIT_AFTER_TUTORIAL, TUTORIAL_UNIT_ID, useTutorialState } from "@/lib/tutorial-store";
 import { Button } from "@/components/ui/button";
 
 // トップページの最初の導線。初めての人にはチュートリアル、進捗がある人には続きの単元を出す(Issue #301)
@@ -21,14 +21,18 @@ interface Target {
 export function HomeStart({ units }: { units: Record<string, HomeStartUnit> }) {
   // サーバー描画と進捗の無い閲覧者にはチュートリアルを出すので、nullを既定にする
   const [target, setTarget] = useState<Target | null>(null);
+  const tourPending = useTutorialState().status === "pending";
 
   useEffect(() => {
+    // 水和の直後はtutorialがサーバーの値(done)なので、その回の結果は捨てる
+    let cancelled = false;
     fetchProgress()
       .then((p) => {
-        if (!p) return;
-        // コンテンツから消えた単元の進捗は無視する
+        if (!p || cancelled) return;
+        // コンテンツから消えた単元の進捗は無視する。ツアーが済んでいないチュートリアルは
+        // 開くとステップ0から始まり直す(#44)ので、「続きから」を約束しない(Issue #317)
         const latest = Object.entries(p.units)
-          .filter(([id]) => units[id])
+          .filter(([id, u]) => units[id] && !(id === TUTORIAL_UNIT_ID && tourPending && u.status === "started"))
           .sort(([, a], [, b]) => b.updatedAt.localeCompare(a.updatedAt));
         const started = latest.find(([, u]) => u.status === "started");
         if (started) return setTarget({ label: "続きから", unitId: started[0] });
@@ -38,7 +42,10 @@ export function HomeStart({ units }: { units: Record<string, HomeStartUnit> }) {
         if (nextId && p.units[nextId]?.status !== "completed") setTarget({ label: "次の単元へ", unitId: nextId });
       })
       .catch((e: Error) => console.error(e));
-  }, [units]);
+    return () => {
+      cancelled = true;
+    };
+  }, [units, tourPending]);
 
   return (
     <div className="space-y-2">
