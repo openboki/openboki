@@ -5,7 +5,11 @@ async function tabsFromGuideToNext(page: Page, url: string) {
   await page.goto(url);
   const later = page.getByRole("button", { name: "今はしない" });
   if (await later.isVisible()) await later.click();
-  await page.getByRole("region", { name: "ガイド" }).getByRole("link", { name: /この単元を改善/ }).focus();
+  // ガイドの最後のフォーカス先から数える(無ければガイド自体)
+  await page.getByRole("region", { name: "ガイド" }).evaluate((guide) => {
+    const stops = guide.querySelectorAll<HTMLElement>("a[href], button:not([disabled])");
+    (stops[stops.length - 1] ?? (guide as HTMLElement)).focus();
+  });
   let presses = 0;
   for (; presses < 40; presses++) {
     const name = await page.evaluate(() => document.activeElement?.textContent?.trim() ?? "");
