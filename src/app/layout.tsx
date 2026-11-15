@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <ThemeBoot />
       </head>
-      <body className="min-h-dvh bg-background text-foreground antialiased font-sans">
+      <body className="flex min-h-dvh flex-col bg-background text-foreground antialiased font-sans">
         <HashHistorySync />
         <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-background focus:p-2">
           本文へ移動
@@ -49,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <ThemeSwitcher />
           </nav>
         </header>
-        <main id="main">{children}</main>
+        <main id="main" className="flex-1">{children}</main>
         <SiteFooter />
       </body>
     </html>
