@@ -184,3 +184,9 @@
   --tw-prose-th-borders: var(--border);
   --tw-prose-td-borders: var(--rule);
 }
+
+/* 表の1列目は日付などの短いラベル。自動レイアウトで隣の長い本文に押されると「12 / 日」と2行に折れるので折り返さない(Issue #340)。
+   見出し(th)は長い語句があり、狭い画面ではみ出すので対象にしない */
+.prose td:first-child {
+  white-space: nowrap;
+}
