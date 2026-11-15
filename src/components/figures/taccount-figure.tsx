@@ -12,7 +12,9 @@ interface Line {
 /** nameはIDEの結果ペインで科目名を用語のトリガーに差し替えるときに渡す */
 export function TAccountFigure({ account, name, debit, credit }: { account: AccountInfo; name?: ReactNode; debit: Line[]; credit: Line[] }) {
   const s = ELEMENT_STYLE[account.element];
-  const inc = accountIncreaseSide(account);
+  // 仮勘定はどの要素でもないので、要素の色と記号も増える側も示さない(ElementBadgeと同じ扱い)
+  const temporary = account.temporary === true;
+  const inc = temporary ? null : accountIncreaseSide(account);
   const sum = (lines: Line[]) => lines.reduce((t, l) => t + l.amount, 0);
   const balance = sum(debit) - sum(credit);
   const side = (title: string, lines: Line[], isIncrease: boolean) => (
@@ -34,9 +36,10 @@ export function TAccountFigure({ account, name, debit, credit }: { account: Acco
   );
   return (
     <div className="text-sm">
-      <div className={`inline-flex items-center gap-1 rounded-t-md border border-b-0 px-2 py-0.5 text-xs font-semibold ${s.bg} ${s.border} ${s.text}`}>
-        <span aria-hidden>{s.symbol}</span>
+      <div className={`inline-flex items-center rounded-t-md border border-b-0 px-2 py-0.5 text-xs font-semibold ${temporary ? "text-muted-foreground" : `gap-1 ${s.bg} ${s.border} ${s.text}`}`}>
+        {!temporary && <span aria-hidden>{s.symbol}</span>}
         {name ?? account.name}
+        {temporary && "(仮)"}
       </div>
       <div className="flex divide-x border-t-2 border-foreground/70">
         {side("借方", debit, inc === "debit")}
