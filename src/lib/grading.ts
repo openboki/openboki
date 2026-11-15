@@ -14,6 +14,8 @@ export interface GradeResult {
 }
 
 const GENERIC_WRONG = "まだ合っていません。結果の表で何が動くはずかを考えて、もう一度試してみましょう。";
+// 歴史の単元には結果の表が無く、ページの左右で教える(Issue #300)
+const GENERIC_WRONG_HISTORY = "まだ合っていません。どのページの左と右に書くかを見直して、もう一度試してみましょう。";
 // 正解の金額は書かない。計算で求める課題では答えそのものになる
 const AMOUNT_WRONG = "科目は合っています。金額をもう一度確かめましょう。";
 // 比較表が全行「同じ」になる誤答。表を見直させても手がかりが無いので、科目へ目を向けさせる
@@ -75,7 +77,7 @@ export function gradePost(task: TaskOf<"post">, entry: JournalEntry, accounts?: 
     const expected = computeImpact(task.answer, accounts);
     if (ELEMENTS.every((el) => yours[el] === expected[el])) return ng(kind === "history" ? SAME_IMPACT_HISTORY : SAME_IMPACT);
   }
-  return ng();
+  return ng(kind === "history" ? GENERIC_WRONG_HISTORY : undefined);
 }
 
 // debugのentriesは誤りの行のほかは貸借がそろっている(prepareで検査)

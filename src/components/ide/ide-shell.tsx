@@ -1105,7 +1105,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
                 <h3 className="text-sm font-semibold">仕訳帳に書く</h3>
                 <HelpIcon topic="journal" />
               </div>
-              <JournalEditor accounts={accounts} value={draft} onChange={setDraft} readOnly={result?.correct === true} currency={unit.currency} />
+              <JournalEditor accounts={accounts} value={draft} onChange={setDraft} readOnly={result?.correct === true} showElements={unit.kind !== "history"} currency={unit.currency} />
               {!result?.correct && (
                 <Button type="submit" disabled={!draftReady} data-tour="post-button" aria-describedby={sideHint ? "post-side-hint" : undefined}>
                   記帳する
@@ -1121,7 +1121,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
           {task.type === "predict" && (
             <div className="space-y-3" data-tour="task-predict">
               <h3 className="text-sm font-semibold">これから記帳する仕訳</h3>
-              <JournalEditor accounts={accounts} value={fromJournalEntry(task.entry, accountMap)} readOnly showImpact={result !== null} />
+              <JournalEditor accounts={accounts} value={fromJournalEntry(task.entry, accountMap)} readOnly showImpact={result !== null} showElements={unit.kind !== "history"} />
               <fieldset disabled={result !== null} className="grid gap-2 sm:grid-cols-5">
                 <legend className="text-sm font-semibold mb-1">記帳すると、それぞれどう動くと思いますか</legend>
                 {askedElements.map((el) => (
@@ -1210,7 +1210,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
               ) : (
                 <div className="space-y-2">
                   <h3 className="text-sm font-semibold">{debugRow + 1}行目を直す</h3>
-                  <JournalEditor accounts={accounts} value={draft} onChange={setDraft} readOnly={result?.correct === true} currency={unit.currency} />
+                  <JournalEditor accounts={accounts} value={draft} onChange={setDraft} readOnly={result?.correct === true} showElements={unit.kind !== "history"} currency={unit.currency} />
                   {!result?.correct && (
                     <Button type="submit" disabled={!draftReady} aria-describedby={sideHint ? "debug-side-hint" : undefined}>
                       確認する
@@ -1268,7 +1268,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
             >
               <h3 className="text-sm font-semibold">自由に試す</h3>
               <p className="text-xs text-muted-foreground">好きな取引を記帳して、{unit.view === "ledger" ? "結果の試算と元帳" : "結果の財務諸表"}がどう動くか確かめてみましょう。{SANDBOX_NOT_SAVED}</p>
-              <JournalEditor accounts={accounts} value={draft} onChange={setDraft} currency={unit.currency} />
+              <JournalEditor accounts={accounts} value={draft} onChange={setDraft} showElements={unit.kind !== "history"} currency={unit.currency} />
               <Button type="submit" variant="outline" disabled={!canPostFreely} aria-describedby={sideHint ? "free-side-hint" : draftReady && !freeBalanced ? "free-post-hint" : undefined}>
                 記帳する
               </Button>
