@@ -208,7 +208,7 @@ Monkeyの人格は「前回起票した領域を避ける」ような賢さは�
 | 段 | 実装 | 起動 |
 | --- | --- | --- |
 | 環境 | `scripts/services.sh`(Supabase + `pnpm dev`)、`scripts/labels.sh`(ラベル作成、初回のみ) | `scripts/services.sh up` |
-| ① 探索A(人格型) | `.claude/skills/monkey-test/`(SKILL、人格7本、`issue-template.md`、`known.md`)、`scripts/monkey/session.mjs`(オラクル・スクリーンショット・DB参照・仕訳入力)、`scripts/monkey-loop.sh` | `MONKEY_UNTIL=23:00 scripts/monkey-loop.sh`。対話なら`/monkey-test <人格> [step]` |
+| ① 探索A(人格型) | `.claude/skills/monkey-test/`(SKILL、人格8本、`issue-template.md`、`known.md`)、`scripts/monkey/session.mjs`(オラクル・スクリーンショット・DB参照・仕訳入力)、`scripts/monkey-loop.sh` | `MONKEY_UNTIL=23:00 scripts/monkey-loop.sh`。対話なら`/monkey-test <人格> [step]` |
 | ① 探索B(seed付き) | `e2e/monkey.spec.ts`(状態に応じた22 action、seedで再現)、`scripts/monkey-scripted.sh`(複数seed → 所見があればClaudeが`/monkey-test scripted <seed>`で再現・起票) | `scripts/monkey-scripted.sh` / `MONKEY=1 MONKEY_SEED=7 pnpm exec playwright test e2e/monkey.spec.ts` |
 | ② トリアージ | `scripts/triage-agent.sh` + `scripts/issue-agent/triage.md`(読み取り専用。`main`で再現 → Agent Brief → `ready-for-agent` / `ready-for-human` / `needs-info` / `duplicate` / `wontfix`) | `scripts/triage-agent.sh <n>` / `loop` |
 | ③ 修正 | `scripts/issue-agent.sh`、`scripts/issue-loop.sh`、`scripts/issue-agent/{work,gate,review,recheck,fix}.md` + スキーマ、`scripts/issue-agent/guard.sh`(PreToolUseでBashの文字列を検査)、`scripts/check.sh`(関門。E2Eは3100番で本番ビルド) | `scripts/issue-agent.sh <n>` / `ISSUE_UNTIL=06:00 scripts/issue-loop.sh` |
