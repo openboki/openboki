@@ -10,18 +10,19 @@ export function SiteFooter() {
   if (usePathname().startsWith("/units/")) return null;
   return (
     <footer className="border-t">
+      {/* 折り返したときに上下のリンクを押し分けられるよう、リンクの高さを24px(WCAG 2.2 2.5.8)にする */}
       <div className="mx-auto flex max-w-4xl flex-wrap gap-x-5 gap-y-1 px-4 py-3 text-xs text-muted-foreground">
-        <Link href="/about" className="hover:text-foreground">
+        <Link href="/about" className="inline-flex min-h-6 items-center hover:text-foreground">
           このサイトについて
         </Link>
-        <Link href="/privacy" className="hover:text-foreground">
+        <Link href="/privacy" className="inline-flex min-h-6 items-center hover:text-foreground">
           プライバシーポリシー
         </Link>
-        <a href={`${REPO_URL}/discussions`} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
+        <a href={`${REPO_URL}/discussions`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-6 items-center hover:text-foreground">
           質問・報告・提案(GitHubアカウントが要ります)
           <span className="sr-only">(GitHub Discussionsを新しいタブで開く)</span>
         </a>
-        <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
+        <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-6 items-center hover:text-foreground">
           GitHub
           <span className="sr-only">(リポジトリを新しいタブで開く)</span>
         </a>
