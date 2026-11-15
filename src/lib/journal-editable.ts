@@ -24,6 +24,9 @@ export type ParsedAmount = { value: number } | { reason: string };
 // 13桁なら、この金額を約900回足しても安全な整数に収まる
 const MAX_AMOUNT = 9_999_999_999_999;
 
+// 単元のscenario.currencyに現れる通貨名
+const CURRENCY_UNITS = ["円", "ドゥカート"];
+
 /**
  * 金額の入力を通貨単位(既定は円。単元のscenario.currency)の整数として解釈する。IMEをオンのまま打った全角数字・全角カンマ・末尾の通貨名(問題文の「30,000円」のように前に空白があってもよい。Issue #211)は受け付け、
  * それ以外は理由を返す(Issue #43)。`Number()`に任せると「1e6」や上限を超える桁まで通ってしまう。
@@ -38,6 +41,9 @@ export function parseAmount(text: string, signed = false, currency = "円"): Par
   if (s.endsWith(currency)) s = s.slice(0, -currency.length).trimEnd();
   s = s.replace(/^[−－ー△▲]/, "-");
   if (s === "") return { reason: "金額を入れてください" };
+  // 円の単元に慣れた学習者はドゥカートの単元でも「円」を付けやすいので、半角かどうかではなく単位の違いを伝える(Issue #309)
+  const otherUnit = CURRENCY_UNITS.find((u) => u !== currency && s.endsWith(u) && /^-?\d+(\.\d+)?\s*$/.test(s.slice(0, -u.length)));
+  if (otherUnit) return { reason: `この単元の金額は${currency}です。「${otherUnit}」を外して数字だけ入れてください` };
   if (/^-?\d+\.\d+$/.test(s)) return { reason: `小数は使えません。${currency}単位の整数で入力してください` };
   if (!signed && s.startsWith("-")) return { reason: "マイナスは使えません。半角の数字で入力してください(例: 100000)" };
   if (!/^-?\d+$/.test(s)) return { reason: signed ? "半角の数字だけで入力してください。マイナスは先頭に - を付けます(例: -100000)" : "半角の数字だけで入力してください(例: 100000)" };
