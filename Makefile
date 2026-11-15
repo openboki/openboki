@@ -69,7 +69,7 @@ build: ## 本番ビルド(Velite → next build。standalone出力)
 start: ## 本番ビルドを起動する(先にmake build)
 	pnpm start
 
-icons: ## src/app/icon.svgからfavicon.icoとapple-icon.pngを書き出す(icon.svgを変えたら回す)
+icons: ## src/app/icon.svgからfavicon.ico、apple-icon.png、OG画像を書き出す(icon.svgを変えたら回す)
 	node scripts/icons.mjs
 
 ##@ 品質改善ループ(docs/quality-loop.md)

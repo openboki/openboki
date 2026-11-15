@@ -12,4 +12,5 @@
 | (フォント)Zen Old Mincho | Google Fonts | SIL Open Font License 1.1 | 2026-11-08 | テーマ「帳簿用紙」の見出し |
 | (フォント)M PLUS 1 Code | Google Fonts | SIL Open Font License 1.1 | 2026-11-08 | テーマ「ワークベンチ」の全体 |
 | (フォント)IBM Plex Mono | Google Fonts | SIL Open Font License 1.1 | 2026-11-08 | 金額などの等幅(ワークベンチ以外) |
+| (フォント)Noto Sans CJK JP | 実行環境のシステムフォント(Noto CJK) | SIL Open Font License 1.1 | 2026-11-15 | OG画像の文字(`scripts/icons.mjs`が`src/app/opengraph-image.png`に描き込む。Noto Sans JPと同じ書体) |
 | (アイコン)lucide-react | https://lucide.dev | ISC | 2026-11-07 | UIのアイコン |
