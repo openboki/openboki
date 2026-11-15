@@ -1,7 +1,7 @@
 # アーキテクチャ(v0.1)
 
-更新日: 2026-11-07
-状態: 採用(ADR 0003)。決定済み: Next.js、Supabase(DB・認証)をMVPから使う。ホスティング: VPS 1台(さくらのVPS 4GB + Coolify)にNext.jsとSupabaseを同居(ADR 0006)。
+更新日: 2026-11-15
+状態: 採用(ADR 0003)。決定済み: Next.js、Supabase(DB・認証)をMVPから使う。ホスティング: VPS 1台(さくらのVPS 4GB + Coolify)にNext.jsとSupabaseを同居(ADR 0006)。アクセス解析: Search Console、自前のUmami、既存DBの集計(ADR 0011)。
 
 ## 1. 設計原則
 1. **採点と解説はコンテンツだけで完結させる。** 正誤判定にDBやAPIを挟まない。
@@ -153,8 +153,10 @@ create table attempts (
 - 勘定科目は5要素と「なぜその要素か」を持ち、仕訳エディタの影響表示と要素分類の演習の両方がこれを参照する。
 
 ## 7. ホスティング
-決定: さくらのVPS 4GB(東京)1台にCoolifyを置き、Next.js(GHCRのイメージをpull)と、Postgres / GoTrue / PostgREST / Kongに削ったSupabaseを同居させる(ADR 0006)。
-守ること: `output: 'standalone'`、ISRや特定ホストのAPIに依存しない、環境変数は`NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`の2つだけ。
+決定: さくらのVPS 4GB 1台(リージョンは国内で契約時に最も安いところ)にCoolifyを置き、Next.js(GHCRのイメージをpull)と、Postgres / GoTrue / PostgREST / Kongに削ったSupabaseを同居させる(ADR 0006)。アクセス解析のUmamiも同じVPSに置き、データは既存のPostgresに別のデータベースとして持つ(ADR 0011)。
+公開は`production`ブランチで行う。mainは品質改善ループと手作業の統合先のままにし、`make check`が通ったコミットまで`production`をfast-forwardで進める。`production`へのpushでGitHub ActionsがDockerイメージをビルドしてGHCRにpushし、SSH経由でVPSの中からCoolifyのデプロイを起動する。Coolifyの管理画面とAPIは外に公開しない。
+ビルド時に渡す値: `CONTENT_VERSION`(Actionsの`github.sha`。回答ログの`content_version`になる)、`SITE_URL`(canonical、sitemap、robotsの基準URL)、`NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`(クライアントに焼き込まれる)。いずれもbuild-argで渡す。
+守ること: `output: 'standalone'`、ISRや特定ホストのAPIに依存しない。
 外部バックアップは置かない(β 中のDBは匿名ユーザーの進捗と回答ログだけ)。本登録(フェーズ7)の前に再検討する。
 
 ## 8. 開発環境
