@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "プライバシーポリシー" };
-
 import { REPO_URL } from "@/lib/repo";
+import { pageMetadata } from "@/lib/site";
+
+export const metadata: Metadata = pageMetadata({
+  path: "/privacy",
+  title: "プライバシーポリシー",
+  description: "Open簿記が学習者の情報をどう取得し、何に使い、いつ消すかを定めます。",
+});
 
 // 非公開の連絡先は未定(#76)。決まったら「問い合わせ先」に足す。法的な文言は運営者が最終確認する
 const DISCUSSIONS_URL = `${REPO_URL}/discussions`;
