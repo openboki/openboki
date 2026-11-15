@@ -125,6 +125,8 @@ export function GraphCanvas({ nodes, links, selectedId, anchorId, matchedIds, on
       if (fitted || !graph) return;
       fitted = true;
       graph.zoomToFit(0, 40);
+      // 初回だけ0にしている。戻さないと、点をドラッグしても周りが付いてこない
+      graph.cooldownTicks(60);
     };
 
     // force-graphはwindowに触るので、ブラウザでだけ読み込む
@@ -145,9 +147,10 @@ export function GraphCanvas({ nodes, links, selectedId, anchorId, matchedIds, on
         .linkColor(linkColor)
         .linkWidth((l) => (isLinkNear(l) ? 2 : 0.7))
         .linkCurvature(0.12)
-        // 最初の描画までに配置をほぼ落ち着かせ、点が飛び回るところを見せない
-        .warmupTicks(120)
-        .cooldownTicks(60)
+        // 最初の描画までに配置を終わらせ、点が動くところも倍率が切り替わるところも見せない。
+        // d3-forceの既定の減衰では300回でalphaが0.001を下回る
+        .warmupTicks(300)
+        .cooldownTicks(0)
         .onEngineStop(fit)
         // 選んでも視点は動かさない。読むために押しただけで図が動くと、見ていた場所を見失う
         .onNodeClick((n) => view.current.onSelect(n.id))
