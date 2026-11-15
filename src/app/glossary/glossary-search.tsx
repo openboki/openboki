@@ -47,13 +47,17 @@ export function GlossarySearch({ entries, domainTitles, domainOf, urlQuery = "" 
   const q = normalizeSearchText(query);
   const hits = q ? entries.filter((e) => [e.name, ...e.aliases, ...e.reading, e.short].some((t) => normalizeSearchText(t).includes(q))) : entries;
   // 説明文にだけ語を含む項目が分野の順で先に並ぶと、探している項目が埋もれる(Issue #86)
-  const exact = q ? hits.filter((e) => [e.name, ...e.aliases, ...e.reading].some((t) => normalizeSearchText(t) === q)) : [];
-  const others = hits.filter((e) => !exact.includes(e));
+  // 途中まで打った語(「借入」)でも名前で探しているので、前方一致も先頭に出す(Issue #298)
+  // 一致した名前の短い順に並べ、完全一致と入力に近い名前(「現」なら現金、現金過不足の順)を先にする
+  const prefixLength = (e: GlossaryEntry) =>
+    Math.min(...[e.name, ...e.aliases, ...e.reading].map(normalizeSearchText).filter((t) => t.startsWith(q)).map((t) => t.length));
+  const matched = q ? hits.filter((e) => prefixLength(e) < Infinity).sort((a, b) => prefixLength(a) - prefixLength(b)) : [];
+  const others = hits.filter((e) => !matched.includes(e));
   const concepts = others.filter((e) => e.kind === "concept");
   const accounts = others.filter((e) => e.kind === "account");
 
   const groups: { title: string; items: GlossaryEntry[] }[] = [
-    { title: "一致する用語", items: exact },
+    { title: "一致する用語", items: matched },
     ...Object.entries(domainTitles).map(([id, title]) => ({ title, items: concepts.filter((c) => domainOf[c.id] === id) })),
     { title: "勘定科目", items: accounts },
   ].filter((g) => g.items.length > 0);
