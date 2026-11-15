@@ -14,7 +14,7 @@ sources:
   - title: John B. Geijsbeek, Ancient Double-Entry Bookkeeping (1914)
     note: 『スンマ』簿記論の英訳と解説。パブリックドメイン
   - title: 渡邉泉『会計の歴史探訪』(同文舘出版)
-    note: 口別計算から期間計算への流れ。記述の照合用で、文章は転記しない
+    note: 口別計算から期間計算への流れ
 scenario:
   company: ヴェネツィアの商人バルトロメオの店
   era: 1386年春、ヴェネツィア。アレクサンドリアからの船が戻った
