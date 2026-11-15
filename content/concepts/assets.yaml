@@ -138,3 +138,13 @@ concepts:
     requires: [sale_of_fixed_assets]
     related: [book_value]
     contrasts: []
+  - id: sale_during_period
+    name: 期中売却
+    aliases: [期中の売却]
+    reading: [きちゅうばいきゃく]
+    short: 会計期間の途中で固定資産を売ること。期首から売った日までの減価償却費を先に計上する
+    summary: 期の途中で固定資産を売ったときは、期首から売った日までに使った分を月割りで減価償却費に計上してから、取得原価と減価償却累計額を帳簿から消す。売った金額は、その分まで引いた売る日の帳簿価額と比べる。
+    example: 1年分の減価償却費が12万円のコーヒーマシンを、4月始まりの年度の9月30日に売ったら、6か月分の6万円を減価償却費として計上する。
+    requires: [sale_of_fixed_assets, monthly_proration]
+    related: [gain_or_loss_on_sale, book_value]
+    contrasts: []

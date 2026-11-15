@@ -16,4 +16,4 @@ sections:
   - title: 債権・債務
     units: [receivables-and-payables/loans, receivables-and-payables/other-receivables-and-payables, receivables-and-payables/temporary-and-deposits]
   - title: 固定資産
-    units: [depreciation/what-is-depreciation, depreciation/straight-line, depreciation/sale-of-fixed-assets]
+    units: [depreciation/what-is-depreciation, depreciation/straight-line, depreciation/sale-of-fixed-assets, depreciation/sale-during-period]
