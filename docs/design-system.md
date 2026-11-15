@@ -116,6 +116,8 @@ src/themes/
 
 レイアウトと3ペイン、タブ、ステップ進行、余白のスケール(Tailwindの既定)、コンポーネントの構造(Button / Card / Tabs / Dialogの中身)、5要素の記号、Lucideのアイコン、アニメーションの規則(`docs/visual-guidelines.md` 3.3)、イラストの形(色は`--brand-accent`で再着色)。
 
+Lucideはブランドのアイコンを持たない。他社のマーク(フッターのGitHub)は公式のSVGをインラインで置き、形を変えず`currentColor`で塗る。
+
 ## 4. 全テーマ共通の規則
 
 1. **5要素は色 + 記号 + 名前。** 色だけで区別させない。色相の系統(2.2)を守る。
