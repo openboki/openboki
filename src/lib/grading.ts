@@ -28,6 +28,9 @@ const SWAPPED = "科目と金額は合っています。借方と貸方が逆で
 const EXTRA_LINES = "正しい行はそろっています。この取引に含まれない余計な行を消しましょう。";
 // 計算問題では記帳しないので、結果の表の動きではなく計算そのものの見直しを促す
 const CALC_WRONG = "まだ合っていません。計算の式と、使う数字をもう一度確かめましょう。";
+// 桁や符号の打ち間違いは式が合っている見込みが高いので、式を疑わせない。考え方の誤りではないので誤解IDは付けない(Issue #332)
+const CALC_SIGN = "数字は合っていますが、プラスとマイナスの向きが逆です。符号を確かめましょう。";
+const CALC_DIGITS = "数字の並びは合っていますが、桁がずれています。0の数や単位を確かめましょう。";
 // 予想は1回限りで、回答と同時に記帳される。やり直しではなく実際の動きとの見比べを促す
 const PREDICT_WRONG = "予想と実際の動きが違いました。下の表で、どの要素がどう動いたかを見比べましょう。外れても、このまま次へ進めます。";
 
@@ -122,7 +125,13 @@ export function gradePredict(task: TaskOf<"predict">, effect: Partial<EffectAnsw
 export function gradeCalc(task: TaskOf<"calc">, value: number): GradeResult {
   if (value === task.answer) return ok(task);
   const pattern = task.wrong_patterns.find((p) => p.match === value);
-  return ng(pattern?.feedback ?? CALC_WRONG, pattern?.misconception);
+  if (pattern) return ng(pattern.feedback, pattern.misconception);
+  if (task.answer !== 0 && value === -task.answer) return ng(CALC_SIGN);
+  const ratio = value / task.answer;
+  const n = Math.round(Math.log10(ratio));
+  // 浮動小数の割り算なので、10のn乗との一致は相対誤差で見る
+  if (task.answer !== 0 && n !== 0 && Math.abs(ratio / 10 ** n - 1) < 1e-9) return ng(CALC_DIGITS);
+  return ng(CALC_WRONG);
 }
 
 export function gradeTweak(task: TaskOf<"tweak">, outputs: Record<string, number>, currency = "円"): GradeResult {
