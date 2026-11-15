@@ -1312,7 +1312,8 @@ export function IdeShell({ unit, accounts, misconceptions, narratives, returnTit
 
         <section id="pane-result" role="region" aria-label="結果" className={`${paneClass("result")} bg-surface-result`} data-tour="statements">
           {unit.era && <h2 className="mb-3 text-sm font-semibold">{unit.era}</h2>}
-          {unit.view === "none" && <p className="text-sm text-muted-foreground">この時代にはまだ帳簿がありません。</p>}
+          {/* 覚え書きのような単式の帳簿はある時代なので、無いものを仕訳帳と結果の表に限って言う */}
+          {unit.view === "none" && <p className="text-sm text-muted-foreground">この時代にはまだ仕訳帳も結果の表もありません。</p>}
           {unit.view !== "none" && visiblePosted.length > 1 && (
             <div className="mb-3 rounded-md border p-2 text-xs space-y-1" data-tour="rewind">
               <div className="flex items-center gap-1">
