@@ -111,7 +111,7 @@ export function ThemeSwitcher() {
         </div>
         <div role="group" aria-label="明るさ" className="flex gap-1 border-t pt-2">
           {MODES.map((m) => (
-            <Button key={m} type="button" size="sm" variant={mode === m ? "secondary" : "ghost"} aria-pressed={mode === m} className="flex-1" onClick={() => applyMode(m)}>
+            <Button key={m} type="button" size="sm" variant="ghost" aria-pressed={mode === m} className={`flex-1 ${mode === m ? "border-primary bg-primary/5" : ""}`} onClick={() => applyMode(m)}>
               {MODE_LABELS[m]}
             </Button>
           ))}
