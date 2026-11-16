@@ -49,13 +49,14 @@ describe("貸借対照表の行順", () => {
       "advance_payment",
       "advances_paid",
       "suspense_payment",
+      // 資産ごとの減価償却累計額は控除する資産の直後、資産を特定しない総称は固定資産の最後(Issue #388)
       "building",
-      "equipment",
-      "vehicle",
-      "accumulated_depreciation",
       "accumulated_depreciation_building",
+      "equipment",
       "accumulated_depreciation_equipment",
+      "vehicle",
       "accumulated_depreciation_vehicle",
+      "accumulated_depreciation",
     ]);
     expect(of("liability")).toEqual(["accounts_payable", "accounts_payable_other", "advance_received", "deposits_received", "suspense_receipt", "bank_overdraft", "loans_payable"]);
   });
