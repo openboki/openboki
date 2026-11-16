@@ -196,8 +196,16 @@ export function TutorialTour({
 function placeCard(r: DOMRect): React.CSSProperties {
   const margin = 12;
   const cardHeight = 200;
+  const cardWidth = 320;
   const below = r.bottom + margin + cardHeight < window.innerHeight;
+  const above = r.top - margin - cardHeight >= margin;
+  // ガイドのような高さいっぱいの案内先は上下に入らず、案内先そのものに重なるので左右へ逃がす(Issue #369)
+  if (!below && !above) {
+    const sideTop = Math.min(Math.max(margin, r.top), window.innerHeight - cardHeight - margin);
+    if (r.right + margin + cardWidth + margin <= window.innerWidth) return { left: r.right + margin, top: sideTop };
+    if (r.left - margin - cardWidth >= margin) return { left: r.left - margin - cardWidth, top: sideTop };
+  }
   const top = below ? r.bottom + margin : Math.max(margin, r.top - margin - cardHeight);
-  const left = Math.min(Math.max(margin, r.left), window.innerWidth - 320 - margin);
+  const left = Math.min(Math.max(margin, r.left), window.innerWidth - cardWidth - margin);
   return { left, top };
 }
