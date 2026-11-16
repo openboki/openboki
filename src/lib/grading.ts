@@ -195,6 +195,32 @@ export function classifyBoard(task: TaskOf<"classify">, accounts: ReadonlyMap<st
   };
 }
 
+// 科目のwhyにある「〜ではありません。」が否定している要素を、文中の言葉で引く
+const DENIED_ELEMENT_WORDS: Record<Element, RegExp> = {
+  asset: /(?<!純)資産|財産/,
+  liability: /負債/,
+  equity: /純資産|元手/,
+  revenue: /収益|売上|もうけ/,
+  expense: /費用|仕入/,
+};
+
+/** 「〜ではありません。」の文が否定している要素。否定文でなければundefined */
+export function deniedElement(sentence: string): Element | undefined {
+  if (!sentence.endsWith("ではありません。")) return undefined;
+  return ELEMENTS.find((el) => DENIED_ELEMENT_WORDS[el].test(sentence));
+}
+
+/** 仕分けボードの説明に使うwhy。否定文は学習者がその要素に入れたときだけ残し、選んでいない箱を否定しない(Issue #377) */
+function whyForChosen(why: string, chosen: string | undefined): string {
+  return why
+    .split(/(?<=。)/)
+    .filter((sentence) => {
+      const denied = deniedElement(sentence);
+      return denied === undefined || denied === chosen;
+    })
+    .join("");
+}
+
 export function gradeClassify(task: TaskOf<"classify">, placed: Partial<Record<string, string>>, accounts: ReadonlyMap<string, AccountInfo>): ClassifyResult {
   const { boxes, items } = classifyBoard(task, accounts);
   const boxLabel = new Map(boxes.map((b) => [b.id, b.label]));
@@ -206,7 +232,7 @@ export function gradeClassify(task: TaskOf<"classify">, placed: Partial<Record<s
       account: item.id,
       misconception: chosen ? task.misconceptions[item.id]?.[chosen] : undefined,
       // 任意の箱には科目のwhyに当たる理由が無いので、正解の箱だけを示し、理由は誤解の説明に任せる
-      feedback: task.labels ? `「${item.label}」は${boxLabel.get(item.answer)}です。` : `${item.label}は${boxLabel.get(item.answer)}です。${accounts.get(item.id)!.why}`,
+      feedback: task.labels ? `「${item.label}」は${boxLabel.get(item.answer)}です。` : `${item.label}は${boxLabel.get(item.answer)}です。${whyForChosen(accounts.get(item.id)!.why, chosen)}`,
     });
   }
   if (wrong.length === 0) return { ...ok(task), wrong, misconceptions: [] };
