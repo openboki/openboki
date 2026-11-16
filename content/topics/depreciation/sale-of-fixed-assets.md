@@ -207,6 +207,9 @@ wrong_patterns:
   - match: { debit: [{ account: accounts_receivable }] }
     misconception: nontrade_as_trade
     feedback: 売掛金は商品を売ったときの科目です。マシンのような商品以外の物を売った代金は未収入金を使います。
+  - match: { debit: [{ account: accounts_payable_other }] }
+    misconception: nontrade_receivable_payable_confused
+    feedback: 未払金は「後で払う義務」(負債)です。マシンを売って代金を4月30日に受け取るので、増えるのは「後で受け取る権利」である未収入金です。
   - match: { debit: [{ account: cash }] }
     no_misconception: 代金を受け取る日の読み落としで、考え方の誤解ではない
     feedback: 代金を受け取るのは4月30日です。きょうはまだ現金は増えていないので、後で受け取る権利である未収入金を左に書きます。
@@ -252,7 +255,10 @@ success: 備品と累計額が消え、未収入金480,000が現れました。�
 type: classify
 accounts: [gain_on_sale_of_fixed_assets, loss_on_sale_of_fixed_assets, accounts_receivable_other, accumulated_depreciation_equipment]
 misconceptions:
+  gain_on_sale_of_fixed_assets:
+    expense: sale_gain_loss_confused
   loss_on_sale_of_fixed_assets:
+    revenue: sale_gain_loss_confused
     liability: expense_as_liability
   accounts_receivable_other:
     liability: nontrade_receivable_payable_confused
