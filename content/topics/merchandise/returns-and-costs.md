@@ -95,6 +95,9 @@ wrong_patterns:
   - match: { credit: [{ account: cash }] }
     misconception: return_as_new_transaction
     feedback: 掛けで買った豆なので、お金は動きません。減るのは買掛金(払う義務)です。
+  - match: { debit: [{ account: cash }] }
+    misconception: return_as_new_transaction
+    feedback: 掛けで買った豆なので、返してもお金は戻ってきません。月末に払う金額が減るので、左は買掛金(払う義務)です。
   - match: { debit: [{ account: sales }] }
     misconception: return_as_new_transaction
     feedback: 問屋に返すのは「売る」ことではありません。元の仕入を取り消すので、右に仕入を書きます。
@@ -181,6 +184,9 @@ wrong_patterns:
   - match: { debit: [{ account: purchases }] }
     misconception: return_as_new_transaction
     feedback: お客さんから戻ってきた菓子を「仕入れた」わけではありません。元の売上を取り消すので、左に売上を書きます。
+  - match: { debit: [{ account: miscellaneous_loss }] }
+    misconception: return_as_new_transaction
+    feedback: 割れた菓子が返ってきても、損を新しく記録するのではありません。返品は元の売上を取り消す逆仕訳なので、左に売上を書きます。
   - match: { credit: [{ account: cash }] }
     feedback: 代金はまだ受け取っていなかったので、現金は動きません。減るのは売掛金(受け取る権利)です。
   - match: { credit: [{ account: accounts_payable }] }
