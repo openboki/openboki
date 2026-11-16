@@ -582,6 +582,12 @@ misconceptions:
     correct: 商品を渡すまでは前受金(負債)。渡せなければ返す義務がある。商品を渡したときに売上へ振り替える
     concepts: [advance_payment_receipt, revenue]
     remediation: receivables-and-payables/other-receivables-and-payables
+  - id: advance_payment_received_confused
+    name: 前払金と前受金の取り違え
+    description: 名前が似ているため、手付金を払った側の前払金と、受け取った側の前受金を取り違えてしまう
+    correct: 前払金は先に払って商品を受け取る権利なので資産、前受金は先に受け取って商品を渡す義務なので負債。手付金を払った側か受け取った側かで決まる
+    concepts: [advance_payment_receipt, asset, liability]
+    remediation: receivables-and-payables/other-receivables-and-payables
   - id: net_pay_is_salary
     name: 手取りが給料
     description: 従業員に実際に振り込んだ手取り額を給料(費用)として記録してしまう
