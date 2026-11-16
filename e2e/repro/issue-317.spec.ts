@@ -38,5 +38,6 @@ test("ツアーをスキップした後は、トップの「続きから」で�
   await expect(link).toBeVisible({ timeout: 10_000 });
   await link.click();
   await expect(page).toHaveURL(/first-entry/);
-  await expect(page.getByText(/前回はステップ2まで/)).toBeVisible({ timeout: 10_000 });
+  // トップの「続きから」は案内を挟まず前回のステップを開く(Issue #375)
+  await expect(page.getByText(/^ステップ2 \/ /)).toBeVisible({ timeout: 10_000 });
 });

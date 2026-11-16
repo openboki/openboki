@@ -49,6 +49,7 @@ export default async function UnitPage({ params }: { params: Promise<{ topic: st
         opening: unit.scenario.opening,
         steps: unit.steps.map((s) => ({ title: s.title, task: s.task })),
         next: next ? { id: next.id, title: next.title } : undefined,
+        requires: unit.requires.map((id) => ({ id, title: unitMap.get(id)!.title })),
       }}
       accounts={unitAccountList(unit.scenario.accounts)}
       netIncomeTerm={glossaryMap.get("net_income")!}

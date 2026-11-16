@@ -12,7 +12,7 @@ export function ElementBadge({ element, contra = false, temporary = false, size 
     <span className={`inline-flex items-center gap-1 rounded-full border px-1.5 ${sizeClass} ${s.text} ${s.bg} ${s.border}`}>
       <span aria-hidden>{s.symbol}</span>
       {s.label}
-      {contra && <span className="opacity-80">(控除)</span>}
+      {contra && <span>(控除)</span>}
     </span>
   );
 }
