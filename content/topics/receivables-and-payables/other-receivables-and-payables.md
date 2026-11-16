@@ -101,10 +101,13 @@ entry:
 answer: { asset: increase, liability: increase, equity: none, revenue: none, expense: none }
 wrong_patterns:
   - match: { expense: increase }
+    misconception: no_cost_allocation
     feedback: 椅子は長く使う物なので、費用ではなく備品(資産)です。
   - match: { liability: none }
+    no_misconception: 後で払う義務の見落としで、未払金をどう考えたかはこの回答だけでは決められない
     feedback: 代金はまだ払っていません。「後で払う義務」である未払金が増えます。
   - match: { equity: increase }
+    no_misconception: 資産と負債のつながりの見落としで、未払金の考え方の誤りではない
     feedback: 資産と負債が同じだけ増えるので、差し引きの純資産は変わりません。
 hint: 備品(資産)と未払金(負債)が同じだけ増えます。
 success: 椅子は長く使うので備品という資産です。備品が630,000に増え、未払金80,000が負債に並びました。費用は動いていません。
@@ -129,6 +132,7 @@ wrong_patterns:
     misconception: advance_is_expense
     feedback: 豆はまだ届いていません。届くまでは仕入ではなく、前払金という資産です。
   - match: { debit: [{ account: advance_received }] }
+    misconception: advance_payment_received_confused
     feedback: 前受金は手付金を受け取った側の科目です。払った側は前払金です。
   - match: { debit: [{ account: accounts_receivable_other }] }
     misconception: advance_payment_as_receivable
@@ -154,13 +158,16 @@ answer:
     - { account: accounts_payable, amount: 30000 }
 wrong_patterns:
   - match: { debit: [{ account: advance_payment }] }
+    misconception: advance_not_cleared_on_receipt
     feedback: 前払金は豆を受け取ったことで役目を終えます。右に書いて消します。
   - match: { credit: [{ account: cash }] }
+    no_misconception: 今回は現金を払っていないという取引文の読み落としで、考え方の誤解ではない
     feedback: 今回は現金を払っていません。手付金はすでに払ってあり、残りは月末です。
   - match: { debit: [{ account: purchases, amount: 30000 }] }
     misconception: advance_is_expense
     feedback: 仕入は豆の全額40,000です。手付金の10,000も、今日仕入に変わります。
   - match: { credit: [{ account: advance_received }] }
+    misconception: advance_payment_received_confused
     feedback: 前受金は手付金を受け取った側の科目です。払ってあったのは前払金です。
   - match: { credit: [{ account: accounts_payable_other }] }
     misconception: trade_as_nontrade
@@ -193,8 +200,10 @@ wrong_patterns:
     misconception: advance_received_is_revenue
     feedback: コーヒーはまだ渡していません。渡すまでは売上ではなく、前受金という負債です。
   - match: { liability: none }
+    no_misconception: 渡す義務の見落としで、前金を売上と読んだかはこの回答だけでは決められない
     feedback: 前金を受け取った分、「渡す義務」を負っています。負債が増えます。
   - match: { equity: increase }
+    misconception: advance_received_is_revenue
     feedback: 現金と負債が同じだけ増えるので、純資産は変わりません。もうけになるのは当日です。
 hint: 現金(資産)と前受金(負債)が同じだけ増えます。
 success: 現金が増え、前受金5,000が負債に並びました。コーヒーをまだ渡していないので売上ではありません。当日コーヒーを渡したときに、売上に変わります。
@@ -212,13 +221,16 @@ wrong_patterns:
     misconception: advance_received_is_revenue
     feedback: 前受金5,000も負債です。まだ渡していないコーヒーの分は、これから渡す義務として残っています。
   - match: 235000
+    no_misconception: 未払金80,000の足し忘れで、負債でないと考えたかはこの回答だけでは決められない
     feedback: 椅子の未払金80,000を忘れていませんか。
   - match: 285000
+    no_misconception: 買掛金30,000の足し忘れで、負債でないと考えたかはこの回答だけでは決められない
     feedback: 豆の残額の買掛金30,000も負債です。
   - match: 365000
     misconception: nontrade_receivable_payable_confused
     feedback: 365,000は未収入金50,000まで足した額です。未収入金は「後で受け取る権利」なので資産で、負債には入りません。
   - match: 1303500
+    no_misconception: 貸借対照表の右側の合計をそのまま読んだ表の読み違いで、負債の考え方の誤りではない
     feedback: 1,303,500は結果の貸借対照表の「負債・純資産合計」で、負債に純資産(資本金など)まで足した額です。後で果たす義務である負債だけを足しましょう。
 hint: 借入金200,000 + 未払金80,000 + 買掛金30,000 + 前受金5,000。
 success: 負債の合計は315,000円。お金を払う義務が3種類と、商品を渡す義務が1種類並んでいます。
@@ -233,9 +245,15 @@ success: 負債の合計は315,000円。お金を払う義務が3種類と、商
 type: classify
 accounts: [accounts_receivable_other, accounts_payable_other, advance_payment, advance_received]
 misconceptions:
+  accounts_receivable_other:
+    liability: nontrade_receivable_payable_confused
+  accounts_payable_other:
+    asset: nontrade_receivable_payable_confused
   advance_payment:
+    liability: advance_payment_received_confused
     expense: advance_is_expense
   advance_received:
+    asset: advance_payment_received_confused
     revenue: advance_received_is_revenue
 hint: 未収入金と前払金は資産、未払金と前受金は負債です。
 success: 未収入金と前払金は資産、未払金と前受金は負債。どれも、まだ終わっていない取引の途中の姿です。
