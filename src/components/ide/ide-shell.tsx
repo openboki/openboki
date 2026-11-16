@@ -466,8 +466,14 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     };
     return save(attempt, true).then(() => {
       const switched = attemptUser !== null && progressUser.current !== null && attemptUser !== progressUser.current;
+      // 読み込み時にセッションが無いままsessionStorageで途中のステップに戻ったタブは、まだ誰にも進捗を書いていない(Issue #365)
+      const top = Math.max(stepIndex, reached, savedStep.current);
+      const unknownUser = attemptUser !== null && progressUser.current === null && top > 0;
       if (attemptUser) progressUser.current ??= attemptUser;
-      if (unsavedProgress.current || switched) saveProgress(savedStep.current);
+      if (unsavedProgress.current || switched || unknownUser) {
+        savedStep.current = top;
+        saveProgress(top);
+      }
     });
   };
 
