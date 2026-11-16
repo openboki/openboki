@@ -137,12 +137,12 @@ function ShapeBars({ st }: { st: ReturnType<typeof buildStatements> }) {
   const pct = (n: number) => `${Math.max(0, (n / scale) * 100)}%`;
   const seg = (label: string, amount: number, cls: string) =>
     amount > 0 && (
-      <div className={`h-full ${cls} motion-safe:transition-[width] motion-safe:duration-500`} style={{ width: pct(amount) }} title={`${label} ${formatAmount(amount)}`} />
+      <div className={`h-full ${cls} forced-color-adjust-none motion-safe:transition-[width] motion-safe:duration-500`} style={{ width: pct(amount) }} title={`${label} ${formatAmount(amount)}`} />
     );
   // barの色は塗り用で文字とのコントラストを保証しないので、ラベルは帯の外に検査済みのfgで置く
   const legend = (el: "asset" | "liability" | "equity") => (
     <span className={`inline-flex items-center gap-1 ${ELEMENT_STYLE[el].text}`}>
-      <span aria-hidden className={`size-2 rounded-sm ${ELEMENT_STYLE[el].bar}`} />
+      <span aria-hidden className={`size-2 rounded-sm forced-color-adjust-none ${ELEMENT_STYLE[el].bar}`} />
       {ELEMENT_STYLE[el].label}
     </span>
   );

@@ -95,11 +95,11 @@ export function ThemeSwitcher() {
               type="button"
               aria-pressed={theme === t.id}
               onClick={() => applyTheme(t.id)}
-              className={`flex w-full items-center gap-2.5 rounded-md border px-2 py-1.5 text-left text-sm ${theme === t.id ? "border-primary bg-primary/5" : "border-transparent hover:bg-muted"}`}
+              className={`flex w-full items-center gap-2.5 rounded-md border px-2 py-1.5 text-left text-sm ${theme === t.id ? "border-primary bg-primary/5 forced-colors:border-2 forced-colors:border-[Highlight]" : "border-transparent hover:bg-muted"}`}
             >
               <span className="flex shrink-0 gap-0.5" aria-hidden>
                 {t.preview.map((c, i) => (
-                  <span key={i} className="h-4 w-2.5 rounded-sm border border-foreground/10" style={{ backgroundColor: c }} />
+                  <span key={i} className="h-4 w-2.5 rounded-sm border border-foreground/10 forced-color-adjust-none" style={{ backgroundColor: c }} />
                 ))}
               </span>
               <span className="min-w-0">
@@ -111,7 +111,7 @@ export function ThemeSwitcher() {
         </div>
         <div role="group" aria-label="明るさ" className="flex gap-1 border-t pt-2">
           {MODES.map((m) => (
-            <Button key={m} type="button" size="sm" variant="ghost" aria-pressed={mode === m} className={`flex-1 ${mode === m ? "border-primary bg-primary/5" : ""}`} onClick={() => applyMode(m)}>
+            <Button key={m} type="button" size="sm" variant="ghost" aria-pressed={mode === m} className={`flex-1 ${mode === m ? "border-primary bg-primary/5 forced-colors:border-2 forced-colors:border-[Highlight]" : ""}`} onClick={() => applyMode(m)}>
               {MODE_LABELS[m]}
             </Button>
           ))}
