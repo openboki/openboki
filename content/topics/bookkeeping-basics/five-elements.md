@@ -144,8 +144,10 @@ wrong_patterns:
     misconception: debit_means_increase
     feedback: 増えた現金は左、売上は右です。左右を入れ替えてみましょう。
   - match: { credit: [{ account: loans_payable }] }
+    misconception: sale_proceeds_as_capital_or_loan
     feedback: 売上は返す必要のないお金です。借入金ではなく売上を使います。
   - match: { credit: [{ account: capital_stock }] }
+    misconception: sale_proceeds_as_capital_or_loan
     feedback: 資本金はあなたが出した元手です。お客さんから受け取った代金は売上です。
   - match: { unbalanced: true }
     feedback: 左の合計と右の合計がそろっていません。どちらも80,000にしましょう。
@@ -249,7 +251,7 @@ success: 資産1,330,000 = 負債300,000 + 純資産1,030,000。左右がぴっ�
 ```
 
 ## ふりかえり
-1か月で、あなたは5つの取引を記帳しました。どの取引も、何が増減したかという結果と、その原因の2つの面を左と右に同じ金額で書いたので、結果の表はいつも左右の合計がそろっていましたね。
+1か月で、あなたは5つの取引を記帳しました。どの取引も、1つの取引の2つの面を同じ金額で左と右に書いたので、結果の表はいつも左右の合計がそろっていましたね。
 
 覚えておきたいことは3つです。現金が入ってきても、借入なら負債が増えるだけで、もうけではない。お金を払っても、マシンのように長く使う物は費用ではなく資産。収益と費用の差が当期純利益になり、それが純資産に足される。
 
