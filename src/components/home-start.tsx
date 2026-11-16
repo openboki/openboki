@@ -3,24 +3,15 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { fetchProgress } from "@/lib/progress";
-import { FIRST_UNIT_AFTER_TUTORIAL, TUTORIAL_UNIT_ID, useTutorialState } from "@/lib/tutorial-store";
+import { TUTORIAL_UNIT_ID, useTutorialState } from "@/lib/tutorial-store";
+import { homeStartTarget, type HomeStartTarget, type HomeStartUnit } from "@/lib/home-start";
 import { Button } from "@/components/ui/button";
 
 // トップページの最初の導線。初めての人にはチュートリアル、進捗がある人には続きの単元を出す(Issue #301)
 
-export interface HomeStartUnit {
-  title: string;
-  nextId?: string;
-}
-
-interface Target {
-  label: string;
-  unitId: string;
-}
-
 export function HomeStart({ units }: { units: Record<string, HomeStartUnit> }) {
   // サーバー描画と進捗の無い閲覧者にはチュートリアルを出すので、nullを既定にする
-  const [target, setTarget] = useState<Target | null>(null);
+  const [target, setTarget] = useState<HomeStartTarget | "all-done" | null>(null);
   const tourPending = useTutorialState().status === "pending";
 
   useEffect(() => {
@@ -29,17 +20,7 @@ export function HomeStart({ units }: { units: Record<string, HomeStartUnit> }) {
     fetchProgress()
       .then((p) => {
         if (!p || cancelled) return;
-        // コンテンツから消えた単元の進捗は無視する。ツアーが済んでいないチュートリアルは
-        // 開くとステップ0から始まり直す(#44)ので、「続きから」を約束しない(Issue #317)
-        const latest = Object.entries(p.units)
-          .filter(([id, u]) => units[id] && !(id === TUTORIAL_UNIT_ID && tourPending && u.status === "started"))
-          .sort(([, a], [, b]) => b.updatedAt.localeCompare(a.updatedAt));
-        const started = latest.find(([, u]) => u.status === "started");
-        if (started) return setTarget({ label: "続きから", unitId: started[0] });
-        const completedId = latest[0]?.[0];
-        if (!completedId) return;
-        const nextId = completedId === TUTORIAL_UNIT_ID ? FIRST_UNIT_AFTER_TUTORIAL : units[completedId].nextId;
-        if (nextId && p.units[nextId]?.status !== "completed") setTarget({ label: "次の単元へ", unitId: nextId });
+        setTarget(homeStartTarget(units, p.units, tourPending));
       })
       .catch((e: Error) => console.error(e));
     return () => {
@@ -50,7 +31,7 @@ export function HomeStart({ units }: { units: Record<string, HomeStartUnit> }) {
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center gap-3">
-        {target ? (
+        {target === "all-done" ? null : target ? (
           <Button size="lg" asChild>
             <Link href={`/units/${target.unitId}`}>
               {target.label}: {units[target.unitId].title}
