@@ -38,5 +38,7 @@ test("ツアーをスキップした後は、トップの「続きから」で�
   await expect(link).toBeVisible({ timeout: 10_000 });
   await link.click();
   await expect(page).toHaveURL(/first-entry/);
-  await expect(page.getByText(/前回はステップ2まで/)).toBeVisible({ timeout: 10_000 });
+  // トップの「続きから」は前回のステップを直接開く(Issue #375)。ツアーが始まり直さないことを確かめる
+  await expect(page.getByText("ステップ2 / 4")).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByRole("dialog", { name: "チュートリアル" })).toHaveCount(0);
 });
