@@ -345,6 +345,8 @@ accounts:
     concepts: [expense, book_value, gain_or_loss_on_sale]
   - id: shipping_expense
     name: 発送費
+    # 「運賃」単独は仕入諸掛も指すので別名にしない。「発送運賃」なら部分一致で候補に出るだけで、完全一致の自動確定はしない
+    aliases: [送料, 発送運賃]
     reading: [はっそうひ]
     short: 売った商品をお客さんに送るためにかかった運賃
     element: expense
