@@ -386,14 +386,15 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
         const outOfRange = saved !== undefined && saved.step >= unit.steps.length;
         // 終えていた単元は、ステップが減っても最後のステップを保存位置として扱い、完了の案内を出し続ける(Issue #385)
         const keepLast = outOfRange && saved.status === "completed";
-        const savedAt = keepLast ? unit.steps.length - 1 : saved?.step;
+        const lastStep = unit.steps.length - 1;
+        const savedAt = keepLast ? lastStep : saved?.step;
         // ステップを減らした単元では保存値が範囲外になる。そのまま持つと最後に着いても完了にならないので無視し、DBの値も戻す(再開できるように)
         if (saved && !outOfRange) savedStep.current = saved.step;
         else if (saved) {
           const reset = resetOutOfRangeStep(unit.id, unit.steps.length);
           // RPCは0に戻すので、終えていた単元は最後のステップへ上げ直す(後退防止のトリガーは上げる更新を通す)
-          (keepLast ? reset.then(() => setUnitProgress(unit.id, "completed", savedAt)) : reset).catch((e: Error) => console.error(e));
-          if (keepLast) savedStep.current = savedAt;
+          (keepLast ? reset.then(() => setUnitProgress(unit.id, "completed", lastStep)) : reset).catch((e: Error) => console.error(e));
+          if (keepLast) savedStep.current = lastStep;
         }
         if (saved && savedAt !== undefined && savedAt > 0 && savedAt < unit.steps.length && !restoredSession.current) {
           const answer = p.answers[unit.id]?.[savedAt];
