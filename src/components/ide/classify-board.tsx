@@ -58,7 +58,7 @@ function Chip({ item, long, inBin, selected, wrong, pressed, disabled, onPress }
       disabled={disabled}
       onClick={onPress}
       aria-pressed={pressed}
-      className={`${long ? LONG_CHIP_CLASS : inBin ? BIN_CHIP_CLASS : CHIP_CLASS} ${disabled ? "" : "cursor-grab"} ${isDragging ? "opacity-40" : ""} ${selected ? "border-primary bg-primary text-primary-foreground" : wrong ? "border-error-fg text-error-fg bg-background" : "bg-background"}`}
+      className={`${long ? LONG_CHIP_CLASS : inBin ? BIN_CHIP_CLASS : CHIP_CLASS} ${disabled ? "" : "cursor-grab"} ${isDragging ? "opacity-40" : ""} ${selected ? "border-primary bg-primary text-primary-foreground" : wrong ? "border-error-fg text-error-fg bg-background forced-colors:border-dashed" : "bg-background"}`}
     >
       {item.label}
       {wrong && <span className="sr-only">(間違い)</span>}
