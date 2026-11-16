@@ -22,6 +22,8 @@ interface Props {
 
 const POOL_ID = "pool";
 const CHIP_CLASS = "rounded-full border px-3 min-h-10 text-sm select-none touch-manipulation";
+// 5列の箱は1列が80px前後なので、余白と文字を詰めて4文字の科目名を1行に収める(Issue #358)
+const BIN_CHIP_CLASS = "rounded-full border px-1.5 min-h-10 text-xs select-none touch-manipulation";
 // 任意の箱の項目は文になるので、折り返しても読める角丸にする
 const LONG_CHIP_CLASS = "rounded-md border px-3 py-1 min-h-10 text-sm text-left select-none touch-manipulation";
 // 5要素でない箱は色を持たない
@@ -32,6 +34,7 @@ const NO_ANNOUNCEMENTS = { announcements: { onDragStart: () => undefined, onDrag
 interface ChipProps {
   item: ClassifyBox;
   long: boolean;
+  inBin: boolean;
   selected: boolean;
   wrong: boolean;
   pressed?: boolean;
@@ -39,7 +42,7 @@ interface ChipProps {
   onPress: () => void;
 }
 
-function Chip({ item, long, selected, wrong, pressed, disabled, onPress }: ChipProps) {
+function Chip({ item, long, inBin, selected, wrong, pressed, disabled, onPress }: ChipProps) {
   // attributesは渡さない。キーボード操作はボタンのままで、roleやtabindexを上書きされたくない
   const { listeners, setNodeRef, isDragging } = useDraggable({ id: item.id, disabled });
   const reduced = useReducedMotion();
@@ -55,7 +58,7 @@ function Chip({ item, long, selected, wrong, pressed, disabled, onPress }: ChipP
       disabled={disabled}
       onClick={onPress}
       aria-pressed={pressed}
-      className={`${long ? LONG_CHIP_CLASS : CHIP_CLASS} ${disabled ? "" : "cursor-grab"} ${isDragging ? "opacity-40" : ""} ${selected ? "border-primary bg-primary text-primary-foreground" : wrong ? "border-error-fg text-error-fg bg-background" : "bg-background"}`}
+      className={`${long ? LONG_CHIP_CLASS : inBin ? BIN_CHIP_CLASS : CHIP_CLASS} ${disabled ? "" : "cursor-grab"} ${isDragging ? "opacity-40" : ""} ${selected ? "border-primary bg-primary text-primary-foreground" : wrong ? "border-error-fg text-error-fg bg-background" : "bg-background"}`}
     >
       {item.label}
       {wrong && <span className="sr-only">(間違い)</span>}
@@ -76,7 +79,7 @@ function boxStyle(id: string) {
   return Object.hasOwn(ELEMENT_STYLE, id) ? ELEMENT_STYLE[id as Element] : PLAIN_BOX;
 }
 
-function Bin({ id, onPress, children }: { id: string; onPress?: () => void; children: ReactNode }) {
+function Bin({ id, narrow, onPress, children }: { id: string; narrow: boolean; onPress?: () => void; children: ReactNode }) {
   const { setNodeRef, isOver } = useDroppable({ id });
   const style = boxStyle(id);
   // 余白を押す経路はポインタ専用で、キーボードと読み上げは見出しのbuttonを使う。buttonの中のクリックはそれぞれのbuttonが処理する
@@ -84,7 +87,7 @@ function Bin({ id, onPress, children }: { id: string; onPress?: () => void; chil
     if (!(e.target as HTMLElement).closest("button")) onPress();
   });
   return (
-    <div ref={setNodeRef} data-drop={id} data-over={isOver || undefined} onClick={onClick} className={`rounded-md border p-2 min-h-20 ${onPress ? "cursor-pointer" : ""} ${style.border} ${style.bg} ${isOver ? `ring-2 ring-offset-1 brightness-95 ${style.ring}` : ""}`}>
+    <div ref={setNodeRef} data-drop={id} data-over={isOver || undefined} onClick={onClick} className={`rounded-md border ${narrow ? "px-1.5 py-2" : "p-2"} min-h-20 ${onPress ? "cursor-pointer" : ""} ${style.border} ${style.bg} ${isOver ? `ring-2 ring-offset-1 brightness-95 ${style.ring}` : ""}`}>
       {children}
     </div>
   );
@@ -146,6 +149,7 @@ export function ClassifyBoard({ boxes, items, placed, onChange, wrong, disabled 
       key={a.id}
       item={a}
       long={!elementBoxes}
+      inBin={inBin}
       selected={selected === a.id}
       wrong={wrong.has(a.id)}
       pressed={inBin ? undefined : selected === a.id}
@@ -173,7 +177,7 @@ export function ClassifyBoard({ boxes, items, placed, onChange, wrong, disabled 
         {/* 箱が2つなら375px幅でも横に並べる。5要素は従来どおり */}
         <div className={`grid gap-2 ${boxes.length === ELEMENTS.length ? "grid-cols-2 sm:grid-cols-5" : "grid-cols-2"}`}>
           {boxes.map(({ id: el, label }) => (
-            <Bin key={el} id={el} onPress={selected && !disabled ? () => place(el, false) : undefined}>
+            <Bin key={el} id={el} narrow={elementBoxes} onPress={selected && !disabled ? () => place(el, false) : undefined}>
               <button
                 type="button"
                 aria-disabled={disabled || !selected}
@@ -181,7 +185,9 @@ export function ClassifyBoard({ boxes, items, placed, onChange, wrong, disabled 
                 className={`w-full text-left text-xs font-semibold mb-1 rounded hover:bg-background/70 px-1 min-h-10 ${boxStyle(el).text} ${selected ? "" : "opacity-70"}`}
               >
                 {elementBoxes && <span aria-hidden>{ELEMENT_STYLE[el as Element].symbol} </span>}
-                {label}{selected ? " ← ここに入れる" : ""}
+                {label}
+                {/* 狭い箱でも「ここに / 入れる」の句で折る */}
+                {selected && <span className="break-keep"> ← ここに<wbr />入れる</span>}
               </button>
               <div className="flex flex-wrap gap-1">{items.filter((a) => placed[a.id] === el).map((a) => chip(a, true))}</div>
             </Bin>
