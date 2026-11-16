@@ -10,7 +10,7 @@ concepts: [memorandum_book, personal_account, debit_credit, journal_entry]
 requires: [birth-of-double-entry/memorandum-and-personal-accounts]
 sources:
   - title: ルカ・パチョーリ『スンマ』(1494年)第9部第11論
-    note: 商品ごとの勘定、利益の元手への振り替え、左右の合計の一致による検算。原典はパブリックドメイン
+    note: 商品ごとの勘定と、左右の合計の一致による検算。『スンマ』はもうけを利益と損失の勘定に集めてから元手へ移す手順を書いており、この単元の直接元手へ移すやり方は次の単元で改める。原典はパブリックドメイン
   - title: John B. Geijsbeek, Ancient Double-Entry Bookkeeping (1914)
     note: 『スンマ』簿記論の英訳と解説。パブリックドメイン
   - title: 渡邉泉『会計の歴史探訪』(同文舘出版)
