@@ -1271,7 +1271,8 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
                 check();
               }}
             >
-              <fieldset disabled={result?.correct === true} className="space-y-1">
+              {/* fieldsetをdisabledにすると行内の用語ボタンまで押せなくなるので、radioだけを無効にする(Issue #391) */}
+              <fieldset className="space-y-1">
                 <legend className="mb-1 flex items-center gap-1 text-sm font-semibold">
                   誤りのある行を選ぶ
                   <HelpIcon topic="debug" />
@@ -1286,6 +1287,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
                             type="radio"
                             name="debug-row"
                             className="mt-0.5"
+                            disabled={result?.correct === true}
                             aria-label={`${i + 1}行目: ${p.memo}`}
                             checked={debugRow === i}
                             onChange={() => {
