@@ -1,14 +1,19 @@
 import Link from "next/link";
 import { units } from "#content";
 import { LEVEL_LABELS, nextUnit, sortedDomains, sortedPaths, sortedTopics, unitsOfTopic } from "@/lib/content";
-import { HomeStart, type HomeStartUnit } from "@/components/home-start";
+import { HomeStart } from "@/components/home-start";
+import type { HomeStartUnit } from "@/lib/home-start";
 import { pageMetadata } from "@/lib/site";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const metadata = pageMetadata({ path: "/" });
 
 export default function Home() {
-  const startUnits: Record<string, HomeStartUnit> = Object.fromEntries(units.map((u) => [u.id, { title: u.title, nextId: nextUnit(u)?.id }]));
+  // キーの順がコンテンツの順になるよう、テーマ順の単元を先に入れる(重複したキーは最初の位置のまま)。非表示テーマ(チュートリアル)は後ろに付く(Issue #360)
+  const ordered = [...sortedTopics.flatMap((t) => unitsOfTopic(t.id)), ...units];
+  const startUnits: Record<string, HomeStartUnit> = Object.fromEntries(
+    ordered.map((u) => [u.id, { title: u.title, kind: u.kind, nextId: nextUnit(u)?.id }]),
+  );
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 space-y-10">
       <section className="space-y-4">
