@@ -103,6 +103,11 @@ function readReturnFrom(): string | null {
   return new URLSearchParams(window.location.search).get("from");
 }
 
+// トップの「続きから」から来たときは、案内を押さずに前回のステップを開く(Issue #375)
+function readAutoResume(): boolean {
+  return new URLSearchParams(window.location.search).get("resume") === "1";
+}
+
 // 「自由に試す」の記帳の見出し。案内(SANDBOX_NOT_SAVED)のとおり再読み込みで消すため、sessionStorageに書かない(Issue #319)
 const FREE_POST_MEMO = "自由に記帳";
 
@@ -318,6 +323,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
   const [tourKey, setTourKey] = useState(0);
   const tourActive = isTutorialUnit && !tourExited && (tutorial.status === "pending" || forceTour || tourKey > 0);
   const returnFrom = useSyncExternalStore(noop, readReturnFrom, () => null);
+  const autoResume = useSyncExternalStore(noop, readAutoResume, () => false);
   const returnTitle = returnFrom ? returnTitles?.[returnFrom] : undefined;
   const exitTour = () => {
     setTourExited(true);
@@ -656,6 +662,19 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     setReached(resumeStep);
     setResumeStep(null);
   };
+
+  // DBの進捗が届いた時点で案内の「続きから」と同じことをする。同じタブではsessionStorageの復元が先に効き、resumeStepは立たない
+  useEffect(() => {
+    if (!autoResume || resumeStep === null || tourActive || stepIndex !== 0) return;
+    // ?tour=1と同じく一度きりの指示。残すとreloadのたびに前回のステップへ飛ぶ
+    const url = new URL(window.location.href);
+    url.searchParams.delete("resume");
+    window.history.replaceState(null, "", url);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- resumeStepはDBの進捗が届いてから立つ
+    resume();
+    // resumeStepが届いたときに1回だけ行う
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoResume, resumeStep]);
 
   // サーバー描画はステップ1なので、復元はマウント後に行う。チュートリアルはツアーがステップ1からの台本なので戻さない
   /* eslint-disable react-hooks/set-state-in-effect -- sessionStorageはマウント後にしか読めない */
