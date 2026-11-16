@@ -1044,7 +1044,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
         {/* 点は縮まないので、スマホ幅ではタイトルを潰し行も溢れさせる。進み具合は隣の「ステップn / N」で分かる(Issue #89) */}
         <ol className="hidden sm:flex gap-1" aria-label="ステップの進み具合" data-tour="steps">
           {unit.steps.map((s, i) => (
-            <li key={i} aria-current={i === stepIndex ? "step" : undefined} className={`h-2 w-2 rounded-full ${i < stepIndex ? "bg-primary" : i === stepIndex ? "bg-primary/60 ring-2 ring-primary/30" : "bg-muted"}`}>
+            <li key={i} aria-current={i === stepIndex ? "step" : undefined} className={`h-2 w-2 rounded-full forced-colors:border forced-colors:border-[CanvasText] ${i < stepIndex ? "bg-primary forced-colors:bg-[CanvasText]" : i === stepIndex ? "bg-primary/60 ring-2 ring-primary/30 forced-colors:border-[Highlight] forced-colors:bg-[Highlight]" : "bg-muted forced-colors:bg-[Canvas]"}`}>
               <span className="sr-only">{s.title}</span>
             </li>
           ))}
