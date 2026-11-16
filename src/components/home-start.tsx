@@ -33,7 +33,8 @@ export function HomeStart({ units }: { units: Record<string, HomeStartUnit> }) {
       <div className="flex flex-wrap items-center gap-3">
         {target === "all-done" ? null : target ? (
           <Button size="lg" asChild>
-            <Link href={`/units/${target.unitId}`}>
+            {/* 「続きから」は前回のステップを開く約束なので、IDEに再開を指示する(Issue #375) */}
+            <Link href={`/units/${target.unitId}${target.label === "続きから" ? "?resume=1" : ""}`}>
               {target.label}: {units[target.unitId].title}
             </Link>
           </Button>
