@@ -383,21 +383,30 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
         setNoRecord(!p || (Object.keys(p.units).length === 0 && Object.keys(p.answers).length === 0));
         if (p) progressUser.current ??= p.userId;
         const saved = p?.units[unit.id];
+        const outOfRange = saved !== undefined && saved.step >= unit.steps.length;
+        // 終えていた単元は、ステップが減っても最後のステップを保存位置として扱い、完了の案内を出し続ける(Issue #385)
+        const keepLast = outOfRange && saved.status === "completed";
+        const savedAt = keepLast ? unit.steps.length - 1 : saved?.step;
         // ステップを減らした単元では保存値が範囲外になる。そのまま持つと最後に着いても完了にならないので無視し、DBの値も戻す(再開できるように)
-        if (saved && saved.step < unit.steps.length) savedStep.current = saved.step;
-        else if (saved) resetOutOfRangeStep(unit.id, unit.steps.length).catch((e: Error) => console.error(e));
-        if (saved && saved.step > 0 && saved.step < unit.steps.length && !restoredSession.current) {
-          const answer = p.answers[unit.id]?.[saved.step];
+        if (saved && !outOfRange) savedStep.current = saved.step;
+        else if (saved) {
+          const reset = resetOutOfRangeStep(unit.id, unit.steps.length);
+          // RPCは0に戻すので、終えていた単元は最後のステップへ上げ直す(後退防止のトリガーは上げる更新を通す)
+          (keepLast ? reset.then(() => setUnitProgress(unit.id, "completed", savedAt)) : reset).catch((e: Error) => console.error(e));
+          if (keepLast) savedStep.current = savedAt;
+        }
+        if (saved && savedAt !== undefined && savedAt > 0 && savedAt < unit.steps.length && !restoredSession.current) {
+          const answer = p.answers[unit.id]?.[savedAt];
           resumeAnswered.current = new Map(
             Object.entries(p.answers[unit.id] ?? {})
               .map(([i, a]) => [Number(i), a] as const)
-              .filter(([i]) => i < saved.step && (p.solved[unit.id]?.includes(i) || unit.steps[i].task.type === "predict")),
+              .filter(([i]) => i < savedAt && (p.solved[unit.id]?.includes(i) || unit.steps[i].task.type === "predict")),
           );
-          setResumeStep(saved.step);
+          setResumeStep(savedAt);
           setResumeCompleted(saved.status === "completed");
           setResumeAnswer(answer);
-          setResumeWrong(p.wrong[unit.id]?.[saved.step] ?? 0);
-          setResumeSolved((p.solved[unit.id]?.includes(saved.step) ?? false) || (unit.steps[saved.step].task.type === "predict" && answer !== undefined));
+          setResumeWrong(p.wrong[unit.id]?.[savedAt] ?? 0);
+          setResumeSolved((p.solved[unit.id]?.includes(savedAt) ?? false) || (unit.steps[savedAt].task.type === "predict" && answer !== undefined));
         }
       })
       .catch((e: Error) => {
