@@ -98,8 +98,8 @@ misconceptions:
     remediation: depreciation/what-is-depreciation
   - id: forgot_monthly_proration
     name: 月割りを忘れる
-    description: 期の途中で取得した資産でも、1年分の減価償却費を計上してしまう
-    correct: 使った期間に対応する費用だけを計上する。取得した月から決算月までの月数で1年分を按分する
+    description: 期の途中で取得した資産や売った資産でも、1年分の減価償却費を計上してしまう
+    correct: 使った期間に対応する費用だけを計上する。取得した年は取得した月から決算月まで、売った年は期首から売った月までの月数で1年分を按分する
     concepts: [monthly_proration, straight_line_method]
     remediation: depreciation/straight-line
   - id: residual_value_ignored
