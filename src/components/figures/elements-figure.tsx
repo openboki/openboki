@@ -13,8 +13,9 @@ export function ElementsFigure({ items, accounts }: { items: Item[]; accounts: R
   const box = (el: Element) => {
     const s = ELEMENT_STYLE[el];
     const list = byElement(el);
+    // 比較の図では箱の1列が60px前後になるので、横の余白を詰めて4文字の科目名を1行に収める(Issue #370)。それより長い名前は箱の幅で折る
     return (
-      <div className={`rounded-md border-2 p-2 min-h-16 ${s.border} ${s.bg}`}>
+      <div className={`rounded-md border-2 px-1.5 py-2 min-h-16 ${s.border} ${s.bg}`}>
         <div className={`text-xs font-semibold ${s.text}`}>
           <span aria-hidden>{s.symbol} </span>
           {s.label}
@@ -23,7 +24,7 @@ export function ElementsFigure({ items, accounts }: { items: Item[]; accounts: R
           {list.map((i) => {
             const a = accounts.get(i.account)!;
             return (
-              <li key={i.account} className={`rounded-full bg-background px-2 py-0.5 text-xs ${i.highlight ? `ring-2 ${s.ring} font-semibold` : ""}`}>
+              <li key={i.account} className={`rounded-full bg-background px-1.5 py-0.5 text-xs ${i.highlight ? `ring-2 ${s.ring} font-semibold` : ""}`}>
                 {a.name}
                 {a.contra && <span className="text-muted-foreground">(控除)</span>}
               </li>
