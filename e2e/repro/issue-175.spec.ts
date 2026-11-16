@@ -115,9 +115,10 @@ test("正解したあとに誤答を重ねたステップは、最後の誤答�
   await nextAndSave(page);
   await expect(page.getByText("ステップ3 / 10")).toBeVisible();
 
+  // 別タブは最後の誤答(売上)を引き継ぐので、同じ答えでは採点されない(Issue #367)。別の誤答で記録する
   await Promise.all([
     other.waitForResponse((r) => r.url().includes("/attempts") && r.request().method() === "POST"),
-    post(other, ["現金", "1000000"], ["売上", "1000000"]),
+    post(other, ["現金", "1000000"], ["借入金", "1000000"]),
   ]);
   await expect(other.getByRole("status").filter({ hasText: "もう一歩" })).toBeVisible();
 
