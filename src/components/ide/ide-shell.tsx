@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { type MouseEvent, type ReactNode, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { Fragment, type MouseEvent, type ReactNode, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { flushSync } from "react-dom";
 import type { Unit } from "#content";
 import type { GlossaryAccount, GlossaryEntry } from "@/lib/content";
@@ -56,6 +56,8 @@ export interface IdeUnit {
   opening: OpeningLine[];
   steps: IdeStep[];
   next?: { id: string; title: string };
+  // 前提の単元。テーマのページが「各単元の冒頭に示す」と案内している(Issue #380)
+  requires: { id: string; title: string }[];
 }
 
 export interface MisconceptionInfo {
@@ -1082,6 +1084,17 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
       <div className="grid flex-1 min-h-0 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)_minmax(0,1fr)]">
         <section id="pane-guide" role="region" aria-label="ガイド" className={`${paneClass("guide")} bg-surface-guide lg:border-r`} data-tour="guide">
           {unit.era && <p className="mb-2 text-xs text-muted-foreground">{unit.era}</p>}
+          {stepIndex === 0 && unit.requires.length > 0 && (
+            <p className="mb-2 text-xs text-muted-foreground">
+              前提:{" "}
+              {unit.requires.map((r, i) => (
+                <Fragment key={r.id}>
+                  {i > 0 && " / "}
+                  <Link href={`/units/${r.id}`} className="underline">{r.title}</Link>
+                </Fragment>
+              ))}
+            </p>
+          )}
           <h2 ref={stepHeading} tabIndex={-1} className={`text-lg font-semibold mb-2 ${FOCUS_TARGET_CLASS}`}>{step.title}</h2>
           {/* ツアーを抜けたあと、学ぶつもりだった単元へ戻れるようにする。チュートリアルを続ける道も残すので自動では戻さない(Issue #224) */}
           {isTutorialUnit && returnTitle && !tourActive && (
