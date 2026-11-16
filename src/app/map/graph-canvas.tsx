@@ -95,21 +95,49 @@ export function GraphCanvas({ nodes, links, selectedId, anchorId, matchedIds, on
         ctx.stroke();
       }
 
-      if (!filtered && (near || n.id === view.current.hoverId || scale >= LABEL_ZOOM)) {
-        const size = Math.max(11 / scale, 3.2);
-        ctx.font = `${selected ? 700 : 500} ${size}px ${colors.font}`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "top";
-        const y = n.y + r + 2.5 / scale;
-        ctx.globalAlpha = 1;
-        ctx.lineWidth = 3.5 / scale;
-        ctx.lineJoin = "round";
-        ctx.strokeStyle = alpha(colors.surface, 0.9);
-        ctx.strokeText(n.name, n.x, y);
-        ctx.fillStyle = colors.foreground;
-        ctx.fillText(n.name, n.x, y);
+      const hovered = n.id === view.current.hoverId;
+      if (!filtered && (near || hovered || scale >= LABEL_ZOOM)) {
+        labels.push({ n, r, selected, rank: selected ? 0 : hovered ? 1 : near ? 2 : 3 });
       }
       ctx.globalAlpha = 1;
+    };
+
+    // ラベルは点をすべて描いた後に、選んだ点 > ポインタの点 > 隣 > その他の順で置く。
+    // 縮めた図では点どうしが近く、真下に固定で描くと名前が重なって読めないので、
+    // 真下・真上・右・左の順に空いている場所を探し、どこも埋まっていれば出さない(説明ペインに文字で一覧がある)
+    let labels: { n: RenderNode; r: number; selected: boolean; rank: number }[] = [];
+    const paintLabels = (ctx: CanvasRenderingContext2D, scale: number) => {
+      const placed: { x: number; y: number; w: number; h: number }[] = [];
+      const size = Math.max(11 / scale, 3.2);
+      const gap = 2.5 / scale;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      ctx.lineWidth = 3.5 / scale;
+      ctx.lineJoin = "round";
+      for (const { n, r, selected } of labels.sort((a, b) => a.rank - b.rank)) {
+        const x = n.x!;
+        const y = n.y!;
+        ctx.font = `${selected ? 700 : 500} ${size}px ${colors.font}`;
+        const w = ctx.measureText(n.name).width;
+        const spots = [
+          { x, y: y + r + gap },
+          { x, y: y - r - gap - size },
+          { x: x + r + gap + w / 2, y: y - size / 2 },
+          { x: x - r - gap - w / 2, y: y - size / 2 },
+        ];
+        const rect = spots
+          .map((p) => ({ x: p.x - w / 2 - gap, y: p.y - gap / 2, w: w + gap * 2, h: size + gap }))
+          .find((a) => placed.every((b) => a.x >= b.x + b.w || b.x >= a.x + a.w || a.y >= b.y + b.h || b.y >= a.y + a.h));
+        if (!rect) continue;
+        placed.push(rect);
+        const tx = rect.x + gap + w / 2;
+        const ty = rect.y + gap / 2;
+        ctx.strokeStyle = alpha(colors.surface, 0.9);
+        ctx.strokeText(n.name, tx, ty);
+        ctx.fillStyle = colors.foreground;
+        ctx.fillText(n.name, tx, ty);
+      }
+      labels = [];
     };
 
     const isLinkNear = (l: RenderLink) => endId(l.source) === focusId() || endId(l.target) === focusId();
@@ -138,6 +166,8 @@ export function GraphCanvas({ nodes, links, selectedId, anchorId, matchedIds, on
         .backgroundColor("rgba(0,0,0,0)")
         .nodeCanvasObjectMode(() => "replace")
         .nodeCanvasObject(paintNode)
+        .onRenderFramePre(() => (labels = []))
+        .onRenderFramePost(paintLabels)
         .nodePointerAreaPaint((n, color, ctx) => {
           ctx.fillStyle = color;
           ctx.beginPath();
