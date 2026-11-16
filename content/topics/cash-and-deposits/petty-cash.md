@@ -101,8 +101,9 @@ wrong_patterns:
   - match: { debit: [{ account: supplies_expense, amount: 10500 }] }
     misconception: postage_as_supplies
     feedback: 切手代4,000円は、郵便のための代金なので通信費です。消耗品費にするのは文房具代6,500円だけです。
-  - match: { unbalanced: true }
-    feedback: 左の3つの費用の合計(12,500)と、右の小口現金がそろっていません。
+  - match: { unbalanced: true, debit: [{ account: communication_expense }, { account: supplies_expense }, { account: travel_expense }], credit: [{ account: petty_cash }] }
+    no_misconception: 科目は3つともそろっていて金額の打ち間違いなので、どの誤解でもない。左右のどちらが違うかは決めつけない(Issue #361)
+    feedback: 科目は合っていますが、左の3つの費用の合計と右の小口現金がそろっていません。報告の切手代4,000円、文房具代6,500円、電車代2,000円と、書いた金額を1行ずつ見比べましょう。
   - match: { debit: [{ account: communication_expense }, { account: supplies_expense }, { account: travel_expense }], credit: [{ account: petty_cash }] }
     no_misconception: 科目は合っていて金額の割り当てだけが違うので、どの科目の誤解でもない(Issue #359)
     feedback: 科目は合っています。切手代、文房具代、電車代のどの金額をどの行に書いたか見直しましょう。
@@ -124,6 +125,17 @@ wrong_patterns:
   - match: { debit: [{ account: supplies_expense, amount: 6500 }, { account: travel_expense, amount: 2000 }], credit: [{ account: petty_cash, amount: 8500 }] }
     misconception: petty_payment_omitted
     feedback: 報告された支払いは3つですが、切手代4,000円の分が書かれていません。通信費の行を足して、右の小口現金も3つの合計にしましょう。
+  - match: { debit: [{ account: communication_expense, amount: 4000 }, { account: supplies_expense, amount: 6500 }], credit: [{ account: petty_cash, amount: 12500 }] }
+    misconception: petty_payment_omitted
+    feedback: 報告された支払いは3つですが、電車代2,000円の分が書かれていません。右の小口現金12,500は3つの合計で合っているので、左に旅費交通費の行を足しましょう。
+  - match: { debit: [{ account: communication_expense, amount: 4000 }, { account: travel_expense, amount: 2000 }], credit: [{ account: petty_cash, amount: 12500 }] }
+    misconception: petty_payment_omitted
+    feedback: 報告された支払いは3つですが、文房具代6,500円の分が書かれていません。右の小口現金12,500は3つの合計で合っているので、左に消耗品費の行を足しましょう。
+  - match: { debit: [{ account: supplies_expense, amount: 6500 }, { account: travel_expense, amount: 2000 }], credit: [{ account: petty_cash, amount: 12500 }] }
+    misconception: petty_payment_omitted
+    feedback: 報告された支払いは3つですが、切手代4,000円の分が書かれていません。右の小口現金12,500は3つの合計で合っているので、左に通信費の行を足しましょう。
+  - match: { unbalanced: true }
+    feedback: 左の合計と右の合計がそろっていません。報告の3つの支払いの合計を、左右のどちらにも書きましょう。
 hint: 左に通信費4,000、消耗品費6,500、旅費交通費2,000の3行。右に小口現金12,500です。「行を追加」で行を増やせます。
 success: 3つの費用が損益計算書に現れ、小口現金は17,500に減りました。
 ```
