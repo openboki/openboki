@@ -59,17 +59,18 @@ test("商品以外の後払いと手付金で、似た4科目の取り違えに�
   await work.getByRole("button", { name: "確認する" }).click();
   await next();
 
-  // ステップ8: 未収入金と未払金を入れ替える
+  // ステップ8: 未収入金と未払金、前払金と前受金をそれぞれ入れ替える
   const board = work.getByRole("group", { name: "仕分けボード" });
   for (const [chip, box] of [
     ["未収入金", "負債"],
     ["未払金", "資産"],
-    ["前払金", "資産"],
-    ["前受金", "負債"],
+    ["前払金", "負債"],
+    ["前受金", "資産"],
   ]) {
     await board.getByRole("button", { name: chip, exact: true }).click();
     await board.getByRole("button", { name: `${box} ← ここに入れる`, exact: true }).click();
   }
   await work.getByRole("button", { name: "確認する" }).click();
   await expect(status).toContainText("未収入金と未払金の取り違え");
+  await expect(status).toContainText("前払金と前受金の取り違え");
 });
