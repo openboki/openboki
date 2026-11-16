@@ -66,7 +66,7 @@ export function Term({ entry, name = entry.name, children }: { entry: GlossaryEn
         <button
           ref={trigger}
           type="button"
-          className="term underline decoration-dotted decoration-primary/60 underline-offset-4 hover:decoration-solid focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+          className="term text-left underline decoration-dotted decoration-primary/60 underline-offset-4 hover:decoration-solid focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
           onClick={(e) => {
             // ホバーで開いている用語を押したときは、トグルで閉じずに固定して中身へフォーカスを移す
             if (open && byHover.current) {
