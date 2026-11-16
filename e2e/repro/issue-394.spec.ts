@@ -11,12 +11,17 @@ test("forced-colorsでも選択中のテーマと会社のかたちが見える"
   await page.getByRole("group", { name: "テーマ" }).getByRole("button", { name: /藍と朱/ }).click();
   await page.getByRole("group", { name: "明るさ" }).getByRole("button", { name: "ライト" }).click();
   await page.emulateMedia({ forcedColors: "active" });
+  // 直前に押したボタンの:hoverとフォーカスの枠で見た目が変わらないように、マウスとフォーカスを外して測る
+  await page.mouse.move(0, 0);
+  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+  await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished)));
 
   // 枠の色・太さ・outlineのどれかで、選択中と他を見分けられる
   const look = (group: string, name: string | RegExp) =>
     page.getByRole("group", { name: group }).getByRole("button", { name }).evaluate((b) => {
       const c = getComputedStyle(b);
-      return [c.borderTopColor, c.borderTopWidth, c.outlineStyle, c.outlineWidth].join(" ");
+      // outline-styleがnoneでもoutline-widthは既定の値を返すので、noneなら幅を数えない
+      return [c.borderTopColor, c.borderTopWidth, c.outlineStyle, c.outlineStyle === "none" ? "0px" : c.outlineWidth].join(" ");
     });
   expect(await look("テーマ", /藍と朱/)).not.toBe(await look("テーマ", /帳簿用紙/));
   expect(await look("明るさ", "ライト")).not.toBe(await look("明るさ", "ダーク"));
