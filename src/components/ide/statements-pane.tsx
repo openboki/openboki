@@ -33,7 +33,8 @@ export function StatementsPane({ accounts, netIncomeTerm, balances, diff, compan
   changedElements.set("equity", (changedElements.get("equity") ?? 0) + netIncomeDelta);
   for (const [el, d] of [...changedElements]) if (d === 0) changedElements.delete(el);
   // 科目名と同じく、当期純利益(損失)の行でも用語の説明を開ける
-  const netIncomeLabel = <Term entry={netIncomeTerm}>{st.netIncome >= 0 ? "当期純利益" : "当期純損失"}</Term>;
+  const netIncomeName = st.netIncome >= 0 ? "当期純利益" : "当期純損失";
+  const netIncomeLabel = <Term entry={netIncomeTerm} name={netIncomeName}>{netIncomeName}</Term>;
   const empty = balances.size === 0 || [...balances.values()].every((v) => v === 0);
   const root = useRef<HTMLDivElement>(null);
   const active = useRef<string | null>(null);
