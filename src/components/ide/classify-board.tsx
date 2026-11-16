@@ -39,7 +39,7 @@ interface ChipProps {
   wrong: boolean;
   pressed?: boolean;
   disabled?: boolean;
-  onPress: () => void;
+  onPress: (e: MouseEvent) => void;
 }
 
 function Chip({ item, long, inBin, selected, wrong, pressed, disabled, onPress }: ChipProps) {
@@ -154,7 +154,8 @@ export function ClassifyBoard({ boxes, items, placed, onChange, wrong, disabled 
       wrong={wrong.has(a.id)}
       pressed={inBin ? undefined : selected === a.id}
       disabled={disabled}
-      onPress={() => (inBin ? unplace(a.id) : setSelected(selected === a.id ? null : a.id))}
+      // 入れた直後は候補欄が縮んで箱が上がり、このチップがポインタの下に来る。連続クリックの2回目以降で戻さない(Issue #389)
+      onPress={(e) => (inBin ? e.detail <= 1 && unplace(a.id) : setSelected(selected === a.id ? null : a.id))}
     />
   );
 
