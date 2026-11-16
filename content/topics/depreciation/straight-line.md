@@ -124,6 +124,10 @@ wrong_patterns:
     feedback: 1年分は200,000ですが、使ったのは10月から3月までの6か月です。使った月数の分だけにしましょう。
   - match: 150000
     feedback: ここでは残存価額ゼロで計算します。1年分200,000を月割りしましょう。
+  - match: 75000
+    feedback: 月割りはできています。ただ、前のステップの残存価額300,000を持ち越しています。ここでは残存価額ゼロなので、1年分は200,000です。
+  - match: 600000
+    feedback: 取得原価1,200,000をそのまま月割りしています。先に耐用年数6年で割って1年分200,000を出し、それを6か月分にしましょう。
   - match: 50000
     feedback: 10月から3月までは6か月です。200,000 × 6 ÷ 12で計算してみましょう。
   - match: 83333
@@ -202,6 +206,9 @@ wrong_patterns:
   - match: { credit: [{ account: accumulated_depreciation_building }] }
     misconception: accumulated_depreciation_any_asset
     feedback: 建物減価償却累計額は、建物の価値の減りを積む科目です。累計額は資産ごとに分けて積み、その資産の取得原価から引いて帳簿価額を出します。マシンの減りは備品減価償却累計額に積みましょう。
+  - match: { debit: [{ account: depreciation_expense, amount: 150000 }] }
+    misconception: accumulated_depreciation_any_asset
+    feedback: 150,000は軽バンの100,000とマシンの50,000を合わせた額です。軽バンの分は前のステップで車両運搬具減価償却累計額に積み終えています。累計額は資産ごとに分けて積むので、この仕訳に書くのはマシンの6か月分50,000だけです。
   - match: { debit: [{ account: depreciation_expense, amount: 100000 }] }
     misconception: forgot_monthly_proration
     feedback: 1年分は100,000ですが、使ったのは6か月です。月割りしてみましょう。
