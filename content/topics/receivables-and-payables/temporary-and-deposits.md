@@ -130,6 +130,15 @@ wrong_patterns:
   - match: { debit: [{ account: shipping_expense }] }
     misconception: advance_for_others_is_expense
     feedback: 店の商品を送ったわけではありません。本人から返してもらうお金なので、立替金という資産です。
+  - match: { debit: [{ account: communication_expense }] }
+    misconception: advance_for_others_is_expense
+    feedback: 店の電話代や切手代ではありません。スタッフの私物の送料を代わりに払い、本人から返してもらうお金なので、費用ではなく立替金という資産です。
+  - match: { debit: [{ account: supplies_expense }] }
+    misconception: advance_for_others_is_expense
+    feedback: 店が使う物を買ったわけではありません。スタッフの私物の送料を代わりに払い、本人から返してもらうお金なので、費用ではなく立替金という資産です。
+  - match: { debit: [{ account: salaries_expense }] }
+    misconception: advance_for_others_is_expense
+    feedback: 働いてもらった対価として渡したお金ではありません。スタッフの私物の送料を代わりに払い、本人から返してもらうお金なので、給料ではなく立替金という資産です。
   - match: { debit: [{ account: deposits_received }] }
     feedback: 預り金は、預かったお金を後で納める義務です。今回は逆に、店が先に払ってあげました。
   - match: { debit: [{ account: advance_payment }] }
@@ -251,6 +260,9 @@ wrong_patterns:
   - match: { credit: [{ account: sales }] }
     misconception: receivable_collection_is_sale
     feedback: ショーケースを売ったときに、未収入金として記録済みです。今回はその権利が回収されただけなので、売上ではありません。
+  - match: { credit: [{ account: interest_income }] }
+    misconception: receivable_collection_is_sale
+    feedback: お金を貸して受け取った利息ではありません。ショーケースの代金は未収入金として記録済みで、今回はその権利が預金に変わっただけなので、収益にはなりません。右に未収入金を書いて権利を減らします。
   - match: { debit: [{ account: bank_deposit }] }
     feedback: 普通預金は入金のときに増やしてあります。今回は仮受金と未収入金を相殺するだけです。
   - match: { credit: [{ account: accounts_receivable }] }
