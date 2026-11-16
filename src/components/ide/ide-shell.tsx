@@ -163,6 +163,13 @@ function isEditable(v: unknown) {
   return isObject(v) && lines(v.debit) && lines(v.credit);
 }
 
+// 同じ答えかを比べるキー。DBのjsonbはキーの順を並べ替えるので、保存済みの答えとも一致するようキーを整列して文字列にする(Issue #367)
+function answerKey(answer: unknown) {
+  return JSON.stringify(answer, (_, v: unknown) =>
+    isObject(v) ?Object.fromEntries(Object.entries(v).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) : v,
+  );
+}
+
 // 手で書き換えた値や、形を変えた更新の前から開いていたタブの値で落ちないよう、形が合わなければ丸ごと捨てる(Issue #277)。
 // 科目IDが変わったあとの記帳も、貸借対照表が合わなくなるので捨てる
 function readSession(unitId: string, stepCount: number, accounts: ReadonlyMap<string, AccountInfo>): SessionSnapshot | null {
@@ -243,6 +250,8 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
   const resumeAnswered = useRef(new Map<number, unknown>());
   // 保存済みの進捗をanswered・postedに取り込んだか。案内は「続きから」を押すまで残すので、取り込みは1回だけにする
   const resumeAdopted = useRef(false);
+  // 再開するステップが未正解なら、その最後の誤答。着いた時点でgradedAnswerに入れ、同じ誤答を2回目に数えない(Issue #367)
+  const resumeGraded = useRef<{ step: number; key: string } | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   // 保存の成功で消えるsaveErrorとは分ける。読み込み直すまで「続きから」が出ないことを知らせ続ける
   const [loadError, setLoadError] = useState(false);
@@ -551,10 +560,33 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     if (!answered.current.has(from)) {
       // restoreStepは誤答や答えの無いときに模範解答で戻す。tweakは模範解答が無いので達成時の値を使う
       if (resumeSolved) answered.current.set(from, resumeAnswer ?? null);
-      else if (!stepAttempts.current.has(from)) stepAttempts.current.set(from, resumeWrong);
+      else if (!stepAttempts.current.has(from)) {
+        stepAttempts.current.set(from, resumeWrong);
+        if (resumeAnswer !== undefined) resumeGraded.current = { step: from, key: answerKey(resumeAnswer) };
+      }
     }
     // reachedは上げない。歩いて進む経路なので、各ステップの達成で「次へ →」を判定する
     resumeAdopted.current = true;
+  };
+
+  // 最後に採点した誤答とその結果を戻す。押し直しを同じ答えと判定し、「さっきと同じ答えです」を結果の横に出すため
+  const restoreGraded = (t: Task, key: string) => {
+    if (t.type !== "post" && t.type !== "calc" && t.type !== "classify" && t.type !== "debug") return;
+    gradedAnswer.current = key;
+    const graded = JSON.parse(key);
+    if (t.type === "post") {
+      setGradedEntry(graded);
+      setResult(gradePost(t, graded, accountMap, unit.kind));
+    }
+    if (t.type === "calc") setResult(gradeCalc(t, graded));
+    if (t.type === "classify") {
+      setGradedPlaced(graded);
+      setResult(gradeClassify(t, graded, accountMap));
+    }
+    if (t.type === "debug") {
+      setGradedEntry(graded.index === t.answer.index ? graded.entry : null);
+      setResult(gradeDebug(t, graded, accountMap, unit.kind));
+    }
   };
 
   const goTo = (index: number) => {
@@ -592,6 +624,11 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     }
     const sessionAnswer = answered.current.get(index);
     if (sessionAnswer !== undefined) restoreStep(index, sessionAnswer);
+    else if (resumeGraded.current?.step === index) {
+      // 同じタブで離れて戻ったときと同じく、1回だけ使う
+      restoreGraded(target.task, resumeGraded.current.key);
+      resumeGraded.current = null;
+    }
     const top = Math.max(index, reached, savedStep.current);
     setReached(Math.max(index, reached));
     savedStep.current = top;
@@ -639,23 +676,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
         setCalcValue(s.calcValue);
         setParams(s.params);
         setDebugRow(s.debugRow ?? null);
-        if (s.gradedAnswer && (t.type === "post" || t.type === "calc" || t.type === "classify" || t.type === "debug")) {
-          gradedAnswer.current = s.gradedAnswer;
-          const graded = JSON.parse(s.gradedAnswer);
-          if (t.type === "post") {
-            setGradedEntry(graded);
-            setResult(gradePost(t, graded, accountMap, unit.kind));
-          }
-          if (t.type === "calc") setResult(gradeCalc(t, graded));
-          if (t.type === "classify") {
-            setGradedPlaced(graded);
-            setResult(gradeClassify(t, graded, accountMap));
-          }
-          if (t.type === "debug") {
-            setGradedEntry(graded.index === t.answer.index ? graded.entry : null);
-            setResult(gradeDebug(t, graded, accountMap, unit.kind));
-          }
-        }
+        if (s.gradedAnswer) restoreGraded(t, s.gradedAnswer);
       }
     }
     setSessionLoaded(true);
@@ -781,7 +802,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     if (answeredStep.current === stepIndex) return;
     // 答えを変えずに押し直したときは採点も記録もしない(答えを変えれば数える)
     const alreadyGraded = (answer: unknown) => {
-      const key = JSON.stringify(answer);
+      const key = answerKey(answer);
       if (gradedAnswer.current === key) {
         // ダブルクリックの2回目まで案内すると、1回しか答えていないのに「同じ答え」と言われる
         if (Date.now() - gradedAt.current > 500) setRepeated((n) => n + 1);
