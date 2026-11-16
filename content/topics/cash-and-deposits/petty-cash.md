@@ -95,7 +95,7 @@ wrong_patterns:
   - match: { credit: [{ account: cash }] }
     misconception: petty_cash_is_cash
     feedback: 担当者の手元のお金は、店の金庫の現金とは分けて小口現金という科目で管理しています。支払いに使ったので、減るのは小口現金です。
-  - match: { debit: [{ account: supplies_expense, amount: 4000 }] }
+  - match: { debit: [{ account: supplies_expense, amount: 4000 }, { account: supplies_expense, amount: 6500 }] }
     misconception: postage_as_supplies
     feedback: 切手代4,000円は、郵便のための代金なので通信費です。消耗品費にするのは文房具代6,500円だけです。
   - match: { debit: [{ account: supplies_expense, amount: 10500 }] }
@@ -103,6 +103,9 @@ wrong_patterns:
     feedback: 切手代4,000円は、郵便のための代金なので通信費です。消耗品費にするのは文房具代6,500円だけです。
   - match: { unbalanced: true }
     feedback: 左の3つの費用の合計(12,500)と、右の小口現金がそろっていません。
+  - match: { debit: [{ account: communication_expense }, { account: supplies_expense }, { account: travel_expense }], credit: [{ account: petty_cash }] }
+    no_misconception: 科目は合っていて金額の割り当てだけが違うので、どの科目の誤解でもない(Issue #359)
+    feedback: 科目は合っています。切手代、文房具代、電車代のどの金額をどの行に書いたか見直しましょう。
   - match: { debit: [{ account: communication_expense, amount: 12500 }] }
     misconception: petty_expenses_lumped
     feedback: 通信費になるのは切手代だけです。報告された3つの支払いは使い道が違うので、文房具代と電車代はそれぞれの費用の科目に分けます。
