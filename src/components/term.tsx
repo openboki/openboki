@@ -10,7 +10,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 
 // 本文中の用語。ホバーまたはタップでshort → summary / example → 単元へ、と段階的に掘れる(要件1章)
 
-export function Term({ entry, children }: { entry: GlossaryEntry; children: React.ReactNode }) {
+// nameは押した語が用語の別名のとき(当期純損失など)に渡し、見出しをその語にする
+export function Term({ entry, name = entry.name, children }: { entry: GlossaryEntry; name?: string; children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -102,12 +103,13 @@ export function Term({ entry, children }: { entry: GlossaryEntry; children: Reac
           // Radixは用語の押下も「外側の操作」と覚え、ホバー後にクリックで固定した用語をEscで閉じたときに用語へフォーカスを戻さない
           if (trigger.current?.contains(e.target as Node)) e.preventDefault();
         }}
-        aria-label={entry.name}
+        aria-label={name}
         onPointerEnter={(e) => e.pointerType === "mouse" && timer.current && clearTimeout(timer.current)}
         onPointerLeave={(e) => schedule(e, false, 250)}
       >
         <div className="font-semibold flex items-center gap-2">
-          {entry.name}
+          {name}
+          {name !== entry.name && <span className="text-xs font-normal text-muted-foreground">用語集では「{entry.name}」</span>}
           {entry.element && <ElementBadge element={entry.element} contra={entry.contra} temporary={entry.temporary} size="xs" />}
         </div>
         <p>{entry.short}</p>
