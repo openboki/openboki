@@ -322,10 +322,10 @@ accounts:
   - id: depreciation_expense
     name: 減価償却費
     reading: [げんかしょうきゃくひ]
-    short: 建物や備品などの購入代金のうち、今年の分として費用にした金額
+    short: 建物や備品などの購入代金のうち、当期に使った分として費用にした金額
     element: expense
     why: 固定資産の取得原価のうち、当期の使用によって消費された部分を費用として認識するためです。
-    example: 100万円のトラックを5年使うなら、1年目の減価償却費は20万円。
+    example: 100万円のトラックを5年使うなら、1年分の減価償却費は20万円。10月に買って3月末が決算なら、初年度は6か月分の10万円。
     concepts: [expense, depreciation, cost_allocation]
   - id: gain_on_sale_of_fixed_assets
     name: 固定資産売却益
@@ -377,7 +377,7 @@ accounts:
     reading: [かしだおれひきあてきんくりいれ]
     short: 決算で貸倒れを見積もり、貸倒引当金に積んだ金額。その年の費用になる
     element: expense
-    why: 今年売った分から出る見込みの貸倒れの損で、純資産を減らす原因だからです。
+    why: 当期に売った分から出る見込みの貸倒れの損で、純資産を減らす原因だからです。
     example: 貸倒引当金の残高4,000円を見積額6,000円に合わせるために積んだ2,000円。
     concepts: [expense, allowance_for_doubtful_accounts, replenishment_method]
   - id: miscellaneous_gain
