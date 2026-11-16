@@ -5,6 +5,8 @@ test("定額法の月割りと2台分の合計の誤答に、取り違えを言�
   const work = page.getByRole("region", { name: "ワークスペース" });
   const next = page.getByRole("button", { name: "次へ →" });
   const generic = page.getByText(/まだ合っていません|科目は合っています。金額をもう一度/);
+  // 本文にも「残存価額」「耐用年数」があるので、説明文は結果の箱の中で探す
+  const result = page.getByRole("status").filter({ hasText: "もう一歩" });
   await page.goto("/units/depreciation/straight-line");
   await page.getByRole("button", { name: "今はしない" }).click({ timeout: 5000 }).catch(() => {});
   await next.click();
@@ -30,7 +32,7 @@ test("定額法の月割りと2台分の合計の誤答に、取り違えを言�
     await work.getByRole("button", { name: "確認する" }).click();
     await expect(page.getByText("もう一歩", { exact: true })).toBeVisible();
     await expect(generic).toHaveCount(0);
-    await expect(page.getByText(words)).toBeVisible();
+    await expect(result.getByText(words)).toBeVisible();
   }
   await amount.fill("100000");
   await work.getByRole("button", { name: "確認する" }).click();
