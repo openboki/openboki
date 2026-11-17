@@ -231,8 +231,9 @@ export function gradeClassify(task: TaskOf<"classify">, placed: Partial<Record<s
     wrong.push({
       account: item.id,
       misconception: chosen ? task.misconceptions[item.id]?.[chosen] : undefined,
-      // 任意の箱には科目のwhyに当たる理由が無いので、正解の箱だけを示し、理由は誤解の説明に任せる
-      feedback: task.labels ? `「${item.label}」は${boxLabel.get(item.answer)}です。` : `${item.label}は${boxLabel.get(item.answer)}です。${whyForChosen(accounts.get(item.id)!.why, chosen)}`,
+      // 任意の箱には科目のwhyに当たる理由が無いので、正解の箱だけを示し、理由は誤解の説明に任せる。
+      // ラベルは動詞句のこともある(「貸倒れとして処理する」)ので、「〜です」に直結せず「の箱」で受ける(Issue #417)
+      feedback: task.labels ? `「${item.label}」は「${boxLabel.get(item.answer)}」の箱です。` : `${item.label}は${boxLabel.get(item.answer)}です。${whyForChosen(accounts.get(item.id)!.why, chosen)}`,
     });
   }
   if (wrong.length === 0) return { ...ok(task), wrong, misconceptions: [] };
