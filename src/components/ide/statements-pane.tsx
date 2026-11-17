@@ -21,7 +21,7 @@ interface Props {
 }
 
 export function StatementsPane({ accounts, netIncomeTerm, balances, diff, company }: Props) {
-  const st = buildStatements(balances, accounts);
+  const st = buildStatements(balances, accounts, diff);
   const balanced = st.totalAssets === st.totalLiabilities + st.totalEquity;
   const changedElements = new Map<Element, number>();
   for (const [id, d] of diff) {
@@ -192,7 +192,8 @@ function Row({ id, name, amount, delta, magnitude = false }: { id?: string; name
   const changed = delta !== 0;
   // 当期純損失・評価勘定の △ は損失額・控除額の大きさなので、増減もその大きさの向きで示す。通常の科目のマイナス残高は符号どおり
   // 利益から損失に転じた記帳は増減額が損失額を超え、大きさの増減として読めないので符号どおり(0からの発生は大きさの増加)
-  const shown = magnitude && amount < 0 && amount - delta <= 0 ? -delta : delta;
+  // 評価勘定を消して0になった行も、控除額の大きさが減ったものとして示す(Issue #418)
+  const shown = magnitude && amount <= 0 && amount - delta <= 0 ? -delta : delta;
   return (
     <div data-account={id} className={`flex flex-wrap items-baseline justify-between gap-x-2 rounded px-1 ${changed ? "bg-changed motion-safe:animate-highlight" : ""}`}>
       <span className="min-w-0">{name}</span>
