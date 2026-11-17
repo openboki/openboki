@@ -19,7 +19,7 @@ function Simple({ spec }: { spec: SimpleFigure }) {
     case "flow":
       return <FlowFigure nodes={spec.nodes} highlight={spec.highlight} />;
     case "timeline":
-      return <TimelineFigure total={spec.total} periods={spec.periods} unit={spec.unit ?? "年"} label={spec.label} />;
+      return <TimelineFigure total={spec.total} periods={spec.periods} unit={spec.unit ?? "年"} label={spec.label} highlight={spec.highlight} startMonth={spec.start_month} />;
     case "taccount":
       return <TAccountFigure account={accountMap.get(spec.account)!} debit={spec.debit ?? []} credit={spec.credit ?? []} />;
     case "proportion":
