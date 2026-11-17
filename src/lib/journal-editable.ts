@@ -59,6 +59,21 @@ export function isIncompleteLine(line: EditableLine, accounts: AccountInfo[], cu
   return !findAccountByName(line.accountName, accounts) || "reason" in parseAmount(line.amount, false, currency);
 }
 
+/**
+ * 金額欄に見えている数字の借方・貸方の合計。科目の決まっていない行も含める。
+ * 科目の無い行を外すと、左右に1,000が見えているのに「貸方合計0 不一致」と出る(Issue #412)。記帳できない理由は行の「科目を選んでください」が伝える
+ */
+export function amountTotals(entry: EditableEntry, currency?: string): { debitTotal: number; creditTotal: number; balanced: boolean } {
+  const sum = (lines: EditableLine[]) =>
+    lines.reduce((t, l) => {
+      const amount = parseAmount(l.amount, false, currency);
+      return "value" in amount ? t + amount.value : t;
+    }, 0);
+  const debitTotal = sum(entry.debit);
+  const creditTotal = sum(entry.credit);
+  return { debitTotal, creditTotal, balanced: debitTotal === creditTotal && debitTotal > 0 };
+}
+
 /** 入力中の行を勘定科目IDの仕訳に変換する。科目が解決できない行や金額が解釈できない行は落とす */
 export function toJournalEntry(entry: EditableEntry, accounts: AccountInfo[], currency?: string): JournalEntry {
   const convert = (lines: EditableLine[]): JournalLine[] =>
