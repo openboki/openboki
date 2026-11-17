@@ -696,6 +696,12 @@ misconceptions:
     correct: 人名勘定の左右は、相手がこちらに負うか(左)、こちらが相手に負うか(右)で決まる。相手から受け取ると相手の負いが減るので右、相手に払うとこちらの負いが減るので左。物を売って渡しても、相手が負うので左
     concepts: [personal_account, debit_credit]
     remediation: birth-of-double-entry/memorandum-and-personal-accounts
+  - id: personal_account_wrong_party
+    name: 人名勘定の相手を取り違える
+    description: 取引の相手ではない人の人名勘定に書いている
+    correct: 人名勘定は相手ごとのページ。その取引で貸し借りが動いた相手のページにだけ書く。別の人のページは、その人との貸し借りだけを写す場所
+    concepts: [personal_account]
+    remediation: birth-of-double-entry/memorandum-and-personal-accounts
   - id: balance_reads_one_side
     name: 残高を片側の合計と思う
     description: 人名勘定の残高を、左か右の片側の合計で答えている
