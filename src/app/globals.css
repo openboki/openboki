@@ -190,3 +190,13 @@
 .prose td:first-child {
   white-space: nowrap;
 }
+
+/* 1列目に幅を取られた残りの列が「ドゥカ / ート」と語の途中で折れるので、文節の切れ目でだけ折る(Issue #395)。
+   keep-allだと空白の無い見出し全体が折れなくなる。ガイドが狭いと(スマホ幅や1280未満の3ペイン)文節でもはみ出すので通常の改行に任せる。
+   auto-phraseはChromium以外では無視され、通常の改行になる */
+@container (min-width: 23rem) {
+  .prose th,
+  .prose td {
+    word-break: auto-phrase;
+  }
+}
