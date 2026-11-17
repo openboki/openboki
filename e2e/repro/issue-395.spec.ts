@@ -74,6 +74,20 @@ for (const step of [3, 5] as const) {
   });
 }
 
+// 1280未満の3ペインではガイドが狭く、文節で折っても表がはみ出す
+for (const width of [1024, 1200, 1260]) {
+  test(`ジョヴァンニのページと航海1口のページの表が3ペインの狭いガイドを超えない(${width}幅)`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    const guide = await openStep(page, 3);
+    expect(await guide.evaluate((el) => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(0);
+    // 2つ目の単元では「今はしない」の案内が出ないので待たない
+    await page.goto("/units/birth-of-double-entry/venture-profit-and-double-entry");
+    await page.getByRole("button", { name: "次へ →" }).click();
+    await expect(guide.locator("table")).toBeVisible();
+    expect(await guide.evaluate((el) => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(0);
+  });
+}
+
 test("ジョヴァンニのページの表が狭い画面でもガイドの幅を超えない(390幅)", async ({ page }) => {
   // 狭い画面では金額の入力が別のタブに隠れるので、ステップ3まで進めてから幅を縮める
   await page.setViewportSize({ width: 1280, height: 800 });

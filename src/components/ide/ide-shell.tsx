@@ -1092,7 +1092,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
       </div>
 
       <div className="grid flex-1 min-h-0 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)_minmax(0,1fr)]">
-        <section id="pane-guide" role="region" aria-label="ガイド" className={`${paneClass("guide")} bg-surface-guide lg:border-r`} data-tour="guide">
+        <section id="pane-guide" role="region" aria-label="ガイド" className={`${paneClass("guide")} @container bg-surface-guide lg:border-r`} data-tour="guide">
           {unit.era && <p className="mb-2 text-xs text-muted-foreground">{unit.era}</p>}
           {stepIndex === 0 && unit.requires.length > 0 && (
             <p className="mb-2 text-xs text-muted-foreground">
