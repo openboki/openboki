@@ -99,6 +99,11 @@ export function TutorialTour({
     card.current?.focus();
   }, [index, ctx.stepIndex]);
 
+  // 最後のカードを読んだら、閉じずにタブを離れても済んだ扱いにする(Issue #397)
+  useEffect(() => {
+    if (last) updateTutorial({ status: "done" });
+  }, [last]);
+
   const finish = () => {
     updateTutorial({ status: "done" });
     onExit();
