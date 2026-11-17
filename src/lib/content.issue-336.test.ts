@@ -4,7 +4,7 @@ import { unitAccountList, unitMap } from "./content";
 // Issue #336: 単元限定の科目の「もっと見る」が行き止まりで、説明文が言う人名勘定・口別計算へ進めなかった
 describe("単元限定の科目の関連", () => {
   it("conceptsを関連として名前付きで出す", () => {
-    const pepper = { id: "pepper_voyage", name: "胡椒(アレクサンドリア航海)", element: "asset" as const, why: "口別の勘定です。", concepts: ["venture_accounting"] };
+    const pepper = { id: "pepper_voyage", name: "胡椒(アレクサンドリア航海)", reading: ["こしょう"], element: "asset" as const, why: "口別の勘定です。", concepts: ["venture_accounting"] };
     const entry = unitAccountList([pepper]).find((a) => a.id === "pepper_voyage")!.glossary;
     expect(entry.related).toEqual([{ id: "venture_accounting", name: "口別計算" }]);
   });

@@ -306,6 +306,7 @@ scenario:
   view: none                       # 帳簿ペインの段階。none | ledger | statements(既定)。docs/ide-design.md 11章
   accounts:                        # この単元だけで使う勘定科目(人名勘定、航海ごとの商品勘定)。全体マスタには載せない
     - { id: giovanni, name: ジョヴァンニ, element: asset, why: 相手がこちらに負う残高を置く人名勘定です。 }
+    - { id: owner_capital, name: 元手, reading: [もとで], element: equity, why: 商人が店に入れた財産を置く勘定です。 }   # 漢字の名前には読みを書く(科目欄の候補検索で引く)
   opening: []
 ```
 

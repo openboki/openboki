@@ -144,7 +144,7 @@ export function unitAccountList(local: Unit["scenario"]["accounts"]): GlossaryAc
         kind: "account" as const,
         name: a.name,
         aliases: [],
-        reading: [],
+        reading: a.reading,
         short: a.why,
         summary: "この単元だけで使う勘定科目です。用語集には載っていません。",
         element: a.element,
