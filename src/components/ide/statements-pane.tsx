@@ -175,7 +175,7 @@ function Group({ element, lines, diff, accounts, children }: { element: Element;
       <div className="mb-0.5">
         <ElementBadge element={element} size="xs" />
       </div>
-      {lines.length === 0 && !children && <div className="text-xs text-muted-foreground/60 px-1">—</div>}
+      {lines.length === 0 && !children && <div className="text-xs text-muted-foreground px-1">—</div>}
       {lines.map((l) => {
         const account = accounts.get(l.account);
         const name = account ? <AccountName account={account} /> : l.name;
