@@ -31,13 +31,13 @@ describe("labelsの形の採点", () => {
     const r = gradeClassify(personal, { wine: "left", receipt: "left" }, new Map());
     expect(r.correct).toBe(false);
     expect(r.misconceptions).toEqual(["personal_account_by_cash_direction"]);
-    expect(r.wrong).toEqual([{ account: "receipt", misconception: "personal_account_by_cash_direction", feedback: "「代金を受け取った」は右(こちらが彼に負う)です。" }]);
+    expect(r.wrong).toEqual([{ account: "receipt", misconception: "personal_account_by_cash_direction", feedback: "「代金を受け取った」は「右(こちらが彼に負う)」の箱です。" }]);
     expect(r.feedback).toBe("1個の項目が別の箱に入っています。");
   });
 
   it("誤解の無い箱の取り違えは誤解IDなしで返る", () => {
     const r = gradeClassify(personal, { wine: "right", receipt: "right" }, new Map());
-    expect(r.wrong).toEqual([{ account: "wine", misconception: undefined, feedback: "「ワインを売った」は左(彼がこちらに負う)です。" }]);
+    expect(r.wrong).toEqual([{ account: "wine", misconception: undefined, feedback: "「ワインを売った」は「左(彼がこちらに負う)」の箱です。" }]);
     expect(r.misconceptions).toEqual([]);
   });
 });

@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { type AccountInfo, type Side, computeImpact, ELEMENTS, findAccountByName, formatAmount, matchesAccountQuery } from "@/lib/accounting";
-import { type EditableEntry, type EditableLine, parseAmount, toJournalEntry } from "@/lib/journal-editable";
+import { type EditableEntry, type EditableLine, amountTotals, parseAmount, toJournalEntry } from "@/lib/journal-editable";
 import { ELEMENT_STYLE } from "@/lib/elements";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -34,6 +34,7 @@ export function JournalEditor({ accounts, value, onChange, readOnly = false, sho
   const accountMap = useMemo(() => new Map(accounts.map((a) => [a.id, a])), [accounts]);
   const entry = useMemo(() => toJournalEntry(value, accounts, currency), [value, accounts, currency]);
   const impact = useMemo(() => computeImpact(entry, accountMap), [entry, accountMap]);
+  const totals = useMemo(() => amountTotals(value, currency), [value, currency]);
 
   const update = (side: Side, index: number, patch: Partial<EditableLine>) => {
     const lines = value[side].map((l, i) => (i === index ? { ...l, ...patch } : l));
@@ -169,12 +170,12 @@ export function JournalEditor({ accounts, value, onChange, readOnly = false, sho
         {renderSide("debit", "借方")}
         {renderSide("credit", "貸方")}
       </div>
-      {showImpact && <ImpactPanel impact={impact} showElements={showElements} />}
+      {showImpact && <ImpactPanel impact={impact} totals={totals} showElements={showElements} />}
     </div>
   );
 }
 
-function ImpactPanel({ impact, showElements }: { impact: ReturnType<typeof computeImpact>; showElements: boolean }) {
+function ImpactPanel({ impact, totals, showElements }: { impact: ReturnType<typeof computeImpact>; totals: ReturnType<typeof amountTotals>; showElements: boolean }) {
   const sign = (n: number) => (n > 0 ? `+${formatAmount(n)}` : n < 0 ? `−${formatAmount(-n)}` : "±0");
   return (
     <div className="rounded-md bg-muted/50 p-2 text-sm" data-tour="impact">
@@ -197,9 +198,9 @@ function ImpactPanel({ impact, showElements }: { impact: ReturnType<typeof compu
         </div>
       )}
       <div className={`text-xs text-muted-foreground ${showElements ? "mt-1" : ""}`}>
-        借方合計{formatAmount(impact.debitTotal)} / 貸方合計{formatAmount(impact.creditTotal)}
-        {impact.debitTotal + impact.creditTotal > 0 && (
-          <span className={impact.balanced ? " text-ok-fg" : " text-error-fg"}>{impact.balanced ? " 一致" : " 不一致"}</span>
+        借方合計{formatAmount(totals.debitTotal)} / 貸方合計{formatAmount(totals.creditTotal)}
+        {totals.debitTotal + totals.creditTotal > 0 && (
+          <span className={totals.balanced ? " text-ok-fg" : " text-error-fg"}>{totals.balanced ? " 一致" : " 不一致"}</span>
         )}
         {showElements && <span className="ml-2">純資産は当期純利益による増減を含みます。</span>}
       </div>
