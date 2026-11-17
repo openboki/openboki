@@ -378,6 +378,12 @@ misconceptions:
     correct: 現金が足りなかったのなら損なので雑損(費用)、多かったのなら得なので雑益(収益)。不足は現金過不足の左に預けてあるので、右に書いて消し、左に雑損を書く
     concepts: [cash_over_and_short, miscellaneous_loss_gain]
     remediation: cash-and-deposits/cash-over-and-short
+  - id: forget_transferred_portion
+    name: 移し済みの分も雑損にする
+    description: 原因が分かって本来の科目へ移した分を引かずに、最初に数えた不足の総額をそのまま雑損に振り替えてしまう
+    correct: 雑損にするのは、決算の日に現金過不足へ残っている金額だけ。原因が分かった分は先に本来の科目へ移してあるので、総額から差し引いて考える
+    concepts: [cash_over_and_short, miscellaneous_loss_gain]
+    remediation: cash-and-deposits/cash-over-and-short
   - id: shortage_transfer_moves_money
     name: 雑損への振り替えでお金が動く
     description: 現金過不足を雑損へ振り替える手続きを支払いと考えて、預金などのお金を減らしてしまう
