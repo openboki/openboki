@@ -307,8 +307,8 @@ export default defineConfig({
             currency: s.string().min(1).default("円"),
             // 結果ペインの段階。none: 帳簿なし、ledger: 元帳と試算まで、statements: 財務諸表まで(docs/ide-design.md 11章)
             view: s.enum(["none", "ledger", "statements"]).default("statements"),
-            // この単元だけで使う勘定科目(人名勘定、航海ごとの商品勘定)。全体マスタにも用語集にも載せない。conceptsは「もっと見る」から進める概念
-            accounts: s.array(s.object({ id: s.string(), name: s.string(), element, why: s.string(), concepts: idList })).default([]),
+            // この単元だけで使う勘定科目(人名勘定、航海ごとの商品勘定)。全体マスタにも用語集にも載せない。readingは科目欄の候補検索で引くひらがなの読み、conceptsは「もっと見る」から進める概念
+            accounts: s.array(s.object({ id: s.string(), name: s.string(), reading: s.array(s.string()).default([]), element, why: s.string(), concepts: idList })).default([]),
             opening: s.array(journalLine).default([]),
           }),
           path: s.path(),
