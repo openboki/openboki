@@ -50,13 +50,13 @@ export interface Statements {
   netIncome: number;
 }
 
-/** 残高を貸借対照表と損益計算書の形に並べる。残高ゼロの科目は出さない。評価勘定は資産の中にマイナス表示。仮勘定は残高のある側の部に並べる */
-export function buildStatements(balances: Balances, accounts: ReadonlyMap<string, AccountInfo>): Statements {
+/** 残高を貸借対照表と損益計算書の形に並べる。残高ゼロの科目は出さないが、diffにある科目は0の行で残す(消えた増減を表で見せる。Issue #418)。評価勘定は資産の中にマイナス表示。仮勘定は残高のある側の部に並べる */
+export function buildStatements(balances: Balances, accounts: ReadonlyMap<string, AccountInfo>, diff?: ReadonlyMap<string, number>): Statements {
   const groups: Record<Element, StatementLine[]> = { asset: [], liability: [], equity: [], revenue: [], expense: [] };
   // 行順は残高の現れた順ではなくマスタの順(資産・負債は流動性配列)。記帳や期首残高の順で表の形を変えない
   for (const [id, a] of accounts) {
-    const amount = balances.get(id);
-    if (!amount) continue;
+    const amount = balances.get(id) ?? 0;
+    if (!amount && !diff?.has(id)) continue;
     const temporary = a.temporary ?? false;
     // 仮勘定は資産でも負債でもないので、逆側の残高は△にせず、その側の部に正の金額で並べる(Issue #191)
     if (temporary && amount < 0) {
