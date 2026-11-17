@@ -1493,7 +1493,8 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
           onLeaveUnit={() => saveProgress(unit.steps.length - 1)}
         />
       )}
-      <div ref={bottomBar} className="border-t bg-background px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] text-sm flex flex-col gap-2 sticky bottom-0 max-h-[50dvh]">
+      {/* 横向きのスマホのように低い画面では、50dvhだとタブ列と合わせて結果の表が150px前後しか残らないので上限を詰める(Issue #409) */}
+      <div ref={bottomBar} className="border-t bg-background px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] text-sm flex flex-col gap-2 sticky bottom-0 max-h-[50dvh] [@media(max-height:500px)]:max-h-[38dvh]">
         {/* 説明が長くても操作行を押し出さないよう、スクロールするのは説明だけにする(Issue #115) */}
         {(result || revealNote || saveError || loadError) && (
           <div className="min-h-0 overflow-y-auto space-y-2 border-b pb-2">
