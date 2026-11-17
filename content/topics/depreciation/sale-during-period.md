@@ -42,6 +42,8 @@ total: 120000
 periods: 12
 unit: か月
 label: マシンの1年分の減価償却費
+highlight: 6
+start_month: 4
 ```
 
 ```task

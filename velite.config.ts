@@ -169,6 +169,10 @@ const simpleFigure = s.discriminatedUnion("type", [
     periods: s.number().int().min(2).max(12),
     unit: s.string().default("年"),
     label: s.string().optional(),
+    // 先頭から数えて強調する期の数。残りの期は薄く描く
+    highlight: s.number().int().min(1).optional(),
+    // 1期目の月。書くと期の名前が「4月」「5月」…になる(月割りの図)
+    start_month: s.number().int().min(1).max(12).optional(),
   }),
   s.object({
     type: s.literal("taccount"),
