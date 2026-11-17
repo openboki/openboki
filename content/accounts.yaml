@@ -4,9 +4,9 @@ accounts:
   - id: cash
     name: 現金
     reading: [げんきん]
-    short: 会社が手元に持っているお金
+    short: 手元に持っていて、すぐ支払いに使えるお金
     element: asset
-    why: 会社が持っていて、いつでも支払いに使える財産だからです。
+    why: 手元にあって、いつでも支払いに使える財産だからです。
     example: レジの中の売上金や、金庫に入れてある紙幣・硬貨。
     concepts: [asset]
   - id: petty_cash
