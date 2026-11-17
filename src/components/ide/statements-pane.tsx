@@ -21,7 +21,7 @@ interface Props {
 }
 
 export function StatementsPane({ accounts, netIncomeTerm, balances, diff, company }: Props) {
-  const st = buildStatements(balances, accounts);
+  const st = buildStatements(balances, accounts, diff);
   const balanced = st.totalAssets === st.totalLiabilities + st.totalEquity;
   const changedElements = new Map<Element, number>();
   for (const [id, d] of diff) {
