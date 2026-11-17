@@ -115,7 +115,9 @@ export function ClassifyBoard({ boxes, items, placed, onChange, wrong, disabled 
     else delete next[id];
     onChange(next);
     const name = items.find((a) => a.id === id)?.label;
-    setAnnouncement(to ? `${name}を${boxLabel(to)}に入れました` : `${name}を候補に戻しました`);
+    // 任意の箱のラベルは動詞句のこともあり、項目も長い文なので、かぎ括弧と「の箱」で区切る(Issue #417)
+    const placedInto = (box: string) => (elementBoxes ? `${name}を${boxLabel(box)}に入れました` : `「${name}」を「${boxLabel(box)}」の箱に入れました`);
+    setAnnouncement(to ? placedInto(to) : `${name}を候補に戻しました`);
   };
   const place = (el: string, byKeyboard: boolean) => {
     if (!selected) return;
