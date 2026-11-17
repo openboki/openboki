@@ -81,6 +81,12 @@ wrong_patterns:
     feedback: 買ったので、絹の口にかかった額が左です。ニッコロはこちらが彼に負う側なので右です。
   - match: { credit: [{ account: cash }] }
     feedback: 代金はまだ払っていません。いま増えたのは、こちらがニッコロに負う分です。
+  - match: { credit: [{ account: giovanni }] }
+    misconception: personal_account_wrong_party
+    feedback: 絹を買った相手はニッコロです。ジョヴァンニのページは彼との貸し借りだけを書く場所なので、右はニッコロのページにします。
+  - match: { debit: [{ account: giovanni }] }
+    misconception: personal_account_wrong_party
+    feedback: 絹を買った相手はニッコロです。ジョヴァンニのページは彼との貸し借りだけを書く場所です。この取引では左が絹、右がニッコロです。
   - match: { unbalanced: true }
     feedback: 借方と貸方には同じ額を書きます。どちらも100にしましょう。
 hint: 「Per 絹 // A ニッコロ、100」。Perが左、Aが右です。
