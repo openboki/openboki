@@ -323,7 +323,11 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
   const isTutorialUnit = unit.id === TUTORIAL_UNIT_ID;
   const [tourExited, setTourExited] = useState(false);
   const [tourKey, setTourKey] = useState(0);
-  const tourActive = isTutorialUnit && !tourExited && (tutorial.status === "pending" || forceTour || tourKey > 0);
+  const tourWanted = isTutorialUnit && (tutorial.status === "pending" || forceTour || tourKey > 0);
+  // 最後のカードでstatusがdoneになっても、閉じるまでカードを出し続ける(Issue #397)
+  const [tourShown, setTourShown] = useState(false);
+  if (tourWanted && !tourShown) setTourShown(true);
+  const tourActive = isTutorialUnit && !tourExited && (tourWanted || tourShown);
   const returnFrom = useSyncExternalStore(noop, readReturnFrom, () => null);
   const autoResume = useSyncExternalStore(noop, readAutoResume, () => false);
   const returnTitle = returnFrom ? returnTitles?.[returnFrom] : undefined;
