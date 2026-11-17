@@ -2,6 +2,16 @@ id: history
 title: 会計の歴史
 order: 90
 concepts:
+  - id: ducat
+    name: ドゥカート
+    aliases: [ドゥカート金貨]
+    reading: [どぅかーと]
+    short: ヴェネツィアの金貨。歴史の単元では、円の代わりにこの通貨で金額を数える
+    summary: ヴェネツィア共和国が1284年から鋳造した金貨で、1枚に約3.5グラムの金を含む。地中海の交易で広く通用し、商人の帳簿はこの単位で金額を書いた。いまの円に直した額は諸説あるので、歴史の単元では店の家賃が8、胡椒20袋の代金が60と、単元の中の数字どうしを比べて大きさをつかむ。
+    example: 「代金60ドゥカートは後で受け取る」の60が金額で、ドゥカートがその単位。
+    requires: []
+    related: [memorandum_book]
+    contrasts: []
   - id: memorandum_book
     name: 覚え書き
     aliases: [メモリアーレ]
