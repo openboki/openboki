@@ -5,7 +5,7 @@ summary: 1385年のヴェネツィアで商人の見習いになり、起きた�
 level: 1
 order: 1
 kind: history
-introduces: [memorandum_book, single_entry, personal_account]
+introduces: [ducat, memorandum_book, single_entry, personal_account]
 concepts: [transaction, debit_credit]
 requires: [bookkeeping-basics/five-elements]
 sources:
@@ -30,7 +30,7 @@ scenario:
 ---
 
 ## リアルト橋のそばで
-1385年の春、あなたはヴェネツィアの商人バルトロメオの店で見習いになりました。店は胡椒と布とワインを、船で運んで売り買いしています。帳簿は1冊だけ。起きたことを起きた順に、文章で書いていく[[memorandum_book|覚え書き]]です。
+1385年の春、あなたはヴェネツィアの商人バルトロメオの店で見習いになりました。店は胡椒と布とワインを、船で運んで売り買いしています。お金はヴェネツィアの金貨[[ducat|ドゥカート]]で数え、この単元の金額はすべてこの単位です。帳簿は1冊だけ。起きたことを起きた順に、文章で書いていく[[memorandum_book|覚え書き]]です。
 
 前の単元で使った左右2列の[[journal|仕訳帳]]も、結果の表も、ここにはありません。それらはこの時代の商人たちが、これから百年あまりかけてたどり着くものです。この単元では、まだ複式簿記の無い店で帳簿を預かり、何に困り、どう工夫したかを追体験します。
 
