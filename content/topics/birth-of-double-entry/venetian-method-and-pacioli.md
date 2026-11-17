@@ -135,6 +135,9 @@ wrong_patterns:
   - match: { credit: [{ account: cash }] }
     misconception: profit_is_cash
     feedback: もうけは現金のページには書きません。利益と損失のページに集めます。
+  - match: { debit: [{ amount: 130 }] }
+    misconception: venture_sales_as_profit
+    feedback: 130は売れた額です。絹にかかった100を引いた30が、この口のもうけです。
   - match: { unbalanced: true }
     feedback: 借方と貸方には同じ額を書きます。どちらも30にしましょう。
 hint: 口のもうけは利益と損失の右へ。損なら左へ。
