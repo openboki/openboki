@@ -5,7 +5,7 @@ import { Fragment, type MouseEvent, type ReactNode, useEffect, useMemo, useRef, 
 import { flushSync } from "react-dom";
 import type { Unit } from "#content";
 import type { GlossaryAccount, GlossaryEntry } from "@/lib/content";
-import { type AccountInfo, type Change, type Element, type JournalEntry, type Side, ELEMENT_LABELS, ELEMENTS, computeImpact, toChange } from "@/lib/accounting";
+import { type AccountInfo, type Change, type Element, type JournalEntry, type Side, ELEMENT_LABELS, ELEMENTS, computeImpact, findAccountByName, toChange } from "@/lib/accounting";
 import { splitAmounts } from "@/lib/task-text";
 import { ElementBadge } from "@/components/element-badge";
 import { AccountName } from "@/components/account-name";
@@ -798,14 +798,24 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     for (const type of ["pointerdown", "keydown", "blur"]) input.addEventListener(type, release, { signal: controller.signal });
   }, [draft]);
   const draftHasBothSides = entryDraft.debit.length > 0 && entryDraft.credit.length > 0;
-  const draftIncomplete = [...draft.debit, ...draft.credit].some((l) => isIncompleteLine(l, accounts, unit.currency));
+  const incompleteLines = [...draft.debit, ...draft.credit].filter((l) => isIncompleteLine(l, accounts, unit.currency));
+  const draftIncomplete = incompleteLines.length > 0;
+  // 科目も金額も埋まっていて金額の書き方だけが違う行に「途中の行」「行を削除」と言うと、空いた欄を探させてしまう(Issue #414)
+  const onlyAmountFormat = incompleteLines.every((l) => l.amount.trim() && findAccountByName(l.accountName, accounts));
   const draftReady = draftHasBothSides && !draftIncomplete;
   // 何か入れたのに記帳できないとき、足りない側か途中の行を伝える(ボタンが無言で無効のままにならないように。Issue #43, #71)
   const missingSides = [entryDraft.debit.length === 0 && "借方", entryDraft.credit.length === 0 && "貸方"].filter(Boolean);
   const touched = [...draft.debit, ...draft.credit].some((l) => l.accountName.trim() || l.amount.trim());
   // 未確定の行はentryDraftから落ちるので、先に見ないと入力済みの側を「足りない側」と案内してしまう(Issue #97)
   const submitVerb = task.type === "debug" ? "確認" : "記帳";
-  const sideHint = draftReady || !touched ? null : draftIncomplete ? `入力が途中の行があります。科目と金額をそろえるか、その行を削除すると${submitVerb}できます。` : `${missingSides.join("と")}にも科目と金額を入れると${submitVerb}できます。`;
+  const sideHint =
+    draftReady || !touched
+      ? null
+      : draftIncomplete
+        ? onlyAmountFormat
+          ? `金額欄の案内に沿って金額を直すと${submitVerb}できます。`
+          : `入力が途中の行があります。科目と金額をそろえるか、その行を削除すると${submitVerb}できます。`
+        : `${missingSides.join("と")}にも科目と金額を入れると${submitVerb}できます。`;
   const askedElements = task.type === "predict" ? predictElements(task) : ELEMENTS;
   const predictReady = askedElements.every((el) => effect[el]);
 
