@@ -134,6 +134,9 @@ wrong_patterns:
   - match: { credit: [{ account: bank_deposit }] }
     misconception: shortage_transfer_moves_money
     feedback: 普通預金は動いていません。この振り替えは、帳簿の中で現金過不足を雑損へ移すだけです。消すのは現金過不足のほうなので、右に書きます。
+  - match: { debit: [{ account: miscellaneous_loss, amount: 3000 }], credit: [{ account: cash_over_and_short, amount: 3000 }] }
+    misconception: forget_transferred_portion
+    feedback: 3,000円は最初に数えた不足の総額です。そのうち2,000円は通信費へ移してあるので、現金過不足に残っているのは1,000円だけです。雑損にするのは残っている分です。
   - match: { unbalanced: true }
     feedback: 左の合計と右の合計がそろっていません。どちらも1,000にしましょう。
 hint: 左に雑損1,000、右に現金過不足1,000です。
