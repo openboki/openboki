@@ -1654,7 +1654,7 @@ function PostedEntry({ posted, accounts }: { posted: Posted; accounts: ReadonlyM
       lines.map((l, j) => {
         const a = accounts.get(l.account);
         return (
-          <span key={j}>
+          <span key={j} className="block">
             {a ? <AccountName account={a} /> : l.account} {l.amount.toLocaleString("ja-JP")}
           </span>
         );
@@ -1664,8 +1664,8 @@ function PostedEntry({ posted, accounts }: { posted: Posted; accounts: ReadonlyM
     <>
       <div className="text-muted-foreground">{posted.memo}</div>
       <div className="grid grid-cols-2 gap-2 font-mono tabular-nums">
-        <div className="space-x-1">{side(posted.entry.debit)}</div>
-        <div className="text-right space-x-1">{side(posted.entry.credit)}</div>
+        <div>{side(posted.entry.debit)}</div>
+        <div className="text-right">{side(posted.entry.credit)}</div>
       </div>
     </>
   );
