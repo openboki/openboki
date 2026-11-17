@@ -8,8 +8,8 @@ import { toJournalEntry } from "./journal-editable";
 
 // Issue #260: 単元限定の勘定科目(scenario.accounts)。全体マスタと重ねず、その単元からだけ参照でき、IDEでは全体マスタの科目と同じに扱う
 const master = new Set(["cash", "capital_stock"]);
-const giovanni = { id: "giovanni", name: "ジョヴァンニ", element: "asset" as const, why: "彼がこちらに負う残高を置く人名勘定です。", concepts: [] };
-const ownerCapital = { id: "owner_capital", name: "元手", element: "equity" as const, why: "商人が店に入れた財産です。", concepts: [] };
+const giovanni = { id: "giovanni", name: "ジョヴァンニ", reading: [], element: "asset" as const, why: "彼がこちらに負う残高を置く人名勘定です。", concepts: [] };
+const ownerCapital = { id: "owner_capital", name: "元手", reading: [], element: "equity" as const, why: "商人が店に入れた財産です。", concepts: [] };
 
 describe("scenario.accountsの検査", () => {
   it("全体マスタと重ならなければ通る", () => {
