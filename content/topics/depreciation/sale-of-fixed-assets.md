@@ -133,6 +133,9 @@ wrong_patterns:
   - match: { debit: [{ account: bank_deposit }] }
     misconception: deposit_is_cash
     feedback: 取引文では代金を現金で受け取っています。普通預金は動いていないので、左は現金です。
+  - match: { unbalanced: true, debit: [{ account: loss_on_sale_of_fixed_assets }] }
+    no_misconception: 売却損の行は書いていて金額の打ち間違いなので、下の書き漏れの案内に流さない(Issue #422)
+    feedback: 左の合計と右の合計がそろっていません。どちらも1,200,000にしましょう。
   - match: { unbalanced: true, debit: [{ account: cash, amount: 850000 }, { account: accumulated_depreciation_vehicle, amount: 300000 }], credit: [{ account: vehicle, amount: 1200000 }] }
     no_misconception: 書いた行はすべて合っていて、売却損の行だけを書いていない。差額の扱いの誤解ではなく書き漏れ(Issue #422)
     feedback: 書いた行は合っていますが、左の合計1,150,000と右の車両運搬具1,200,000がそろっていません。帳簿価額より安く売れた分の50,000を、固定資産売却損として左に足しましょう。
@@ -243,6 +246,9 @@ wrong_patterns:
   - match: { credit: [{ account: vehicle }] }
     misconception: vehicle_is_equipment
     feedback: 車両運搬具は軽バンの科目です。コーヒーマシンは備品なので、右では備品600,000を消します。
+  - match: { unbalanced: true, credit: [{ account: gain_on_sale_of_fixed_assets }] }
+    no_misconception: 売却益の行は書いていて金額の打ち間違いなので、下の書き漏れの案内に流さない(Issue #422)
+    feedback: 左の合計と右の合計がそろっていません。どちらも630,000にしましょう。
   - match: { unbalanced: true, debit: [{ account: accounts_receivable_other, amount: 480000 }, { account: accumulated_depreciation_equipment, amount: 150000 }], credit: [{ account: equipment, amount: 600000 }] }
     no_misconception: 書いた行はすべて合っていて、売却益の行だけを書いていない。差額の扱いの誤解ではなく書き漏れ(Issue #422)
     feedback: 書いた行は合っていますが、左の合計630,000と右の備品600,000がそろっていません。帳簿価額より高く売れた分の30,000を、固定資産売却益として右に足しましょう。

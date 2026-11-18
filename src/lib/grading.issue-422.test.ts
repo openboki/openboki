@@ -121,6 +121,22 @@ describe("固定資産の売却(売却損益の行の書き忘れと打ち間違
     expect(feedback).toContain("どちらも720,000");
   });
 
+  it("期中売却で売却損を2,000と打ち間違えると、書き漏れの案内に流さず、どちらも720,000にするよう言う", () => {
+    const task = findPost("depreciation/sale-during-period", "loss_on_sale_of_fixed_assets");
+    const result = gradePost(task, {
+      debit: [
+        { account: "cash", amount: 400000 },
+        { account: "accumulated_depreciation_equipment", amount: 240000 },
+        { account: "depreciation_expense", amount: 60000 },
+        { account: "loss_on_sale_of_fixed_assets", amount: 2000 },
+      ],
+      credit: [{ account: "equipment", amount: 720000 }],
+    });
+    expect(result.misconception).toBeUndefined();
+    expect(result.feedback).not.toContain("足しましょう");
+    expect(result.feedback).toContain("どちらも720,000");
+  });
+
   it("期中売却の売却益の行を書き忘れると、その行を足すよう言う", () => {
     const task = findPost("depreciation/sale-during-period", "gain_on_sale_of_fixed_assets", "credit");
     const result = gradePost(task, {
@@ -150,6 +166,21 @@ describe("固定資産の売却(売却損益の行の書き忘れと打ち間違
     expect(feedback).toContain("どちらも372,000");
   });
 
+  it("期中売却で売却益を1,200と打ち間違えると、書き漏れの案内に流さず、どちらも372,000にするよう言う", () => {
+    const task = findPost("depreciation/sale-during-period", "gain_on_sale_of_fixed_assets", "credit");
+    const result = gradePost(task, {
+      debit: [
+        { account: "accounts_receivable_other", amount: 210000 },
+        { account: "accumulated_depreciation_vehicle", amount: 108000 },
+        { account: "depreciation_expense", amount: 54000 },
+      ],
+      credit: [{ account: "vehicle", amount: 360000 }, { account: "gain_on_sale_of_fixed_assets", amount: 1200 }],
+    });
+    expect(result.misconception).toBeUndefined();
+    expect(result.feedback).not.toContain("足しましょう");
+    expect(result.feedback).toContain("どちらも372,000");
+  });
+
   it("軽バンの売却損の行を書き忘れると、その行を足すよう言う", () => {
     const task = findPost("depreciation/sale-of-fixed-assets", "loss_on_sale_of_fixed_assets");
     const result = gradePost(task, {
@@ -175,6 +206,21 @@ describe("固定資産の売却(売却損益の行の書き忘れと打ち間違
     expect(feedback).toContain("どちらも1,200,000");
   });
 
+  it("軽バンの売却で売却損を5,000と打ち間違えると、書き漏れの案内に流さず、どちらも1,200,000にするよう言う", () => {
+    const task = findPost("depreciation/sale-of-fixed-assets", "loss_on_sale_of_fixed_assets");
+    const result = gradePost(task, {
+      debit: [
+        { account: "cash", amount: 850000 },
+        { account: "accumulated_depreciation_vehicle", amount: 300000 },
+        { account: "loss_on_sale_of_fixed_assets", amount: 5000 },
+      ],
+      credit: [{ account: "vehicle", amount: 1200000 }],
+    });
+    expect(result.misconception).toBeUndefined();
+    expect(result.feedback).not.toContain("足しましょう");
+    expect(result.feedback).toContain("どちらも1,200,000");
+  });
+
   it("マシンの売却益の行を書き忘れると、その行を足すよう言う", () => {
     const task = findPost("depreciation/sale-of-fixed-assets", "gain_on_sale_of_fixed_assets", "credit");
     const result = gradePost(task, {
@@ -184,6 +230,17 @@ describe("固定資産の売却(売却損益の行の書き忘れと打ち間違
     expect(result.correct).toBe(false);
     expect(result.misconception).toBeUndefined();
     expect(result.feedback).toContain("固定資産売却益として右に足しましょう");
+  });
+
+  it("マシンの売却で売却益を3,000と打ち間違えると、書き漏れの案内に流さず、どちらも630,000にするよう言う", () => {
+    const task = findPost("depreciation/sale-of-fixed-assets", "gain_on_sale_of_fixed_assets", "credit");
+    const result = gradePost(task, {
+      debit: [{ account: "accounts_receivable_other", amount: 480000 }, { account: "accumulated_depreciation_equipment", amount: 150000 }],
+      credit: [{ account: "equipment", amount: 600000 }, { account: "gain_on_sale_of_fixed_assets", amount: 3000 }],
+    });
+    expect(result.misconception).toBeUndefined();
+    expect(result.feedback).not.toContain("足しましょう");
+    expect(result.feedback).toContain("どちらも630,000");
   });
 
   it("マシンの売却で未収入金を48,000と打ち間違えると、左を未収入金480,000と言い切らない", () => {
