@@ -163,8 +163,14 @@ wrong_patterns:
   - match: { debit: [{ account: bank_deposit }] }
     misconception: deposit_is_cash
     feedback: 取引文では代金を現金で受け取っています。普通預金は動いていないので、左は現金です。
+  - match: { unbalanced: true, debit: [{ account: loss_on_sale_of_fixed_assets }] }
+    no_misconception: 売却損の行は書いていて金額の打ち間違いなので、下の書き漏れの案内に流さない(Issue #422)
+    feedback: 左の合計と右の合計がそろっていません。どちらも720,000にしましょう。
+  - match: { unbalanced: true, debit: [{ account: cash, amount: 400000 }, { account: accumulated_depreciation_equipment, amount: 240000 }, { account: depreciation_expense, amount: 60000 }], credit: [{ account: equipment, amount: 720000 }] }
+    no_misconception: 書いた行はすべて合っていて、売却損の行だけを書いていない。差額の扱いの誤解ではなく書き漏れ(Issue #422)
+    feedback: 書いた行は合っていますが、左の合計700,000と右の備品720,000がそろっていません。帳簿価額より安く売れた分の20,000を、固定資産売却損として左に足しましょう。
   - match: { unbalanced: true }
-    feedback: 左の合計と右の合計がそろっていません。右で消す備品は720,000。左は現金400,000、累計額240,000、減価償却費60,000で700,000なので、足りない20,000が固定資産売却損です。
+    feedback: 左の合計と右の合計がそろっていません。どちらも720,000にしましょう。
 hint: 左に現金400,000、備品減価償却累計額240,000、減価償却費60,000、固定資産売却損20,000。右に備品720,000です。
 success: 備品と累計額が消えました。損益計算書には、半年使った分の減価償却費60,000と、固定資産売却損20,000が別々に載っています。
 ```
@@ -326,8 +332,14 @@ wrong_patterns:
   - match: { credit: [{ account: equipment }] }
     misconception: vehicle_is_equipment
     feedback: 備品はマシンのような機器の科目です。スクーターは車両運搬具なので、右では車両運搬具360,000を消します。
+  - match: { unbalanced: true, credit: [{ account: gain_on_sale_of_fixed_assets }] }
+    no_misconception: 売却益の行は書いていて金額の打ち間違いなので、下の書き漏れの案内に流さない(Issue #422)
+    feedback: 左の合計と右の合計がそろっていません。どちらも372,000にしましょう。
+  - match: { unbalanced: true, debit: [{ account: accounts_receivable_other, amount: 210000 }, { account: accumulated_depreciation_vehicle, amount: 108000 }, { account: depreciation_expense, amount: 54000 }], credit: [{ account: vehicle, amount: 360000 }] }
+    no_misconception: 書いた行はすべて合っていて、売却益の行だけを書いていない。差額の扱いの誤解ではなく書き漏れ(Issue #422)
+    feedback: 書いた行は合っていますが、左の合計372,000と右の車両運搬具360,000がそろっていません。帳簿価額より高く売れた分の12,000を、固定資産売却益として右に足しましょう。
   - match: { unbalanced: true }
-    feedback: 左の合計と右の合計がそろっていません。左は未収入金210,000、累計額108,000、減価償却費54,000で372,000。右の車両運搬具360,000との差12,000が固定資産売却益です。
+    feedback: 左の合計と右の合計がそろっていません。どちらも372,000にしましょう。
 hint: 左に未収入金210,000、車両運搬具減価償却累計額108,000、減価償却費54,000。右に車両運搬具360,000と固定資産売却益12,000です。
 success: 車両運搬具と累計額が消え、未収入金210,000が現れました。損益計算書の減価償却費は、マシンの60,000とスクーターの54,000で114,000になっています。
 ```

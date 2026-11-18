@@ -68,7 +68,7 @@ wrong_patterns:
   - match: { credit: [{ account: cash, amount: 97000 }] }
     feedback: 手取りは普通預金から振り込みました。
   - match: { unbalanced: true }
-    feedback: 左の給料100,000と、右の普通預金97,000 + 預り金3,000がそろっていません。
+    feedback: 左の合計と右の合計がそろっていません。どちらも100,000にしましょう。
   - match: { debit: [{ account: salaries_expense, amount: 100000 }], credit: [{ account: bank_deposit, amount: 100000 }] }
     misconception: withholding_ignored
     feedback: 振り込んだのは差し引いた後の97,000円です。差し引いた3,000円は店のお金ではなく、スタッフの代わりに納めるまで預かっている義務(負債)なので、預り金として右に書きます。
@@ -203,7 +203,7 @@ wrong_patterns:
   - match: { debit: [{ account: suspense_payment }] }
     feedback: 仮払金は精算で役目を終えます。右に書いて消します。
   - match: { unbalanced: true }
-    feedback: 左の旅費交通費18,000 + 現金2,000と、右の仮払金20,000がそろっていません。
+    feedback: 左の合計と右の合計がそろっていません。どちらも20,000にしましょう。
   - match: { credit: [{ account: suspense_payment, amount: 18000 }] }
     misconception: settlement_clears_only_spent
     feedback: 18,000円だけ消すと、仮払金が2,000円残ってしまいます。精算では仮払金を全額消します。戻ってきた2,000円の現金も記録しましょう。

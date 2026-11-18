@@ -173,7 +173,7 @@ wrong_patterns:
     misconception: trade_as_nontrade
     feedback: 未払金は商品以外の物の代金に使う科目です。豆は売り物の商品なので、残りの代金は買掛金です。
   - match: { unbalanced: true }
-    feedback: 左の仕入40,000と、右の前払金10,000 + 買掛金30,000がそろっていません。
+    feedback: 左の合計と右の合計がそろっていません。どちらも40,000にしましょう。
   - match: { debit: [{ account: purchases, amount: 40000 }], credit: [{ account: accounts_payable, amount: 40000 }] }
     misconception: advance_not_cleared_on_receipt
     feedback: 先に払った手付金10,000は前払金として資産に残っています。右に前払金10,000を書いて消し、買掛金は残りの30,000だけです。
