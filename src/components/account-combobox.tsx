@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-import { type AccountInfo, ELEMENTS, findAccountByReading, matchesAccountQuery } from "@/lib/accounting";
+import { type AccountInfo, findAccountByReading, groupAccountCandidates } from "@/lib/accounting";
 import { ELEMENT_STYLE } from "@/lib/elements";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover";
@@ -31,10 +31,7 @@ export function AccountCombobox({ accounts, value, onChange, onCompositionChange
   const [active, setActive] = useState<number | null>(null);
 
   const query = value.trim();
-  const groups = useMemo(() => {
-    const matched = query ? accounts.filter((a) => matchesAccountQuery(a, query)) : accounts;
-    return ELEMENTS.map((element) => ({ element, items: matched.filter((a) => a.element === element) })).filter((g) => g.items.length > 0);
-  }, [accounts, query]);
+  const groups = useMemo(() => groupAccountCandidates(accounts, query), [accounts, query]);
   const options = useMemo(() => groups.flatMap((g) => g.items), [groups]);
   // 候補が1件だけで、それが正式名と完全に一致したら選び終えたとみなして閉じる。別名では閉じず、正式名を見せる
   const shown = open && options.length > 0 && !(options.length === 1 && options[0].name === query);
