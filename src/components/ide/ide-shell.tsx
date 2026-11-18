@@ -1371,7 +1371,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
             >
               <label className="text-sm font-semibold block">
                 {task.question}
-                <Input inputMode="numeric" className="mt-1" value={calcValue} disabled={result?.correct === true} onChange={(e) => {
+                <Input inputMode="numeric" className="mt-1" value={calcValue} readOnly={result?.correct === true} onChange={(e) => {
                     setCalcValue(e.target.value);
                     setCalcError(null);
                   }}
