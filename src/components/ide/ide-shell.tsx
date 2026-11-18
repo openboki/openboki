@@ -693,6 +693,22 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoResume, resumeStep]);
 
+  // 進捗が届く前に「次へ →」で先へ進んでいると、goToでの取り込みが済んでいない。届いた時点で取り込み、表示中のステップも戻す(Issue #431)
+  useEffect(() => {
+    if (resumeStep === null || tourActive || stepIndex === 0 || resumeAdopted.current) return;
+    adoptResume(resumeStep);
+    // このステップで答えていれば(answeredStepが立つ)その結果を残す
+    if (answeredStep.current === stepIndex) return;
+    const answer = answered.current.get(stepIndex);
+    if (answer !== undefined) restoreStep(stepIndex, answer);
+    else if (resumeGraded.current?.step === stepIndex) {
+      restoreGraded(step.task, resumeGraded.current.key);
+      resumeGraded.current = null;
+    }
+    // resumeStepが届いたときに1回だけ行う
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resumeStep]);
+
   // サーバー描画はステップ1なので、復元はマウント後に行う。チュートリアルはツアーがステップ1からの台本なので戻さない
   /* eslint-disable react-hooks/set-state-in-effect -- sessionStorageはマウント後にしか読めない */
   useEffect(() => {
@@ -1355,7 +1371,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
             >
               <label className="text-sm font-semibold block">
                 {task.question}
-                <Input inputMode="numeric" className="mt-1" value={calcValue} disabled={result?.correct === true} onChange={(e) => {
+                <Input inputMode="numeric" className="mt-1" value={calcValue} readOnly={result?.correct === true} onChange={(e) => {
                     setCalcValue(e.target.value);
                     setCalcError(null);
                   }}
