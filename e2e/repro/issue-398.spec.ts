@@ -8,7 +8,7 @@ test("ジョヴァンニの残高を60と答えると、誤解の説明が付き
   await page.getByRole("region", { name: "ワークスペース" }).getByPlaceholder("金額(ドゥカート)").fill("60");
   await page.getByRole("button", { name: "確認する" }).click();
   const status = page.getByRole("status").filter({ hasText: "もう一歩" });
-  await expect(status).toContainText("よくある思い込み: 人名勘定の左右をお金や物の向きで決める");
+  await expect(status).toContainText("よくある思い込み: 相手に払った分も貸しから引く");
   await expect(status).not.toContainText("9日と20日にも売っています");
   // 18日の買いと22日の支払いの扱いに触れる
   await expect(status).toContainText("22日");
