@@ -22,7 +22,7 @@ test("predictが初めて出たとき案内が出て、「わかった」で閉�
   await goToPredict(page);
   const note = page.getByRole("note", { name: "初めての「予想して記帳する」" });
   await expect(note).toBeVisible();
-  await expect(note).toContainText("5要素がどう動くかを選びます");
+  await expect(note).toContainText("動きそうな要素が増えるか減るか変わらないかを選びます");
   await note.getByRole("button", { name: "わかった" }).click();
   await expect(note).toBeHidden();
   expect(await seen(page)).toContain("predict");
