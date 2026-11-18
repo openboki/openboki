@@ -240,6 +240,12 @@ misconceptions:
     correct: 雑損は原因の分からない現金の不足などに使う。売掛金を回収できなかった損は原因がはっきりしているので、貸倒損失を使う
     concepts: [bad_debt]
     remediation: bad-debts/bad-debt-loss
+  - id: allowance_for_unestimated_bad_debt
+    name: 見積もっていない貸倒れに貸倒引当金を使う
+    description: 当期に生じた売掛金が貸倒れになったとき、貸倒損失ではなく貸倒引当金を減らして売掛金を消してしまう
+    correct: 貸倒引当金は、前の期末に見積もって積んでおいた分を取り崩すときの科目。当期に生じた売掛金はまだ見積もっていないので、全額を貸倒損失(費用)にする
+    concepts: [bad_debt, allowance_for_doubtful_accounts]
+    remediation: bad-debts/bad-debt-loss
   - id: bad_debt_is_cash_outflow
     name: 貸倒れでお金が出ていく
     description: 貸倒れの損を、現金や預金が減る取引として記録してしまう
@@ -309,7 +315,7 @@ misconceptions:
   - id: payable_payment_is_purchase
     name: 支払いのときにもう一度仕入
     description: 買掛金を支払ったときに、仕入をもう一度記録してしまう
-    correct: 仕入は商品を受け取ったときに記録済み。支払いでは買掛金(負債)が減り、現金(資産)が減るだけで、仕入は増えない
+    correct: 仕入は商品を受け取ったときに記録済み。支払いでは買掛金(負債)が減り、払ったお金(現金や当座預金)が減るだけで、仕入は増えない
     concepts: [accounts_payable, purchase]
     remediation: merchandise/credit-transactions
   - id: return_as_new_transaction

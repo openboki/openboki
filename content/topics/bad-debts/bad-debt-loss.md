@@ -169,6 +169,9 @@ wrong_patterns:
   - match: { debit: [{ account: miscellaneous_loss }] }
     misconception: bad_debt_as_miscellaneous_loss
     feedback: 雑損は、原因の分からない現金の不足などに使う科目です。売掛金を回収できなかった損は、原因がはっきりしているので貸倒損失を使います。
+  - match: { debit: [{ account: allowance_for_doubtful_accounts }] }
+    misconception: allowance_for_unestimated_bad_debt
+    feedback: 貸倒引当金は、前の期末に見積もって積んでおいた分を取り崩すときの科目です。雑貨店への売掛金は当期に生じたもので、まだ見積もっていません。受け取れなかった30,000は、全額を貸倒損失(費用)にします。
   - match: { credit: [{ account: cash }] }
     misconception: bad_debt_is_cash_outflow
     feedback: 貸倒れでお金は出ていきません。入ってくるはずだったお金が入らなかっただけです。現金は受け取った20,000を左に書きます。
