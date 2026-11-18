@@ -59,7 +59,7 @@ wrong_patterns:
     misconception: debit_means_increase
     feedback: 仕入は費用なので左、買掛金と減った現金は右です。
   - match: { unbalanced: true }
-    feedback: 左の合計52,000と、右の合計(買掛金 + 現金)がそろっていません。
+    feedback: 左の合計と右の合計がそろっていません。どちらも52,000にしましょう。
 hint: 左に仕入52,000。右は買掛金50,000と現金2,000の2行です。
 success: 仕入が運賃込みの52,000で記録されました。右の2行の合計も52,000で、左右がそろっています。
 ```
