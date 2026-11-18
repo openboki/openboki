@@ -309,7 +309,7 @@ misconceptions:
   - id: payable_payment_is_purchase
     name: 支払いのときにもう一度仕入
     description: 買掛金を支払ったときに、仕入をもう一度記録してしまう
-    correct: 仕入は商品を受け取ったときに記録済み。支払いでは買掛金(負債)が減り、現金(資産)が減るだけで、仕入は増えない
+    correct: 仕入は商品を受け取ったときに記録済み。支払いでは買掛金(負債)が減り、払ったお金(現金や当座預金)が減るだけで、仕入は増えない
     concepts: [accounts_payable, purchase]
     remediation: merchandise/credit-transactions
   - id: return_as_new_transaction
