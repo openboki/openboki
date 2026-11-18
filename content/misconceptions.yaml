@@ -690,6 +690,18 @@ misconceptions:
     correct: 貸しは、売った額から受け取った額を引いた残り。受け取った時点で、その分はもう貸しではない
     concepts: [personal_account]
     remediation: birth-of-double-entry/memorandum-and-personal-accounts
+  - id: payment_to_counterparty_reduces_claim
+    name: 相手に払った分も貸しから引く
+    description: 相手に払った額を、相手から受け取った額と同じように貸しから引いている
+    correct: 貸しから引くのは、相手から受け取った額だけ。相手から買って負った分と、それを返した払いは貸しとは別で、差し引き0なら貸しは変わらない
+    concepts: [personal_account]
+    remediation: birth-of-double-entry/memorandum-and-personal-accounts
+  - id: purchase_from_counterparty_adds_claim
+    name: 相手から買った分も貸しに足す
+    description: 相手から後払いで買った額を、相手に売った額と同じように貸しに足している
+    correct: 貸しに足すのは、相手に売った額だけ。後払いで買ったのは、こちらが相手に払う側。貸しには足さず、払ったときに消える
+    concepts: [personal_account]
+    remediation: birth-of-double-entry/memorandum-and-personal-accounts
   - id: credit_purchase_as_claim
     name: 後払いで買っても貸し
     description: 相手から後払いで買った分を、相手への貸しに足している
