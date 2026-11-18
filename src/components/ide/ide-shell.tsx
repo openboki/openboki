@@ -330,7 +330,8 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
   const tourActive = isTutorialUnit && !tourExited && (tourWanted || tourShown);
   const returnFrom = useSyncExternalStore(noop, readReturnFrom, () => null);
   const autoResume = useSyncExternalStore(noop, readAutoResume, () => false);
-  const returnTitle = returnFrom ? returnTitles?.[returnFrom] : undefined;
+  // fromはURL由来なので、constructorや__proto__がプロトタイプのプロパティを引かないよう自前のキーだけ見る(Issue #428)
+  const returnTitle = returnFrom && returnTitles && Object.hasOwn(returnTitles, returnFrom) ? returnTitles[returnFrom] : undefined;
   const exitTour = () => {
     setTourExited(true);
     if (!forceTour) return;
