@@ -137,6 +137,22 @@ export function matchesAccountQuery(account: AccountInfo, query: string): boolea
   return [account.name, ...account.aliases, ...(account.reading ?? [])].some((text) => normalizeSearchText(text).includes(q));
 }
 
+/**
+ * 科目の候補を5要素ごとにまとめる。入力が名前・別名・読みの先頭に一致する科目を先に出す。
+ * 「借」で当座借越が借入金より先に指され、Enterで入っていた(Issue #425)。一致の無いグループどうしは要素順のまま
+ */
+export function groupAccountCandidates(accounts: AccountInfo[], query: string): { element: Element; items: AccountInfo[] }[] {
+  const q = normalizeSearchText(query);
+  const prefix = (a: AccountInfo) => [a.name, ...a.aliases, ...(a.reading ?? [])].some((t) => normalizeSearchText(t).startsWith(q));
+  const matched = accounts.filter((a) => matchesAccountQuery(a, query));
+  return ELEMENTS.map((element) => {
+    const items = matched.filter((a) => a.element === element);
+    return { element, items: [...items.filter(prefix), ...items.filter((a) => !prefix(a))] };
+  })
+    .filter((g) => g.items.length > 0)
+    .sort((a, b) => Number(prefix(b.items[0])) - Number(prefix(a.items[0])));
+}
+
 /** 読みと完全に一致する科目がちょうど1つならそれを返す。「げんきん」は小口現金・現金過不足にも部分一致するので、候補の数では決まらない(Issue #292) */
 export function findAccountByReading(query: string, accounts: Iterable<AccountInfo>): AccountInfo | undefined {
   const q = normalizeSearchText(query);
