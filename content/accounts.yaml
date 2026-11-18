@@ -82,7 +82,8 @@ accounts:
     concepts: [asset, loan]
   - id: accounts_receivable_other
     name: 未収入金
-    reading: [みしゅうにゅうきん]
+    aliases: [未収金]
+    reading: [みしゅうにゅうきん, みしゅうきん]
     short: 商品以外の物(備品など)を売って、まだ受け取っていない代金
     element: asset
     why: 後で現金を受け取る権利で、将来お金に変わる財産だからです。商品の売上代金なら売掛金、それ以外なら未収入金です。
