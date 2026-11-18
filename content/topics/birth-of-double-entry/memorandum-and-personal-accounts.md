@@ -70,11 +70,14 @@ wrong_patterns:
     misconception: claim_ignores_receipts
     feedback: 売った60、25、30を足しただけになっています。3月5日と14日に受け取った分は、もう貸しではありません。
   - match: 80
-    misconception: credit_purchase_as_claim
+    misconception: purchase_from_counterparty_adds_claim
     feedback: 3月18日の布は、こちらがジョヴァンニから買ったものです。これは貸しではなく、こちらが払う側でした(22日に払っています)。
   - match: 60
-    misconception: personal_account_by_cash_direction
+    misconception: payment_to_counterparty_reduces_claim
     feedback: 2日の60だけを答えたなら、9日と20日の売りと、5日と14日の受け取りも拾います。売りと受け取りを全部拾って60なら、18日に買った10と22日に払った10の扱いを確かめましょう。22日に払ったのは、18日の買いでこちらが負った分を返したもので、貸しから引く額ではありません。
+  - match: 50
+    misconception: payment_to_counterparty_reduces_claim
+    feedback: 18日に買った10と22日に払った10を両方引いています。18日の買いはこちらが負った分、22日の払いはそれを返した分で、差し引き0です。貸しは、売った115から受け取った45を引いて出します。
 hint: ジョヴァンニの行だけを拾い、売った額を足し、受け取った額を引きます。こちらが買って払った分は、貸しとは別です。
 success: 70ドゥカートです。答えは出ましたが、12行から1人の行を7つ拾って足し引きしました。相手が30人いたら、聞かれるたびにこれをやることになります。
 ```
