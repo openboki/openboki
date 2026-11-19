@@ -340,6 +340,7 @@ body="issue-agentによる統合(実装$IMPL_MODEL、レビュー$REVIEW_MODEL�
 Closes #$ISSUE"
 coauthors=$(git log --format=%B "main..$BRANCH" | grep -i '^Co-Authored-By:' | sort -u)
 [ -z "$coauthors" ] || body="$body
+
 $coauthors"
 if [ "$PUSH" = 1 ]; then
   log "PRを作ってsquashでマージします"
