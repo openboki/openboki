@@ -81,6 +81,15 @@ wrong_patterns:
     feedback: 未払金は、商品以外のものを買った代金を後で払う義務です。今回の3,000円は買い物の代金ではなく、スタッフから預かった税金なので預り金です。
   - match: { credit: [{ account: suspense_receipt }] }
     feedback: 仮受金は、正体の分からない入金を置く科目です。今回の3,000円は所得税だと分かっていて、スタッフの代わりに預かっているので預り金です。
+  - match: { credit: [{ account: miscellaneous_gain }] }
+    misconception: deposit_is_revenue
+    feedback: 差し引いた3,000円は店のもうけではありません。スタッフの代わりに税務署へ納めるまで預かっている義務(負債)なので、雑益ではなく預り金として右に書きます。
+  - match: { credit: [{ account: sales }] }
+    misconception: deposit_is_revenue
+    feedback: 商品を売って得たお金ではありません。差し引いた3,000円は、スタッフの代わりに税務署へ納めるまで預かっている義務(負債)なので、売上ではなく預り金として右に書きます。
+  - match: { credit: [{ account: interest_income }] }
+    misconception: deposit_is_revenue
+    feedback: お金を貸して受け取った利息ではありません。差し引いた3,000円は、スタッフの代わりに税務署へ納めるまで預かっている義務(負債)なので、受取利息ではなく預り金として右に書きます。
 hint: 左に給料100,000。右に普通預金97,000と預り金3,000の2行です。「行を追加」で行を増やせます。
 success: 給料100,000が費用に、預り金3,000が負債に並びました。預り金はスタッフのお金です。
 ```
