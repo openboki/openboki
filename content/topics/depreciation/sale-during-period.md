@@ -130,12 +130,18 @@ wrong_patterns:
   - match: { debit: [{ account: loss_on_sale_of_fixed_assets, amount: 80000 }] }
     misconception: sale_ignores_current_depreciation
     feedback: 400,000を期首の帳簿価額480,000と比べています。4月から9月までに使った60,000は、売却損ではなく減価償却費として左に書きます。売却損は残りの20,000です。
+  - match: { debit: [{ account: accumulated_depreciation_equipment, amount: 300000 }, { account: depreciation_expense, amount: 60000 }], credit: [{ account: accumulated_depreciation_equipment, amount: 60000 }] }
+    no_misconception: 当期分を累計額に積んでから消す2つの仕訳をまとめた形で、考え方の誤解ではない。右の累計額60,000を見ずに下の300,000だけのパターンに当てると、積んでいないと逆のことを言う(Issue #444)
+    feedback: 考え方は合っています。今年の分60,000を累計額に積んでから消す2つの仕訳を合わせると、この形になります。ただ、積んでもすぐに消すので、この単元では累計額には積まず、消す累計額は期首の240,000、60,000は減価償却費として左に書く4行の形で記帳します。
+  - match: { debit: [{ account: accumulated_depreciation, amount: 300000 }, { account: depreciation_expense, amount: 60000 }], credit: [{ account: accumulated_depreciation, amount: 60000 }] }
+    no_misconception: 当期分を累計額に積んでから消す2つの仕訳をまとめた形で、考え方の誤解ではない(Issue #444)
+    feedback: 考え方は合っています。今年の分60,000を累計額に積んでから消す2つの仕訳を合わせると、この形になります。ただ、積んでもすぐに消すので、この単元では累計額には積まず、消す累計額は期首の240,000、60,000は減価償却費として左に書く4行の形で記帳します。
   - match: { debit: [{ account: accumulated_depreciation_equipment, amount: 300000 }] }
-    no_misconception: 当期分を累計額に積んでから消す2つの仕訳をまとめた形で、考え方の誤解ではない
-    feedback: 考え方は合っています。ただ、この仕訳では今年の分60,000を累計額に積んでいないので、消す累計額は期首の240,000です。60,000は減価償却費として左に書きましょう。
+    misconception: sale_ignores_current_depreciation
+    feedback: 今年の分60,000を減価償却費にせず、帳簿に無い累計額まで消しています。帳簿にある累計額は期首の240,000だけなので、消すのは240,000です。4月から9月までに使った60,000は、減価償却費として左に書きましょう。
   - match: { debit: [{ account: accumulated_depreciation, amount: 300000 }] }
-    no_misconception: 当期分を累計額に積んでから消す2つの仕訳をまとめた形で、考え方の誤解ではない
-    feedback: 考え方は合っています。ただ、この仕訳では今年の分60,000を累計額に積んでいないので、消す累計額は期首の240,000です。60,000は減価償却費として左に書きましょう。
+    misconception: sale_ignores_current_depreciation
+    feedback: 今年の分60,000を減価償却費にせず、帳簿に無い累計額まで消しています。帳簿にある累計額は期首の240,000だけなので、消すのは240,000です。4月から9月までに使った60,000は、減価償却費として左に書きましょう。
   - match: { debit: [{ account: depreciation_expense, amount: 120000 }] }
     misconception: forgot_monthly_proration
     feedback: 120,000は1年分です。今年使ったのは4月から9月までの6か月なので、減価償却費は60,000です。
@@ -302,12 +308,18 @@ wrong_patterns:
   - match: { debit: [{ account: depreciation_expense, amount: 18000 }] }
     misconception: proration_counts_remaining_months
     feedback: 18,000は、売った後の1月から3月の3か月分です。費用にするのは、期首の4月から売った12月までの9か月分の54,000です。
+  - match: { debit: [{ account: accumulated_depreciation_vehicle, amount: 162000 }, { account: depreciation_expense, amount: 54000 }], credit: [{ account: accumulated_depreciation_vehicle, amount: 54000 }] }
+    no_misconception: 当期分を累計額に積んでから消す2つの仕訳をまとめた形で、考え方の誤解ではない。右の累計額54,000を見ずに下の162,000だけのパターンに当てると、積んでいないと逆のことを言う(Issue #444)
+    feedback: 考え方は合っています。今年の分54,000を累計額に積んでから消す2つの仕訳を合わせると、この形になります。ただ、積んでもすぐに消すので、この単元では累計額には積まず、消す累計額は期首の108,000、54,000は減価償却費として左に書く形で記帳します。
+  - match: { debit: [{ account: accumulated_depreciation, amount: 162000 }, { account: depreciation_expense, amount: 54000 }], credit: [{ account: accumulated_depreciation, amount: 54000 }] }
+    no_misconception: 当期分を累計額に積んでから消す2つの仕訳をまとめた形で、考え方の誤解ではない(Issue #444)
+    feedback: 考え方は合っています。今年の分54,000を累計額に積んでから消す2つの仕訳を合わせると、この形になります。ただ、積んでもすぐに消すので、この単元では累計額には積まず、消す累計額は期首の108,000、54,000は減価償却費として左に書く形で記帳します。
   - match: { debit: [{ account: accumulated_depreciation_vehicle, amount: 162000 }] }
-    no_misconception: 当期分を累計額に積んでから消す2つの仕訳をまとめた形で、考え方の誤解ではない
-    feedback: 考え方は合っています。ただ、この仕訳では今年の分54,000を累計額に積んでいないので、消す累計額は期首の108,000です。54,000は減価償却費として左に書きましょう。
+    misconception: sale_ignores_current_depreciation
+    feedback: 今年の分54,000を減価償却費にせず、帳簿に無い累計額まで消しています。帳簿にある累計額は期首の108,000だけなので、消すのは108,000です。4月から12月までに使った54,000は、減価償却費として左に書きましょう。
   - match: { debit: [{ account: accumulated_depreciation, amount: 162000 }] }
-    no_misconception: 当期分を累計額に積んでから消す2つの仕訳をまとめた形で、考え方の誤解ではない
-    feedback: 考え方は合っています。ただ、この仕訳では今年の分54,000を累計額に積んでいないので、消す累計額は期首の108,000です。54,000は減価償却費として左に書きましょう。
+    misconception: sale_ignores_current_depreciation
+    feedback: 今年の分54,000を減価償却費にせず、帳簿に無い累計額まで消しています。帳簿にある累計額は期首の108,000だけなので、消すのは108,000です。4月から12月までに使った54,000は、減価償却費として左に書きましょう。
   - match: { credit: [{ account: accumulated_depreciation_vehicle }] }
     misconception: contra_always_credit
     feedback: 累計額を右に書くと、さらに積み増すことになります。期首までの108,000は消すので左に書き、今年の分54,000は累計額に積まず減価償却費として左に書きます。
