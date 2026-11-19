@@ -31,7 +31,7 @@
   スクリプトが同じ`scripts/check.sh`を独立に再実行するので、通っていない状態で`done`と申告しても差し戻される。
 - すべての変更をコミットする(未コミットの変更を残さない)。コミットメッセージは既存の履歴に倣い、
   1行目に変更の要約、本文に「なぜその実装なのか」と`Closes #$ISSUE`を書く。
-  末尾に`Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>`を付ける。
+  末尾に`Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>`を付ける。
 - `.env*`、`supabase/migrations/`、`.github/`、`.githooks/`、`scripts/`、`.claude/`、`velite.config.ts`は変更しない
   (変更が必要ならスクリプトが人手に回す。その旨を`summary`に書いて`blocked`で終える)。
 - 一時ファイルが要るならscratchpadか`logs/`に置く。
