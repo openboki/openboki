@@ -31,6 +31,8 @@ import { HelpDialog } from "./help-dialog";
 import { HelpControlsContext, HelpIcon } from "./help-icon";
 import { FirstTimeNote } from "./first-time-note";
 import { Spotlight } from "./spotlight";
+import { SpotIllustration } from "@/components/illustrations/spot-illustration";
+import type { IllustrationName } from "@/lib/illustrations";
 import { type HelpContext, type HelpTopic, SANDBOX_NOT_SAVED, firstTimeTopic } from "@/lib/help-topics";
 import { FIRST_UNIT_AFTER_TUTORIAL, TUTORIAL_UNIT_ID, markSeen, updateTutorial, useTutorialState } from "@/lib/tutorial-store";
 
@@ -39,6 +41,7 @@ import { FIRST_UNIT_AFTER_TUTORIAL, TUTORIAL_UNIT_ID, markSeen, updateTutorial, 
 export interface IdeStep {
   title: string;
   task: Task;
+  illustration?: IllustrationName;
 }
 
 export interface IdeUnit {
@@ -1136,7 +1139,10 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
               ))}
             </p>
           )}
-          <h2 ref={stepHeading} tabIndex={-1} className={`text-lg font-semibold mb-2 ${FOCUS_TARGET_CLASS}`}>{step.title}</h2>
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <h2 ref={stepHeading} tabIndex={-1} className={`text-lg font-semibold ${FOCUS_TARGET_CLASS}`}>{step.title}</h2>
+            {step.illustration && <SpotIllustration name={step.illustration} className="w-[4.75rem] shrink-0" />}
+          </div>
           {/* ツアーを抜けたあと、学ぶつもりだった単元へ戻れるようにする。チュートリアルを続ける道も残すので自動では戻さない(Issue #224) */}
           {isTutorialUnit && returnTitle && !tourActive && (
             <p className="mb-3 text-sm">

@@ -1,5 +1,6 @@
 import { parse as parseYaml } from "yaml";
 import { defineConfig, s, z } from "velite";
+import { ILLUSTRATION_NAMES, type IllustrationName } from "./src/lib/illustrations";
 import { classifyErrors, debugErrors, pathErrors, scenarioAccountErrors, unitAccountIds, unitKindErrors } from "./src/lib/content-checks";
 
 // コンテンツのスキーマと横断検査。構造の定義はdocs/content-model.md、画面と学習フローはdocs/ide-design.mdが正本
@@ -222,10 +223,13 @@ export interface Step {
   narrative: string;
   task: Task;
   figures: Figure[];
+  illustration?: IllustrationName;
 }
 
 // 単元本文を「## 見出し」ごとのステップに分け、```taskブロックを課題として解釈する
 const TASK_BLOCK = /```task\s*\n([\s\S]*?)```/;
+// 見出しの横に置くスポットイラスト。中身は名前だけ(docs/visual-guidelines.md 6章)
+const ILLUSTRATION_BLOCK = /```illustration\s*\n([\s\S]*?)```/;
 function parseSteps(body: string, ctx: z.RefinementCtx): Step[] {
   const chunks = body.split(/^## /m).filter((c) => c.trim());
   const steps: Step[] = [];
@@ -243,7 +247,13 @@ function parseSteps(body: string, ctx: z.RefinementCtx): Step[] {
       }
       task = parsed.data;
     }
-    const narrative = (m ? rest.replace(TASK_BLOCK, "") : rest).trim();
+    const im = ILLUSTRATION_BLOCK.exec(rest);
+    const illustration = im?.[1].trim() as IllustrationName | undefined;
+    if (illustration && !ILLUSTRATION_NAMES.includes(illustration)) {
+      ctx.addIssue({ code: "custom", message: `ステップ${i + 1}「${title}」のillustration: ${illustration}というイラストはない(${ILLUSTRATION_NAMES.join(" / ")})` });
+      return;
+    }
+    const narrative = rest.replace(TASK_BLOCK, "").replace(ILLUSTRATION_BLOCK, "").trim();
     const figures: Figure[] = [];
     for (const fm of narrative.matchAll(FIGURE_BLOCK)) {
       const parsed = figureSchema.safeParse(parseYaml(fm[1]));
@@ -253,7 +263,7 @@ function parseSteps(body: string, ctx: z.RefinementCtx): Step[] {
       }
       figures.push(parsed.data);
     }
-    steps.push({ title, narrative, task, figures });
+    steps.push({ title, narrative, task, figures, illustration });
   });
   return steps;
 }

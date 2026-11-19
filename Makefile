@@ -2,7 +2,7 @@
 # 実体はpackage.jsonのscriptsとscripts/*.sh。引数は環境変数で渡す(例: make monkey MONKEY_UNTIL=22:00)。
 .DEFAULT_GOAL := help
 .PHONY: help install hooks setup env-local dev db-start db-stop db-reset services-up services-down services-status \
-        content lint typecheck test test-watch e2e check build start docker-build icons \
+        content lint typecheck test test-watch e2e check build start docker-build icons illustrations \
         monkey monkey-stop monkey-scripted triage issue issue-loop issue-stop issue-status issue-verify quality-night labels
 
 ##@ セットアップ
@@ -82,6 +82,9 @@ docker-build: ## 本番用のDockerイメージを作る(DOCKER_IMAGE=openboki:l
 
 icons: ## src/app/icon.svgからfavicon.ico、apple-icon.png、OG画像を書き出す(icon.svgを変えたら回す)
 	node scripts/icons.mjs
+
+illustrations: ## イラスト一覧を全テーマのライト・ダークで撮ってlogs/illustrations/に置く(開発サーバーが要る。絵を足したら回す)
+	node scripts/illustration-sheet.mjs
 
 ##@ 品質改善ループ(docs/quality-loop.md)
 
