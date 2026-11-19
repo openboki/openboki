@@ -73,7 +73,7 @@ Open簿記に移植した。§1〜§3は調査の記録、§4以降が設計、�
 scripts/services.sh up|status|down        Supabaseローカル + pnpm dev
 scripts/monkey-loop.sh  (MONKEY_UNTIL)    ① 探索: 人格を選んでclaude -p → 再現 → 起票(needs-triage)
 scripts/triage-agent.sh <n> / triage-loop ② 自動トリアージ: 再現スクリプトをmainで実行 → ready-for-agent / needs-info / ready-for-human
-scripts/issue-agent.sh  <n> / issue-loop  ③ 修正: worktreeで実装 → 関門 → レビュー → mainへ --no-ffマージ → push(Closes #nで閉じる)
+scripts/issue-agent.sh  <n> / issue-loop  ③ 修正: worktreeで実装 → 関門 → レビュー → PRをsquashでマージ(Closes #nで閉じる。ADR 0012)
 scripts/issue-verify.sh <n>               ④ 再検証: 閉じたIssueの再現スクリプトをmainで再実行 → 検証済みコメントor reopen
                                           ⑤ 継続: 翌晩の ① が自然に回帰を拾う
 ```
@@ -218,7 +218,7 @@ Monkeyの人格は「前回起票した領域を避ける」ような賢さは�
 - ログは`logs/`(gitignore): `logs/monkey/<日時>-<人格>/`(history.md、step-NN.mjs、shots/、oracle.jsonl、trace)、`logs/monkey-scripted/<seed>.log`、`logs/triage/<n>/`、`logs/issue-agent/<n>/`。
 - 人格型Monkeyは`MONKEY_PARALLEL=3`で3人格まで同時に走らせられる(人格ごとに別ブラウザ。同じ人格は同時に走らない。起票直前の重複確認を人格側にも求めている)。
 - issue-loopは`ISSUE_PARALLEL=3`で3件まで同時に処理できる(2026-11-08)。ロックはIssueごと、関門のE2Eはワーカーごとのポート(3100 + 枠番号)、
-  mainへの統合(取り込み → 関門 → マージ → push → 再検証)だけ`logs/issue-agent/lock`で1件ずつ。同じファイルを触るIssueを同時に進めると統合時にコンフリクトしてneeds-humanに落ちるので、areaが異なる組み合わせが向く。
+  mainへの統合(取り込み → 関門 → PRをsquashでマージ → 再検証)だけ`logs/issue-agent/lock`で1件ずつ。同じファイルを触るIssueを同時に進めると統合時にコンフリクトしてneeds-humanに落ちるので、areaが異なる組み合わせが向く。
 - 状況の確認は`scripts/issue-agent.sh status`。止めるのは`scripts/monkey-loop.sh stop` / `scripts/issue-loop.sh stop`。
 - 学習者からの質問・報告・提案はGitHub Discussionsに届く。対応が要るものは「Create issue from discussion」で起票して`needs-triage`を付け、トリアージ以降の流れに乗せる。質問への回答だけで済むものはDiscussionsで閉じる。
 - 人が見るもの: 新しいDiscussions、`ready-for-human`と`agent:needs-human`のIssue(`gh issue list --label ready-for-human,agent:needs-human`)、

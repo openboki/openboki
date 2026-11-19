@@ -4,7 +4,7 @@
 ビジョンは`docs/vision.md`、ロードマップは`docs/roadmap.md`、要件は`docs/requirements.md`、学習体験(会計IDE)は`docs/ide-design.md`、デザインシステムとテーマは`docs/design-system.md`、コンテンツ構造は`docs/content-model.md`、構成は`docs/architecture.md`、設計判断の理由は`docs/decisions/`、開発プロセスと現在のフェーズは`README.md`を見る。
 
 ## 現在のフェーズ
-ロードマップM1(学習ループの検証。docs/roadmap.md)。スタックはNext.js 16 + Supabase(ADR 0003)。ホスティングはVPS 1台 + Coolify(ADR 0006)で、公開は`production`ブランチから行う(mainへの統合だけでは公開されない)。アクセス解析はADR 0011。Dockerで動くstandalone出力を維持し、特定ホストの固有機能に依存しない。
+ロードマップM1(学習ループの検証。docs/roadmap.md)。スタックはNext.js 16 + Supabase(ADR 0003)。ホスティングはVPS 1台 + Coolify(ADR 0006)で、公開は`production`ブランチから行う(mainへの統合だけでは公開されない)。アクセス解析はADR 0011。mainは直線の履歴で1コミット = 1 Issue、統合はPRのsquashだけ(ADR 0012)。Dockerで動くstandalone出力を維持し、特定ホストの固有機能に依存しない。
 新しい機能や課題の種類は、まず1単元で試してから量産する(roadmap.md 1章)。
 Next.jsのAPIは学習データと異なる可能性があるので、書く前に`node_modules/next/dist/docs/`の該当ガイドを読む(AGENTS.md)。
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# GitHub Issueを1件、実装側のモデルがworktreeで実装し、レビュー側のモデルが読み取り専用でレビューし、mainへ統合してpushする。
+# GitHub Issueを1件、実装側のモデルがworktreeで実装し、レビュー側のモデルが読み取り専用でレビューし、PRをsquashでマージしてmainへ統合する(ADR 0012)。
 # 設計はdocs/quality-loop.md §4.4。続けて回すのはscripts/issue-loop.sh。元はTaxForgeのscripts/issue-agent.sh。
 #
 #   scripts/issue-agent.sh <Issue番号>   # 1件処理
@@ -10,7 +10,7 @@
 #   2人手が要る(実装で行き詰まり、レビューが収束しない、保護パス)。ループはこのIssueをスキップして次へ進む
 #   3コンフリクト
 #   4関門(scripts/check.sh)が上限回数まで通らない
-#   5環境の問題(本体が汚れている、originより遅れている、claudeの異常終了、pushの失敗)。ループはこれで停止する
+#   5環境の問題(本体が汚れている、originより遅れている、claudeの異常終了、pushやPRのマージの失敗)。ループはこれで停止する
 #   6対象外(openでない、処理中)
 #   7 Claude Codeの利用上限。ループはリセットまで待って同じIssueを取り直す
 # 2〜4ではworktreeとブランチを残し、Issueにagent:needs-humanを付ける。
@@ -20,7 +20,7 @@
 #   ISSUE_PHASE_TIMEOUT   claude -p 1回の上限秒(既定3600)
 #   ISSUE_MAX_TURNS       claude -p 1回のターン上限(既定200)
 #   ISSUE_MAX_BUDGET_USD  claude -p 1回の費用上限(未指定なら無し)
-#   ISSUE_PUSH            統合後にmainをoriginへpushする(既定1。0で止める)
+#   ISSUE_PUSH            PRを作ってGitHub上で統合する(既定1。0ならローカルでsquashするだけでpushしない)
 #   ISSUE_VERIFY          統合後にscripts/issue-verify.shを回す(既定1)
 #   ISSUE_FORCE=1         agent:in-progress / agent:needs-humanが付いていても引き継ぐ
 #   ISSUE_FRESH=1         既存のworktreeとブランチを捨てて作り直す
@@ -312,51 +312,78 @@ $(findings_md "$review")"
 done
 
 # ---------- 7. 統合 ----------
-# mainの取り込みからpush・再検証までは1件ずつ。並走するissue-agentはここで順番を待つ
+# mainは直線で、1コミット = 1 Issue(ADR 0012)。mainの同期からマージ・再検証までは1件ずつ。並走するissue-agentはここで順番を待つ
 exec 8>"$LOG_DIR/lock"
 flock -n 8 || { log "別のissue-agentの統合を待ちます($LOG_DIR/lock)"; flock 8; }
+[ "$(git branch --show-current)" = "main" ] || give_up 5 "" "本体チェックアウトがmainではなくなっています"
+if [ "$PUSH" = 1 ]; then
+  # PRの相手はorigin/mainなので、ローカルのmainを同じ位置にそろえる。人が直接コミットした分は先にpushする
+  git fetch -q origin main >"$ISSUE_DIR/merge.log" 2>&1 && git merge -q --ff-only origin/main >>"$ISSUE_DIR/merge.log" 2>&1 \
+    && git push -q --no-verify origin main >>"$ISSUE_DIR/merge.log" 2>&1 \
+    || give_up 5 "" "ローカルのmainをorigin/mainにそろえられません($ISSUE_DIR/merge.log)"
+fi
 head_before=$(git -C "$WT" rev-parse HEAD)
 log "mainを取り込みます"
-if ! git -C "$WT" merge --no-edit main >"$ISSUE_DIR/merge.log" 2>&1; then
+# squashするので、この追いつき用マージはmainに残らない
+if ! git -C "$WT" merge --no-edit main >>"$ISSUE_DIR/merge.log" 2>&1; then
   git -C "$WT" merge --abort; give_up 3 agent:needs-human "mainの取り込みでコンフリクトしました($ISSUE_DIR/merge.log)"
 fi
 if [ "$(git -C "$WT" rev-parse HEAD)" != "$head_before" ]; then
   gate final || give_up 4 agent:needs-human "main取り込み後の関門で失敗しました: ${GATE_REPORT%%$'\n'*}(詳細はログ)"
 fi
-[ "$(git branch --show-current)" = "main" ] || give_up 5 "" "本体チェックアウトがmainではなくなっています"
 overlap=$(comm -12 <(git status --porcelain | cut -c4- | sort) <(git diff --name-only main..."$BRANCH" | sort))
 [ -z "$overlap" ] || give_up 5 "" "本体チェックアウトの未コミットの変更が統合するファイルと重なっています:
 $overlap"
-log "mainへマージします"
-if ! git merge --no-ff --no-edit -m "$title (#$ISSUE)" \
-    -m "issue-agentによる統合(実装$IMPL_MODEL、レビュー$REVIEW_MODEL、${round}ラウンド)。" "$BRANCH" >>"$ISSUE_DIR/merge.log" 2>&1; then
-  git merge --abort; give_up 3 agent:needs-human "mainへのマージに失敗しました($ISSUE_DIR/merge.log)"
+subject="$title (#$ISSUE)"
+body="issue-agentによる統合(実装$IMPL_MODEL、レビュー$REVIEW_MODEL、${round}ラウンド)。
+
+Closes #$ISSUE"
+coauthors=$(git log --format=%B "main..$BRANCH" | grep -i '^Co-Authored-By:' | sort -u)
+[ -z "$coauthors" ] || body="$body
+$coauthors"
+if [ "$PUSH" = 1 ]; then
+  log "PRを作ってsquashでマージします"
+  head=$(git -C "$WT" rev-parse HEAD)
+  # 中断した前回のブランチがoriginに残っていることがあるので上書きする
+  git push -q --no-verify --force origin "$BRANCH" >>"$ISSUE_DIR/merge.log" 2>&1 || give_up 5 "" "ブランチをpushできません($ISSUE_DIR/merge.log)"
+  pr=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number // empty')
+  [ -n "$pr" ] || pr=$(gh pr create --head "$BRANCH" --base main --title "$subject" --body "$AI_NOTE
+
+$body" 2>>"$ISSUE_DIR/merge.log" | grep -o '[0-9]*$')
+  [ -n "$pr" ] || give_up 5 "" "PRを作れませんでした($ISSUE_DIR/merge.log)"
+  # 作った直後はGitHubがマージの可否を計算中で断られることがある
+  merged=0
+  for _ in 1 2 3 4 5; do
+    if gh pr merge "$pr" --squash --match-head-commit "$head" --subject "$subject" --body "$body" >>"$ISSUE_DIR/merge.log" 2>&1; then merged=1; break; fi
+    sleep 5
+  done
+  [ "$merged" = 1 ] || give_up 5 "" "PR #${pr}をマージできませんでした($ISSUE_DIR/merge.log)"
+  git pull -q --ff-only origin main >>"$ISSUE_DIR/merge.log" 2>&1 || give_up 5 "" "PR #${pr}はマージ済みですが、ローカルのmainを進められません($ISSUE_DIR/merge.log)"
+  git push -q --no-verify origin --delete "$BRANCH" >>"$ISSUE_DIR/merge.log" 2>&1
+  via="PR #${pr}をsquashでマージ、Closes #${ISSUE}で閉じます"
+else
+  log "ローカルでsquashします"
+  if ! { git merge --squash "$BRANCH" && git commit -q -m "$subject" -m "$body"; } >>"$ISSUE_DIR/merge.log" 2>&1; then
+    git reset -q --merge; give_up 3 agent:needs-human "mainへのsquashに失敗しました($ISSUE_DIR/merge.log)"
+  fi
+  via="ローカルでsquash、pushは未実施(ISSUE_PUSH=0)"
 fi
 merge_sha=$(git rev-parse --short HEAD)
+git diff --quiet HEAD "$BRANCH" || log "注意: mainのツリーが関門を通したブランチと一致しません(統合中にoriginへ別のpushがあった可能性)"
 
 # ---------- 8. 後片付け ----------
 git worktree remove "$WT" || git worktree remove --force "$WT"
-git branch -d "$BRANCH"
+# squashではブランチがmainの祖先にならないので-dは通らない
+git branch -q -D "$BRANCH"
 gh issue edit "$ISSUE" --remove-label agent:in-progress --remove-label ready-for-agent >/dev/null
 cost=$(total_cost)
 leftover=$(findings_md "$review")
-pushed="pushは未実施(ISSUE_PUSH=0。pushするとCloses #${ISSUE}で閉じます)"
-if [ "$PUSH" = 1 ]; then
-  # pre-pushフック(lint / 型 / テスト)は関門で通したものと同じなので飛ばす
-  if git push -q --no-verify origin main >>"$ISSUE_DIR/merge.log" 2>&1; then pushed="origin/mainへpush済み(Closes #${ISSUE}で閉じます)"
-  else
-    comment "## mainへ統合しました(pushは失敗)
-
-マージコミット \`$merge_sha\` はローカルのmainに入っていますが、originへのpushに失敗しました($ISSUE_DIR/merge.log)。手でpushしてください。レビュー${round}ラウンド、費用表示 \$$cost。"
-    log "完了(push失敗): $merge_sha"; exit 5
-  fi
-fi
 comment "## mainへ統合しました
 
-マージコミット \`$merge_sha\`(--no-ff、$pushed)。レビュー${round}ラウンド、費用表示 \$$cost。${leftover:+
+コミット \`$merge_sha\`($via)。レビュー${round}ラウンド、費用表示 \$$cost。${leftover:+
 
 残った指摘(should / nit):
 $leftover}"
-log "完了: $merge_sha($pushed、レビュー${round}ラウンド、費用表示 \$$cost)"
+log "完了: $merge_sha($via、レビュー${round}ラウンド、費用表示 \$$cost)"
 if [ "$VERIFY" = 1 ]; then scripts/issue-verify.sh "$ISSUE" || log "再検証で問題がありました(scripts/issue-verify.sh $ISSUE)"; fi
 exit 0
