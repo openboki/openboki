@@ -77,12 +77,16 @@ export function TutorialTour({
   const last = index === STEPS.length - 1;
   const satisfied = step.done ? step.done(ctx) : true;
   const card = useRef<HTMLDivElement>(null);
+  // 記入の段で先に記帳した瞬間を捉える。件数の大小で見ると、記帳後に「← 前へ」で記入の段をたどり直せなくなる(Issue #437)
+  const [seenPosted, setSeenPosted] = useState(ctx.postedCount);
+  const justPosted = ctx.postedCount > seenPosted;
+  if (ctx.postedCount !== seenPosted) setSeenPosted(ctx.postedCount);
 
   // 本体の「← 前へ」で最初のステップへ戻ると、記入以降の段の対象や文言が画面と合わなくなるので、「次へ →」を待つ段へ戻す(Issue #96)
   if (index > NEXT_BUTTON_STAGE && ctx.stepIndex === 0) setIndex(NEXT_BUTTON_STAGE);
   // 記入の段のまま本体が仕訳ステップより先へ進むと、下書きが消えて仕訳欄の無い画面に記入を求め続けるので、結果の段へ送る(Issue #215)。
   // postedCountで判定しないのは、記帳後に「← 前へ」で戻った場合は記入の段をたどり直せるようにするため
-  else if (index > NEXT_BUTTON_STAGE && index < RESULT_STAGE && ctx.stepIndex > JOURNAL_UNIT_STEP) setIndex(RESULT_STAGE);
+  else if (index > NEXT_BUTTON_STAGE && index < RESULT_STAGE && (ctx.stepIndex > JOURNAL_UNIT_STEP || justPosted)) setIndex(RESULT_STAGE);
   else if (step.autoAdvance && satisfied) setIndex(index + 1);
 
   useEffect(() => {
