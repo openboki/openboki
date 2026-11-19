@@ -47,7 +47,7 @@ export default async function UnitPage({ params }: { params: Promise<{ topic: st
         currency: unit.scenario.currency,
         view: unit.scenario.view,
         opening: unit.scenario.opening,
-        steps: unit.steps.map((s) => ({ title: s.title, task: s.task })),
+        steps: unit.steps.map((s) => ({ title: s.title, task: s.task, illustration: s.illustration })),
         next: next ? { id: next.id, title: next.title } : undefined,
         requires: unit.requires.map((id) => ({ id, title: unitMap.get(id)!.title })),
       }}

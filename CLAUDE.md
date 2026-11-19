@@ -26,6 +26,7 @@ Next.jsのAPIは学習データと異なる可能性があるので、書く前�
 - `src/lib/progress.ts`: 匿名サインインと回答・進捗の保存。`supabase/migrations/`: スキーマとRLS
 - `scripts/`: 無人ループ(`monkey-loop.sh` / `triage-agent.sh` / `issue-agent.sh` / `issue-loop.sh` / `issue-verify.sh` / `quality-night.sh`)、`scripts/monkey/session.mjs`(Monkeyのオラクル)、`scripts/issue-agent/`(プロンプトとスキーマ、PreToolUseのguard)。`.claude/skills/monkey-test/`: 人格と手順。`e2e/repro/`: Issueの回帰テスト(`issue-<n>.spec.ts`)。`logs/`はgitignore
 - `src/app/map/`: 概念マップ(`concept-map.tsx`が一覧・図・説明の3ペイン、`graph-canvas.tsx`がforce-graphで図を描く)。線の組み立ては`src/lib/concept-graph.ts`
+- `src/components/illustrations/`: 物語のスポットイラスト(自作のSVG。名前の一覧は`src/lib/illustrations.ts`、絵柄の決まりはdocs/visual-guidelines.md 6章)。絵を足すときは`.claude/skills/spot-illustration/`の手順に従い、`make illustrations`の見本(`/illustrations`を全テーマで撮る)で既存の絵と見比べる
 - `src/components/markdown.tsx`: 説明文の描画。`[[id]]` → 用語ポップオーバー、```journal → 仕訳エディタ
 
 ## 使うSkills / MCP
@@ -43,7 +44,7 @@ Next.jsのAPIは学習データと異なる可能性があるので、書く前�
 - コンテンツ(解説・演習・概念・誤解)は`content/`で管理し、DBに置かない。
 - 不正解は「どの誤解か」まで判定して返す。誤答パターンと誤解IDを省略した演習を増やさない。
 - 実API(決済・LLM・本番Supabase)を呼ぶテストを追加しない。Supabaseはローカルスタックで検証する。
-- 図解はコードで描く(`figure`ブロック)。外部イラストはunDrawのみとし、追加時は`docs/assets-ledger.md`に記録する。いらすとやとAI生成画像は学習コンテンツに使わない(ADR 0004)。
+- 図解はコードで描く(`figure`ブロック)。物語のスポットイラストも自作のSVGをコードで描き(`illustration`ブロック)、絵柄は`docs/visual-guidelines.md` 6章に合わせる。外部のイラスト素材と、画像生成AIの出力(ラスター画像)は学習コンテンツに使わない(ADR 0004)。
 
 ## Coding Style
 - コード内のコメントは日本語で記述してください。
