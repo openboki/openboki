@@ -5,6 +5,7 @@ import { FlowFigure } from "./flow-figure";
 import { TimelineFigure } from "./timeline-figure";
 import { TAccountFigure } from "./taccount-figure";
 import { ProportionFigure } from "./proportion-figure";
+import { PartiesFigure } from "./parties-figure";
 
 // 図解ブロックの振り分け(docs/visual-guidelines.md 5章)。種類ごとの描画は各ファイル
 
@@ -22,6 +23,8 @@ function Simple({ spec }: { spec: SimpleFigure }) {
       return <TimelineFigure total={spec.total} periods={spec.periods} unit={spec.unit ?? "年"} label={spec.label} highlight={spec.highlight} startMonth={spec.start_month} />;
     case "taccount":
       return <TAccountFigure account={accountMap.get(spec.account)!} debit={spec.debit ?? []} credit={spec.credit ?? []} />;
+    case "parties":
+      return <PartiesFigure rows={spec.rows} />;
     case "proportion":
       return <ProportionFigure assets={spec.assets} liabilities={spec.liabilities ?? []} equity={spec.equity ?? []} accounts={accountMap} />;
   }
