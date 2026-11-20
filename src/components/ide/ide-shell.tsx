@@ -1636,9 +1636,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
               <p className="whitespace-pre-wrap">{result.feedback}</p>
               {/* 歴史の単元はページの左右で教えるので、5要素の比較表は出さない(Issue #274) */}
               {(task.type === "post" || task.type === "debug") && !result.correct && gradedEntry && unit.kind !== "history" && (
-                <div className="rounded bg-background/70 p-2">
-                  <ImpactCompare yours={gradedEntry} expected={task.type === "post" ? task.answer : task.answer.entry} accounts={accountMap} />
-                </div>
+                <ImpactCompare yours={gradedEntry} expected={task.type === "post" ? task.answer : task.answer.entry} accounts={accountMap} />
               )}
               {task.type === "predict" && <PredictCompare predicted={effect} elements={askedElements} entry={task.entry} accounts={accountMap} />}
               {"wrong" in result && result.wrong.length > 0 && (

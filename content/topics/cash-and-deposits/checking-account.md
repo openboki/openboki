@@ -63,7 +63,7 @@ wrong_patterns:
     feedback: 左の合計と右の合計がそろっていません。どちらも200,000にしましょう。
   - match: { debit: [{ account: bank_deposit }], credit: [{ account: bank_deposit }] }
     misconception: deposit_kinds_confused
-    feedback: 左も右も普通預金になっています。「預金」とだけ書くと、普通預金として読まれます。左は新しく作った当座預金です。資産の中での移動は正しい仕訳でも合計が動かないので、比較表はすべて ±0のまま差が出ません。
+    feedback: 左も右も普通預金になっています。「預金」とだけ書くと、普通預金として読まれます。左は新しく作った当座預金です。
 hint: 左に当座預金200,000、右に普通預金200,000です。
 success: 貸借対照表に当座預金が現れ、普通預金が同じだけ減りました。資産の合計は変わっていません。
 ```
@@ -153,7 +153,7 @@ wrong_patterns:
     feedback: 他人が振り出した小切手を受け取ったときは現金として扱います。当座預金に入れたわけではありません。
   - match: { debit: [{ account: bank_deposit }] }
     misconception: received_check_is_checking_account
-    feedback: 小切手を受け取っただけで、まだ銀行には入れていません。受け取った小切手は現金として記録します。普通預金も現金も同じ資産なので、比較表では違いが見えにくいところです。
+    feedback: 小切手を受け取っただけで、まだ銀行には入れていません。受け取った小切手は現金として記録します。
   - match: { debit: [{ account: accounts_receivable }] }
     feedback: 代金はもう小切手で受け取っています。「後で受け取る権利」ではありません。
   - match: { unbalanced: true }
