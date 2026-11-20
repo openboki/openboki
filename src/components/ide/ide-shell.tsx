@@ -709,6 +709,33 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     setResumeStep(null);
   };
 
+  // 完了した単元を最初から解き直す(Issue #481)。保存済みの答えは取り込まない。DBの完了とこれまでの回答は残し、解き直しの回答は追記する
+  const restart = () => {
+    setPosted(replayEntries(unit.steps, 0));
+    answered.current.clear();
+    celebratedSteps.current.clear();
+    resumeAdopted.current = true;
+    resumeGraded.current = null;
+    setResumeStep(null);
+    goTo(0);
+    // goToは離れるステップの誤答回数を控えるので、そのあとで消す
+    stepAttempts.current.clear();
+    setAttempts(0);
+    setReached(0);
+  };
+  const restartButton = (
+    <Button
+      size="sm"
+      variant="ghost"
+      onClick={() => {
+        flushSync(restart);
+        stepHeading.current?.focus();
+      }}
+    >
+      最初からやり直す
+    </Button>
+  );
+
   // DBの進捗が届いた時点で案内の「続きから」と同じことをする。同じタブではsessionStorageの復元が先に効き、resumeStepは立たない
   useEffect(() => {
     if (!autoResume || resumeStep === null || tourActive || stepIndex !== 0) return;
@@ -1221,19 +1248,22 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
           {/* ツアーはステップ0からの台本なので、ツアー中に再開させるとツアーと画面がずれる。
               案内は開いた直後(最初のステップ)だけ出す。自分で進み始めたら学習に集中できるよう消す */}
           {!tourActive && resumeStep !== null && stepIndex === 0 && (
-            <div className="mb-3 rounded-md bg-muted/60 p-2 text-sm flex items-center justify-between gap-2">
+            <div className="mb-3 rounded-md bg-muted/60 p-2 text-sm flex flex-wrap items-center justify-between gap-2">
               <span>{resumeCompleted ? "この単元は完了しています。" : `前回はステップ${resumeStep + 1}まで進みました。`}</span>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => {
-                  // 再開したステップの見出しを読ませるので、描画を終えてから移す
-                  flushSync(resume);
-                  stepHeading.current?.focus();
-                }}
-              >
-                {resumeCompleted ? "最後のステップを見る" : "続きから"}
-              </Button>
+              <div className="ml-auto flex items-center gap-2">
+                {resumeCompleted && !isTutorialUnit && restartButton}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    // 再開したステップの見出しを読ませるので、描画を終えてから移す
+                    flushSync(resume);
+                    stepHeading.current?.focus();
+                  }}
+                >
+                  {resumeCompleted ? "最後のステップを見る" : "続きから"}
+                </Button>
+              </div>
             </div>
           )}
           <div className="prose prose-sm max-w-none">{narratives[stepIndex]}</div>
@@ -1648,6 +1678,8 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
               答えを見る
             </Button>
           )}
+          {/* チュートリアルのやり直しは「使い方」の「チュートリアルを最初から」が受け持つ */}
+          {isLast && done && stepIndex > 0 && !isTutorialUnit && restartButton}
           <span className="flex-1" />
           {!done && !revealNote && <span className="text-xs text-muted-foreground">課題ができると次へ進めます</span>}
           {/* 狭い幅で折り返すときも「次へ →」を右下に残すため、前後のボタンはひとまとまりで次の段の右端へ回す */}

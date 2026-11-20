@@ -18,12 +18,7 @@ export default function Home() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 space-y-10">
       <section className="space-y-4">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold">会計を原理から、手を動かして学ぶ</h1>
-          <p className="text-muted-foreground">
-            短い解説を読み、その場で仕訳を切り、5要素と財務諸表がどう動くかを確かめる。暗記ではなく「なぜ」を積み上げる学習サイトです。
-          </p>
-        </div>
+        <h1 className="text-2xl font-bold">会計を原理から、手を動かして学ぶ</h1>
         <HomeStart units={startUnits} />
       </section>
 
