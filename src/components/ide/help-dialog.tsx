@@ -4,7 +4,7 @@ import Link from "next/link";
 import { type RefObject, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { type HelpContext, type HelpTopic, HELP_CATEGORIES, HELP_TOPICS, canShowTarget, currentTopics, helpTopic, topicBody } from "@/lib/help-topics";
+import { type HelpContext, type HelpTopic, HELP_CATEGORIES, HELP_TOPICS, canShowTarget, currentTopics, helpTopic, onView, topicBody } from "@/lib/help-topics";
 import { TUTORIAL_UNIT_ID, updateTutorial, useTutorialState } from "@/lib/tutorial-store";
 
 // 「使い方」: いまの画面に出ている機能を先に、残りは分類ごとに畳んで出す。末尾にチュートリアルの設定(docs/help-design.md 5.3)
@@ -89,7 +89,7 @@ export function HelpDialog({ open, onOpenChange, focusTopic, returnToRef, ctx, s
               すべての機能
             </h3>
             {HELP_CATEGORIES.map((cat) => {
-              const topics = HELP_TOPICS.filter((t) => t.category === cat.id);
+              const topics = HELP_TOPICS.filter((t) => t.category === cat.id && onView(t, ctx));
               return (
                 // keyにfocusCategoryを含め、「?」から開き直したときにopen属性を初期値から効かせる
                 <details key={`${cat.id}-${focusCategory === cat.id}`} open={focusCategory === cat.id} className="group rounded-md border">

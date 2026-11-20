@@ -25,6 +25,8 @@ export interface HelpTopic {
   body: string | ((ctx: HelpContext) => string);
   // 「いまの画面でできること」に入れる条件。無ければ常に
   when?: (ctx: HelpContext) => boolean;
+  // 結果ペインがこの段階の単元にだけある機能。外れる単元では「使い方」に出さない。無ければすべての段階
+  views?: HelpContext["view"][];
   // 「場所を示す」で光らせる要素(data-tourの値)と、スマートフォンで切り替えるペイン
   target?: string;
   pane?: "guide" | "work" | "result";
@@ -123,6 +125,7 @@ export const HELP_TOPICS: HelpTopic[] = [
     title: "貸借対照表と損益計算書",
     target: "statements",
     pane: "result",
+    views: ["statements"],
     short: "記帳のたびに結果の表が動きます。動いた行が光り、差分が「+」「−」付きで出ます。",
     body: "記帳のたびに結果の表が動きます。動いた行が光り、前のステップとの差分が「+」「−」付きで出ます。科目名に触れると意味と要素が出ます。貸借対照表の左右の合計は、いつも一致します。",
   },
@@ -134,8 +137,18 @@ export const HELP_TOPICS: HelpTopic[] = [
     pane: "result",
     short: "左の帯が資産、右の帯が負債と純資産です。同じ幅になり、記帳のたびに中身が変わります。",
     body: "貸借対照表の上の帯です。左が資産、右が負債と純資産で、幅はいつも同じになります。記帳のたびに中身の割合が変わるので、「資産は負債と純資産でまかなわれる」構造が目で分かります。",
-    // 帯は財務諸表の上にだけある
-    when: (c) => c.postedCount >= 1 && c.view === "statements",
+    views: ["statements"],
+    when: (c) => c.postedCount >= 1,
+  },
+  {
+    id: "trial",
+    category: "result",
+    title: "試算",
+    target: "trial",
+    pane: "result",
+    views: ["ledger"],
+    short: "科目ごとに借方と貸方の合計を並べ、左右の合計が一致するかを確かめる表です。",
+    body: "科目ごとに借方と貸方の合計を並べ、最後の行に左右それぞれの合計を出します。記帳のたびに数字が変わり、表の下に左右の合計が一致しているかが出ます。一致しないときは、どこかの仕訳で金額の写し間違いや書き漏らしがあると疑います。",
   },
   {
     id: "rewind",
@@ -152,6 +165,7 @@ export const HELP_TOPICS: HelpTopic[] = [
     id: "changed",
     category: "result",
     title: "このステップで動いた要素",
+    views: ["statements"],
     short: "このステップの記帳で、5要素のどれがいくら動いたかをまとめて出します。",
     body: "結果の下に、このステップの記帳で5要素のどれがいくら動いたかをまとめて出します。表のどこが変わったか分からなくなったら、ここを見ます。",
   },
@@ -258,12 +272,17 @@ export function topicBody(t: HelpTopic, ctx: HelpContext): string {
   return typeof t.body === "string" ? t.body : t.body(ctx);
 }
 
+/** この単元の画面にある機能か。「すべての機能」もこれで絞る */
+export function onView(t: HelpTopic, ctx: HelpContext): boolean {
+  return !t.views || t.views.includes(ctx.view);
+}
+
 /** 「場所を示す」を付けるか: 対象があり、いまの画面に出ている */
 export function canShowTarget(t: HelpTopic, ctx: HelpContext): boolean {
-  return Boolean(t.target) && (!t.when || t.when(ctx));
+  return Boolean(t.target) && onView(t, ctx) && (!t.when || t.when(ctx));
 }
 
 /** 「いまの画面でできること」。ガイド → ワークスペース → 結果 → 課題の順(表の順)で、条件を満たす話題だけ */
 export function currentTopics(ctx: HelpContext): HelpTopic[] {
-  return HELP_TOPICS.filter((t) => t.when && t.when(ctx));
+  return HELP_TOPICS.filter((t) => t.when && onView(t, ctx) && t.when(ctx));
 }
