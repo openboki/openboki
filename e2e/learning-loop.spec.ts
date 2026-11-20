@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
+import { type AccountInfo, computeImpact } from "../src/lib/accounting";
 
 // 会計IDEの学習ループ。コンテンツ(.velite)を読んで各ステップを正しく操作し、最後まで進めて進捗が保存されることを確かめる。
 // 最初のpostステップでは、わざと貸借を逆にして「もう一歩」と誤解の説明が出ることも確かめる。
@@ -46,6 +47,13 @@ async function fillEntry(page: Page, entry: Entry) {
   }
 }
 
+// 貸借を逆にすると5要素の増減は符号が反転するので、正解の純増減がすべて0のときだけ比較表と一致する
+function sameImpactWhenSwapped(entry: Entry): boolean {
+  const map = new Map([...accounts, ...unitAccounts].map((a) => [a.id, a as AccountInfo]));
+  const impact = computeImpact(entry, map);
+  return impact.asset === 0 && impact.liability === 0 && impact.equityTotal === 0 && impact.revenue === 0 && impact.expense === 0;
+}
+
 function solveTweak(task: Extract<Task, { type: "tweak" }>): Record<string, number> {
   // 定額法: (cost - residual) / useful_lifeを目標値にするパラメータを総当たりで探す
   const values = Object.fromEntries(task.params.map((p) => [p.id, p.value]));
@@ -85,7 +93,8 @@ for (const unit of units) {
             await work.getByRole("button", { name: "記帳する" }).click();
             await expect(page.getByText("もう一歩", { exact: true })).toBeVisible();
             // 歴史の単元はページの左右で教えるので、5要素の比較表を出さない(Issue #274)
-            if (unit.kind === "history") await expect(page.getByText("あなたの仕訳")).toHaveCount(0);
+            // 5要素の動きが正解と一致する誤答(資産どうしの貸借逆)も、表が「合っている」と読めるので出さない(Issue #413)
+            if (unit.kind === "history" || sameImpactWhenSwapped(task.answer)) await expect(page.getByText("あなたの仕訳")).toHaveCount(0);
             else await expect(page.getByText("あなたの仕訳")).toBeVisible();
             triedWrong = true;
           }
@@ -155,7 +164,7 @@ for (const unit of units) {
     }
     // 最後のステップに到達すると完了として保存される
     await page.goto(`/topics/${unit.id.split("/")[0]}`);
-    await expect(page.getByRole("listitem").filter({ hasText: unit.title }).getByText("完了")).toBeVisible();
+    await expect(page.getByRole("listitem").filter({ hasText: unit.title }).getByText("完了", { exact: true })).toBeVisible();
   });
 }
 
