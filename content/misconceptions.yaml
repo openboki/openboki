@@ -552,6 +552,18 @@ misconceptions:
     correct: 返済は「返す義務(借入金)」と預金が同じだけ減る取引で、もうけは変わらない。費用になるのは利息だけ
     concepts: [loan, expense]
     remediation: receivables-and-payables/loans
+  - id: lending_is_expense
+    name: 貸したお金は費用
+    description: お金を貸して預金が出ていったことを、支払利息のような費用として記録してしまう
+    correct: 貸したお金は後で返してもらう権利(貸付金)に形を変えただけで、もうけは減らない。資産として残し、費用になるのは借りた側が払う利息だけ
+    concepts: [loan, asset, expense]
+    remediation: receivables-and-payables/loans
+  - id: interest_full_year_for_months
+    name: 利息を1年分のまま答える
+    description: 半年分のように期間が1年に満たない利息でも、元本 × 年利率の1年分をそのまま答えてしまう
+    correct: 年利率は1年あたりの率。期間が1年でないときは、元本 × 年利率に月数 ÷ 12を掛けて、その期間の分に直す
+    concepts: [interest, annual_interest_rate]
+    remediation: receivables-and-payables/loans
   - id: nontrade_as_trade
     name: 後払いなら何でも売掛金・買掛金
     description: 商品以外の物(備品など)を後払いで売り買いしたときにも、売掛金や買掛金を使ってしまう

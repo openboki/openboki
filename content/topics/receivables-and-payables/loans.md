@@ -60,6 +60,7 @@ wrong_patterns:
     misconception: lender_borrower_confused
     feedback: 借入金は自分が借りたときの科目です。今回は貸した側なので貸付金です。
   - match: { debit: [{ account: interest_expense }] }
+    misconception: lending_is_expense
     feedback: 貸したお金は費用ではありません。返してもらう権利として資産に残ります。
   - match: { credit: [{ account: cash }] }
     misconception: deposit_is_cash
@@ -92,15 +93,17 @@ wrong_patterns:
     misconception: interest_income_as_cash
     feedback: 普通預金が増えるのは合っています。その原因は貸したことで得たもうけなので、受取利息という収益も同時に増えます。
   - match: { asset: none }
+    no_misconception: 預金が増えることの見落としで、貸付金が減ると見たかはこの回答だけでは決められない
     feedback: 利息が預金に振り込まれたので、資産は増えます。貸付金は減りませんが、普通預金が増えます。
   - match: { equity: none }
+    no_misconception: 収益と純資産のつながりの見落としで、利息の考え方の誤りではない
     feedback: 収益が増えると当期純利益が増え、純資産も増えます。
 hint: 普通預金(資産)と受取利息(収益)が増えます。収益が増えれば純資産も増えます。
 success: 受取利息2,000が損益計算書に現れました。貸付金はそのままです。利息と元本は別物です。
 ```
 
 ## 借入金の利息を払う
-今度はマメノキが払う番です。銀行の[[loans_payable|借入金]]300,000円の利息、半年分3,000円を普通預金から支払いました。
+今度はマメノキが払う番です。銀行の[[loans_payable|借入金]]300,000円は[[annual_interest_rate|年利率]]2%で借りています。その利息、半年分3,000円を普通預金から支払いました。
 
 借りている「使用料」なので、「[[interest_expense|支払利息]]」という費用です。借入金そのものは減りません。[[principal|元本]]を返したときだけ、借入金が減ります。
 
@@ -142,10 +145,13 @@ question: 借入金300,000円、年利率2%、半年分(6か月)の利息はい�
 answer: 3000
 wrong_patterns:
   - match: 6000
+    misconception: interest_full_year_for_months
     feedback: 6,000円は1年分です。半年分なので6/12を掛けます。
   - match: 300
+    no_misconception: 2%を0.002とした桁の計算違いで、利息の考え方の誤りではない
     feedback: 年利率は2%です。300,000 × 0.02 = 6,000が1年分、その半分です。
   - match: 1500
+    no_misconception: 半年分の3,000をさらに半分にした計算の誤りで、考え方の誤解ではない
     feedback: 半年は6/12 = 1/2です。1年分の6,000に1/2を掛け直しましょう。
   - match: 36000
     misconception: interest_months_not_divided
@@ -185,7 +191,8 @@ wrong_patterns:
     misconception: principal_is_revenue
     feedback: 返ってきたのは元本です。もうけではないので、受取利息ではなく貸付金を減らします。
   - match: { credit: [{ account: sales }] }
-    feedback: 商品を売ったわけではありません。貸したお金が戻ってきただけです。
+    misconception: principal_is_revenue
+    feedback: 商品を売ったわけではありません。貸したお金が戻ってきただけで、もうけではないので、売上ではなく貸付金を減らします。
   - match: { credit: [{ account: loans_payable }] }
     misconception: lender_borrower_confused
     feedback: 返してもらった側なので、消すのは借入金ではなく貸付金です。借入金は自分が借りたお金の科目です。
@@ -215,10 +222,13 @@ wrong_patterns:
     misconception: repayment_is_expense
     feedback: 返済は費用ではありません。返す義務(借入金)が減るだけで、もうけは動きません。
   - match: { liability: none }
+    no_misconception: 借入金が減ることの見落としで、返済をどう考えたかはこの回答だけでは決められない(費用と見た回答は費用の予想で捕まえる)
     feedback: 100,000円返したので、借入金という義務が減ります。
   - match: { equity: decrease }
+    no_misconception: 資産と負債が同じだけ減ることの見落としで、返済を費用と見た回答は費用の予想で捕まえる
     feedback: 資産と負債が同じだけ減るので、差し引きの純資産は変わりません。
   - match: { asset: none }
+    no_misconception: 普通預金が減ることの見落としで、考え方の誤解ではない
     feedback: 普通預金から100,000円を払ったので、資産は減ります。
 hint: 普通預金(資産)と借入金(負債)が同じだけ減ります。もうけは動きません。
 success: 普通預金が減り、借入金という「義務」が同じだけ減って200,000になりました。返済は費用ではなく、費用になったのは利息の3,000円だけです。
