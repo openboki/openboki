@@ -174,7 +174,7 @@ success: 資産が減り、費用が増え、利益が減りました。現金�
 ## マシンの分も記帳する
 2号店のコーヒーマシン600,000円も、10月1日に買ったものです。耐用年数6年、残存価額ゼロなら1年分は100,000円。こちらも使ったのは6か月です。
 
-マシン(備品)の減価償却を、自分で計算して記帳してみましょう。累計額は資産ごとに分けて積むので、マシンの減りは軽バンの累計額ではなく[[accumulated_depreciation_equipment|備品減価償却累計額]]に積みます。総称の「減価償却累計額」と書いても構いません。
+マシン(備品)の減価償却を、自分で計算して記帳してみましょう。累計額は資産ごとに分けて積むので、マシンの減りは軽バンの累計額ではなく[[accumulated_depreciation_equipment|備品減価償却累計額]]に積みます。総称の「減価償却累計額」は帳簿では別の勘定になるので、資産ごとの科目で書きます。
 
 ```figure
 type: taccount
@@ -190,9 +190,6 @@ transaction: 決算にあたり、コーヒーマシン(備品)の減価償却�
 answer:
   debit: [{ account: depreciation_expense, amount: 50000 }]
   credit: [{ account: accumulated_depreciation_equipment, amount: 50000 }]
-alternatives:
-  - debit: [{ account: depreciation_expense, amount: 50000 }]
-    credit: [{ account: accumulated_depreciation, amount: 50000 }]
 wrong_patterns:
   - match: { swapped: true }
     misconception: debit_means_increase
@@ -233,6 +230,9 @@ wrong_patterns:
   - match: { debit: [{ account: supplies_expense }] }
     misconception: depreciation_as_supplies_expense
     feedback: 消耗品費は、文房具のようにすぐ使い切る物の費用です。何年も使うマシンの使った分には、減価償却のための費用の科目があります。
+  - match: { credit: [{ account: accumulated_depreciation }] }
+    misconception: accumulated_depreciation_any_asset
+    feedback: 減価償却累計額は、資産ごとの累計額をまとめて呼ぶ総称です。帳簿では科目名ごとに別の勘定になり、軽バンの累計額とも備品の累計額とも別の行に載ります。マシンの減りは備品減価償却累計額に積みましょう。
   - match: { unbalanced: true }
     feedback: 左の合計と右の合計がそろっていません。
 hint: 600,000 ÷ 6年 = 100,000。それを6か月分にすると50,000です。右は備品減価償却累計額です。
