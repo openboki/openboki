@@ -1377,7 +1377,8 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
             >
               <label className="text-sm font-semibold block">
                 {task.question}
-                <Input inputMode="numeric" className="mt-1" value={calcValue} readOnly={result?.correct === true} onChange={(e) => {
+                {/* iOSのnumeric / decimalのテンキーには負号が無いので、inputModeを付けない */}
+                <Input className="mt-1" value={calcValue} readOnly={result?.correct === true} onChange={(e) => {
                     setCalcValue(e.target.value);
                     setCalcError(null);
                   }}
@@ -1497,7 +1498,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
           {unit.view === "statements" && <StatementsPane accounts={accountMap} netIncomeTerm={netIncomeTerm} balances={view.balances} diff={view.diff} company={unit.company} />}
           {unit.view === "ledger" && (
             <div className="space-y-5 text-sm">
-              <section aria-label="試算">
+              <section aria-label="試算" data-tour="trial">
                 <h3 className="font-semibold mb-1">
                   試算 <span className="text-xs font-normal text-muted-foreground">{unit.company}</span>
                 </h3>
