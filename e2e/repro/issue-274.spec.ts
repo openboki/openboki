@@ -28,8 +28,8 @@ test("航海の儲けと複式の発見 ステップ7の貸借逆に5要素の�
   await next.click();
   await expect(page.getByText("ステップ6 / 9")).toBeVisible();
   await work.getByRole("radio").nth(2).check();
-  // 正しい行で貸方を現金にすると5要素の動きが同じになり、以前は5要素の汎用文が出ていた
-  await fill("ジョヴァンニ", "50", "現金", "50");
+  // 正しい行で貸方をマッテオにすると5要素の動きが同じになり、以前は5要素の汎用文が出ていた(現金と胡椒は#452で専用の説明を持った)
+  await fill("ジョヴァンニ", "50", "マッテオ", "50");
   await work.getByRole("button", { name: "確認する" }).click();
   const debugStatus = page.getByRole("status").filter({ hasText: "もう一歩" });
   await expect(debugStatus).toBeVisible();

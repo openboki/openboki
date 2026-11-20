@@ -20,9 +20,10 @@ describe("歴史の単元で5要素の動きが同じ誤答", () => {
     expect(r.feedback).toBe(SAME_IMPACT_HISTORY);
   });
 
-  it("debugで正しい行の貸方を現金にしたときも同じ", () => {
+  // 現金と胡椒にはパターンがある(Issue #452)ので、パターンの無いマッテオで確かめる
+  it("debugで正しい行の貸方をマッテオにしたときも同じ", () => {
     const task = venture.steps[5].task as TaskOf<"debug">;
-    const entry = { debit: task.answer.entry.debit, credit: [{ account: "cash", amount: 50 }] };
+    const entry = { debit: task.answer.entry.debit, credit: [{ account: "matteo", amount: 50 }] };
     expect(gradeDebug(task, { index: task.answer.index, entry }, accounts, venture.kind).feedback).toBe(SAME_IMPACT_HISTORY);
   });
 

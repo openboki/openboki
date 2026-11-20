@@ -22,7 +22,7 @@ describe("単元2ステップ6「写し忘れを見つける」", () => {
   it("両側そろった行を選ぶと、wrong_patternsの文言が返る", () => {
     const r = gradeDebug(task, { index: 4, entry: task.entries[4] }, accounts);
     expect(r.correct).toBe(false);
-    expect(r.feedback).toBe(task.wrong_patterns.find((p) => p.match.index === 4)!.feedback);
+    expect(r.feedback).toBe(task.wrong_patterns.find((p) => "index" in p.match && p.match.index === 4)!.feedback);
   });
 
   it("パターンの無い行を選ぶと、両側そろっているという既定の文言が返る", () => {

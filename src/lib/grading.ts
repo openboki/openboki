@@ -92,13 +92,14 @@ export interface DebugAnswer {
   entry: JournalEntry;
 }
 
-/** debug: 選んだ行と直した仕訳を採点する。行の選び間違いはwrong_patternsで、行が合っていれば仕訳をpostと同じく比べる(Issue #263) */
+/** debug: 選んだ行と直した仕訳を採点する。行の選び間違いはindexのwrong_patternsで、行が合っていれば仕訳をpostと同じく比べる(Issue #263、#452) */
 export function gradeDebug(task: TaskOf<"debug">, answer: DebugAnswer, accounts?: ReadonlyMap<string, AccountInfo>, kind: Unit["kind"] = "lesson"): GradeResult {
   if (answer.index !== task.answer.index) {
-    const pattern = task.wrong_patterns.find((p) => p.match.index === answer.index);
+    const pattern = task.wrong_patterns.find((p) => "index" in p.match && p.match.index === answer.index);
     return ng(pattern?.feedback ?? DEBUG_ROW_BALANCED, pattern?.misconception);
   }
-  const r = gradePost({ type: "post", transaction: "", answer: task.answer.entry, alternatives: [], wrong_patterns: [] }, answer.entry, accounts, kind);
+  const wrong_patterns = task.wrong_patterns.flatMap((p) => ("index" in p.match ? [] : [{ ...p, match: p.match }]));
+  const r = gradePost({ type: "post", transaction: "", answer: task.answer.entry, alternatives: [], wrong_patterns }, answer.entry, accounts, kind);
   return r.correct ? ok(task) : r;
 }
 

@@ -51,13 +51,15 @@ test("ステップ7でワインの口からもうけを移すと、胡椒の口�
   await expect(status.filter({ hasText: generic })).toHaveCount(0);
 });
 
-// debugのwrong_patternsは行の選び間違い(index)しか書けないので、velite.config.tsのスキーマを広げるまで保留
-test.fixme("ステップ6で写し忘れた行の右を胡椒にすると、ワインの口を指す誤解の説明が出る", async ({ page }) => {
+test("ステップ6で写し忘れた行の右を胡椒にすると、ワインの口を指す誤解の説明が出る", async ({ page }) => {
   const { work } = await openStep6(page);
   const status = page.getByRole("status");
   await fill(work, "借方", "ジョヴァンニ", "50");
   await fill(work, "貸方", "胡椒(アレクサンドリア航海)", "50");
   await work.getByRole("button", { name: "確認する" }).click();
-  await expect(status.filter({ hasText: "もう一歩" })).toBeVisible();
+  const wrong = status.filter({ hasText: "もう一歩" });
+  await expect(wrong).toBeVisible();
+  await expect(wrong).toContainText("よくある思い込み");
+  await expect(wrong).toContainText("ワイン");
   await expect(status.filter({ hasText: generic })).toHaveCount(0);
 });

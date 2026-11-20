@@ -316,7 +316,7 @@ scenario:
 - `kind: lesson`は従来どおり、postかpredictが1つ以上。
 - `kind: history` / `forensics`は、種類を問わずtaskが1つ以上。読み物だけの単元は作れない。
 - classifyは箱を任意にできる。`accounts`の代わりに`labels`(箱のIDと表示名)と`items`(並べる項目のID・表示・正解の箱)を書く。`misconceptions`は`項目 → 間違えた箱 → 誤解ID`。`accounts`を書いた従来の形は、箱を5要素とみなす。
-- debug(バグ探し。M3)は、`entries`(記帳済みの仕訳。1件だけ誤りがあり、片側が空でもよい)の中から誤りの行を指し、直す課題。`answer`は`index`(0始まり)と`entry`(直した仕訳)。`wrong_patterns`の`match`は`{ index }`。学習者が行を選び、仕訳を直して確認すると、試算の左右がそろう。原稿の例は`birth-of-double-entry/venture-profit-and-double-entry`の「写し忘れを見つける」。
+- debug(バグ探し。M3)は、`entries`(記帳済みの仕訳。1件だけ誤りがあり、片側が空でもよい)の中から誤りの行を指し、直す課題。`answer`は`index`(0始まり)と`entry`(直した仕訳)。`wrong_patterns`の`match`は、行の選び間違いなら`{ index }`、行は合っていて直した仕訳が違う場合はpostと同じ形(`debit` / `credit` / `swapped` / `unbalanced`)。学習者が行を選び、仕訳を直して確認すると、試算の左右がそろう。原稿の例は`birth-of-double-entry/venture-profit-and-double-entry`の「写し忘れを見つける」。
 - observeの`entries`は`scenario.accounts`の科目も使える。historyの単元では、現代の科目(`cash`など)と単元限定の科目を混ぜてよい。
 
 ### 7.3 パスのfrontmatter

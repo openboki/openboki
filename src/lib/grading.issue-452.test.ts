@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { unitAccountList, unitMap } from "./content";
-import { gradePost, type TaskOf } from "./grading";
+import { gradeDebug, gradePost, type TaskOf } from "./grading";
 
 // Issue #452: ステップ7(もうけを元手に移す)で、胡椒ではなくワインの口から30を移すと、誤解の説明が無く汎用文だけが出ていた
 const venture = unitMap.get("birth-of-double-entry/venture-profit-and-double-entry")!;
@@ -34,5 +34,28 @@ describe("航海の儲けと複式の発見 ステップ7で、ワインの口�
   it("借方 胡椒180は従来どおりventure_sales_as_profit", () => {
     const r = gradePost(task, { debit: [{ account: "pepper_voyage", amount: 180 }], credit: [{ account: "owner_capital", amount: 180 }] }, accounts, "history");
     expect(r.misconception).toBe("venture_sales_as_profit");
+  });
+});
+
+// ステップ6(写し忘れを見つける)で、行は合っているが書き足す右のページを取り違える
+describe("航海の儲けと複式の発見 ステップ6で、写し忘れの右を別のページにする", () => {
+  const debug = venture.steps[5].task as TaskOf<"debug">;
+  const fix = (account: string) => ({ index: 2, entry: { debit: [{ account: "giovanni", amount: 50 }], credit: [{ account, amount: 50 }] } });
+
+  it("右を胡椒にするとventure_account_mixedで、ワインの口を指す", () => {
+    const r = gradeDebug(debug, fix("pepper_voyage"), accounts, "history");
+    expect(r.correct).toBe(false);
+    expect(r.misconception).toBe("venture_account_mixed");
+    expect(r.feedback).toContain("ワイン");
+  });
+
+  it("右を現金にすると、まだ受け取っていないと説明する", () => {
+    const r = gradeDebug(debug, fix("cash"), accounts, "history");
+    expect(r.correct).toBe(false);
+    expect(r.feedback).toContain("まだ受け取っていません");
+  });
+
+  it("answerは正解のまま", () => {
+    expect(gradeDebug(debug, debug.answer, accounts, "history").correct).toBe(true);
   });
 });
