@@ -6,7 +6,7 @@ describe("tweakの採点の文言と通貨", () => {
   const task: TaskOf<"tweak"> = {
     type: "tweak",
     formula: "straight_line",
-    params: [{ id: "cost", label: "取得原価", value: 1200, min: 0, max: 2000, step: 100, unit: "" }],
+    params: [{ id: "cost", label: "取得原価", value: 1200, min: 0, max: 2000, step: 100, unit: "", fixed: false }],
     goal: { output: "annual_depreciation", equals: 150, label: "1年分の減価償却費" },
   };
 

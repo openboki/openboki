@@ -22,6 +22,12 @@ describe("tweakの保存値の復元", () => {
 
   it("目標を満たす正しい保存値はそのまま使う", () => {
     const task = unitMap.get("depreciation/straight-line")!.steps[2].task as TaskOf<"tweak">;
-    expect(tweakRestoreValues(task, { cost: 1800000, residual_value: 600000, useful_life: 6 })).toEqual({ cost: 1800000, residual_value: 600000, useful_life: 6 });
+    expect(tweakRestoreValues(task, { cost: 1200000, residual_value: 0, useful_life: 6 })).toEqual({ cost: 1200000, residual_value: 0, useful_life: 6 });
+  });
+
+  // Issue #454: 固定した条件が初期値と違う保存値は、画面で作れない組み合わせなので使わない
+  it("固定した条件を動かした保存値は捨て、動かせる条件だけで目標に届く値で戻す", () => {
+    const task = unitMap.get("depreciation/straight-line")!.steps[2].task as TaskOf<"tweak">;
+    expect(tweakRestoreValues(task, { cost: 1800000, residual_value: 600000, useful_life: 6 })).toEqual({ cost: 1200000, residual_value: 0, useful_life: 6 });
   });
 });

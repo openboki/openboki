@@ -105,7 +105,7 @@ describe("その他の課題", () => {
     const task: TaskOf<"tweak"> = {
       type: "tweak",
       formula: "straight_line",
-      params: [{ id: "cost", label: "取得原価", value: 1200000, min: 0, max: 2000000, step: 100000, unit: "円" }],
+      params: [{ id: "cost", label: "取得原価", value: 1200000, min: 0, max: 2000000, step: 100000, unit: "円", fixed: false }],
       goal: { output: "annual_depreciation", equals: 150000, label: "1年分の減価償却費" },
     };
     const outputs = evaluateFormula("straight_line", { cost: 1200000, residual_value: 0, useful_life: 8 }).outputs;

@@ -115,6 +115,8 @@ export const taskSchema = s.discriminatedUnion("type", [
           max: s.number(),
           step: s.number().positive(),
           unit: s.string().default(""),
+          // 動かせない条件。値だけ見せて、動かす条件を1つに絞る(Issue #454)
+          fixed: s.boolean().default(false),
         }),
       )
       .min(1),
@@ -509,6 +511,7 @@ export default defineConfig({
               if (!FORMULA_PARAMS[t.formula].includes(p.id)) errors.push(`${w}: パラメータ${p.id}は${t.formula}にない`);
               if (p.value < p.min || p.value > p.max) errors.push(`${w}: パラメータ${p.id}の初期値が範囲外`);
             });
+            if (t.params.every((p) => p.fixed)) errors.push(`${w}: 動かせるパラメータが無い(すべてfixed)`);
             break;
           }
           case "classify":
