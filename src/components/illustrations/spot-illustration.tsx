@@ -105,19 +105,22 @@ const DRAWINGS: Record<IllustrationName, ReactNode> = {
   bakery: (
     <>
       <path d="M8 104H112" />
-      <rect className="fill-card" x="20" y="46" width="80" height="58" />
-      <path className="fill-brand-accent" d="M36 32V18a12 11 0 0 1 24 0a12 11 0 0 1 24 0V32Z" />
-      <path strokeWidth={THIN} d="M48 16v8M60 19v7M72 16v8" />
-      <rect className="fill-primary" x="14" y="32" width="92" height="16" rx="4" />
-      <rect className={TINT} x="26" y="58" width="42" height="32" rx="2" />
-      <path strokeWidth={THIN} d="M26 74H68" />
-      <rect className="fill-brand-accent" x="31" y="64" width="15" height="10" rx="4" />
-      <circle className="fill-brand-accent" cx="57" cy="68.500" r="5.5" />
-      <ellipse className="fill-brand-accent" cx="38" cy="85" rx="7" ry="5" />
-      <ellipse className="fill-brand-accent" cx="56" cy="85" rx="7" ry="5" />
-      <rect className="fill-primary" x="76" y="60" width="18" height="44" rx="2" />
-      <rect className={TINT} x="80" y="64" width="10" height="12" rx="1.500" />
-      <circle className="fill-card" cx="80.500" cy="86" r="1.5" />
+      <rect className="fill-card" x="22" y="48" width="76" height="56" />
+      <path className="fill-card" d="M38 36V30a22 16 0 0 1 44 0V36Z" />
+      <path className="fill-card" d="M54.500 27h11l-1.500 6h-8Z" />
+      <path className="fill-brand-accent" d="M52 27a8 7 0 0 1 16 0Z" />
+      <rect className="fill-primary" x="16" y="36" width="88" height="14" rx="3" />
+      <rect className={TINT} x="28" y="58" width="44" height="34" rx="2" />
+      <path strokeWidth={THIN} d="M28 85H72" />
+      <path className="fill-card" d="M33.500 75h13l-2 10h-9Z" />
+      <path className="fill-brand-accent" d="M31 75a9 9 0 0 1 18 0Z" />
+      <circle className="fill-foreground" cx="40" cy="65" r="1.5" />
+      <path className="fill-card" d="M53.500 75h13l-2 10h-9Z" />
+      <path className="fill-brand-accent" d="M51 75a9 9 0 0 1 18 0Z" />
+      <circle className="fill-foreground" cx="60" cy="65" r="1.5" />
+      <rect className="fill-primary" x="78" y="62" width="16" height="42" rx="2" />
+      <rect className={TINT} x="81.500" y="66" width="9" height="11" rx="1.500" />
+      <circle className="fill-card" cx="82" cy="87" r="1.5" />
     </>
   ),
 };
