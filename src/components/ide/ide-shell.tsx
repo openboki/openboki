@@ -1497,7 +1497,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
           {unit.view === "statements" && <StatementsPane accounts={accountMap} netIncomeTerm={netIncomeTerm} balances={view.balances} diff={view.diff} company={unit.company} />}
           {unit.view === "ledger" && (
             <div className="space-y-5 text-sm">
-              <section aria-label="試算">
+              <section aria-label="試算" data-tour="trial">
                 <h3 className="font-semibold mb-1">
                   試算 <span className="text-xs font-normal text-muted-foreground">{unit.company}</span>
                 </h3>
