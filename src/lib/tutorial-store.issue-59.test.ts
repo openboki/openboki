@@ -21,7 +21,7 @@ describe("別タブが変えたtutorial-state", () => {
     localStorage.setItem(KEY, JSON.stringify({ status: "pending", enabled: false }));
     updateTutorial({ status: "skipped" });
 
-    expect(stored()).toEqual({ status: "skipped", enabled: false, seen: [] });
+    expect(stored()).toEqual({ status: "skipped", enabled: false, optedIn: false, seen: [] });
     unmount();
   });
 
@@ -64,7 +64,7 @@ describe("別タブが変えたtutorial-state", () => {
     act(() => updateTutorial({ enabled: false }));
     act(() => updateTutorial({ status: "skipped" }));
 
-    expect(result.current).toEqual({ status: "skipped", enabled: false, seen: [] });
+    expect(result.current).toEqual({ status: "skipped", enabled: false, optedIn: false, seen: [] });
     unmount();
   });
 });

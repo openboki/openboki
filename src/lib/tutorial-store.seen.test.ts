@@ -24,6 +24,6 @@ describe("tutorial-store seen", () => {
   it("他の設定を変えてもseenは残る", () => {
     markSeen("calc");
     updateTutorial({ enabled: false });
-    expect(JSON.parse(localStorage.getItem("tutorial-state")!)).toEqual({ status: "pending", enabled: false, seen: ["calc"] });
+    expect(JSON.parse(localStorage.getItem("tutorial-state")!)).toEqual({ status: "pending", enabled: false, optedIn: false, seen: ["calc"] });
   });
 });

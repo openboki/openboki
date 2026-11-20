@@ -131,7 +131,7 @@ export function HelpDialog({ open, onOpenChange, focusTopic, returnToRef, ctx, s
                 </Button>
               )}
               <label className="flex items-center gap-2 text-xs text-muted-foreground">
-                <input type="checkbox" checked={state.enabled} onChange={(e) => updateTutorial({ enabled: e.target.checked })} />
+                <input type="checkbox" checked={state.enabled} onChange={(e) => updateTutorial({ enabled: e.target.checked, optedIn: e.target.checked })} />
                 初めて単元を開いたときにチュートリアルを案内する
               </label>
             </div>
