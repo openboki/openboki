@@ -33,7 +33,7 @@ const DRAWINGS: Record<IllustrationName, ReactNode> = {
       <rect className="fill-card" x="20" y="50" width="72" height="36" rx="4" />
       <rect className="fill-card" x="14" y="42" width="72" height="36" rx="4" />
       <rect className="fill-primary" x="60" y="42" width="12" height="36" />
-      <circle className="fill-brand-accent" cx="38" cy="60" r="9" />
+      <circle cx="38" cy="60" r="9" />
       <path strokeWidth={THIN} d="M20 48h6M20 72h6" />
       <path className="fill-brand-accent" d="M74 102v-6a16 5.500 0 0 1 32 0v6a16 5.500 0 0 1-32 0z" />
       <path className="fill-brand-accent" d="M74 96v-6a16 5.500 0 0 1 32 0v6a16 5.500 0 0 1-32 0z" />
@@ -44,26 +44,21 @@ const DRAWINGS: Record<IllustrationName, ReactNode> = {
   ),
   "coffee-machine": (
     <>
-      <path strokeWidth={THIN} d="M40 6q-3 4 0 8M56 6q-3 4 0 8" />
-      <rect className="fill-card" x="34" y="14" width="12" height="8" rx="2" />
-      <rect className="fill-card" x="50" y="14" width="12" height="8" rx="2" />
-      <rect className="fill-card" x="26" y="22" width="68" height="8" rx="2" />
-      <rect className={TINT} x="28" y="72" width="64" height="28" />
-      <rect className="fill-primary" x="20" y="30" width="80" height="44" rx="7" />
-      <circle className="fill-card" cx="40" cy="48" r="8" />
-      <path strokeWidth={THIN} d="M40 48l4-4" />
-      <circle className="fill-brand-accent" cx="60" cy="48" r="3.5" />
-      <circle className="fill-card" cx="72" cy="48" r="3.5" />
-      <circle className="fill-brand-accent" cx="88" cy="48" r="5" />
-      <path strokeWidth={THIN} d="M30 64h60" />
-      <rect className="fill-card" x="48" y="74" width="24" height="6" />
-      <path className="fill-brand-accent" d="M44 80h32l-4 6H48z" />
-      <path strokeWidth={4} d="M76 82l14 3" />
-      <path strokeWidth={THIN} d="M55 86v3M65 86v3" />
-      <path d="M32 74v12q0 5-4 7" />
-      <rect className="fill-card" x="51" y="90" width="18" height="10" rx="2" />
-      <path strokeWidth={THIN} d="M69 92q5 2 0 6" />
-      <rect className="fill-card" x="16" y="100" width="88" height="8" rx="3" />
+      <rect className="fill-card" x="26" y="10" width="16" height="10" rx="2" />
+      <rect className="fill-card" x="46" y="10" width="16" height="10" rx="2" />
+      <path className="fill-primary" d="M24 20H94a6 6 0 0 1 6 6v16a6 6 0 0 1-6 6H52V92H18V26a6 6 0 0 1 6-6Z" />
+      <circle className="fill-card" cx="35" cy="64" r="8" />
+      <path strokeWidth={THIN} d="M35 64l4-4" />
+      <circle className="fill-brand-accent" cx="70" cy="34" r="4" />
+      <circle className="fill-card" cx="84" cy="34" r="4" />
+      <rect className="fill-card" x="62" y="48" width="26" height="7" rx="1" />
+      <path className="fill-brand-accent" d="M67 55h16l-3 5H70z" />
+      <path strokeWidth={4} d="M90 51.500h14" />
+      <path strokeWidth={THIN} d="M72 63v3M78 63v3" />
+      <path d="M87 73q8 0 7 6-1 4-8 4" />
+      <path className="fill-card" d="M62 69H88V78a8 8 0 0 1-8 8H70a8 8 0 0 1-8-8Z" />
+      <rect className={TINT} x="54" y="86" width="46" height="6" rx="1" />
+      <rect className="fill-card" x="12" y="92" width="96" height="10" rx="3" />
     </>
   ),
   bank: (
@@ -88,7 +83,7 @@ const DRAWINGS: Record<IllustrationName, ReactNode> = {
       <ellipse className="fill-card" cx="52" cy="98" rx="38" ry="8" />
       <path d="M78 64q17-1 15 12-2 10-18 11" />
       <path className="fill-card" d="M26 58H78V70A26 26 0 0 1 26 70Z" />
-      <ellipse className="fill-foreground" cx="52" cy="58" rx="26" ry="6" />
+      <ellipse className={TINT} cx="52" cy="58" rx="26" ry="6" />
       <path className="fill-primary" d="M52 84c-1-5-8-5-9-2 1 4 6 5 9 2zm0-2c1-5 7-5 8-2-1 4-5 5-8 2z" />
       <circle className="fill-brand-accent" cx="100" cy="94" r="11" />
       <circle strokeWidth={THIN} cx="100" cy="94" r="6.5" />
@@ -98,15 +93,13 @@ const DRAWINGS: Record<IllustrationName, ReactNode> = {
   ),
   "shop-key": (
     <>
-      <path className="fill-primary" d="M24 66 50 44 76 66V102H24Z" />
-      <circle className="fill-card" cx="50" cy="60" r="4" />
-      <rect className="fill-card" x="40" y="76" width="20" height="16" rx="2" />
-      <path strokeWidth={THIN} d="M50 76V92M40 84H60" />
-      <circle cx="59" cy="46" r="16.5" />
-      <path strokeWidth={5.5} d="M82 46 104 68" />
-      <path strokeWidth={4} d="M95 59l-6 6M102 66l-6 6" />
-      <circle className="fill-brand-accent" cx="75" cy="39" r="10" />
-      <circle className="fill-card" cx="75" cy="39" r="3.5" />
+      <path strokeWidth={5.5} d="M54 50 102 98" />
+      <path strokeWidth={4} d="M86 82l-8 8M96 92l-8 8" />
+      <circle className="fill-brand-accent" cx="40" cy="36" r="20" />
+      <circle className="fill-card" cx="36" cy="32" r="7" />
+      <path strokeWidth={THIN} d="M33 36q-9 16-3 34" />
+      <path className="fill-primary" d="M14 86 30 70 46 86V108H14Z" />
+      <rect className="fill-card" x="25" y="92" width="10" height="16" rx="1" />
     </>
   ),
 };
