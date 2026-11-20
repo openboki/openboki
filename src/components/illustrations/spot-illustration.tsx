@@ -282,12 +282,14 @@ const DRAWINGS: Record<IllustrationName, ReactNode> = {
   ),
   check: (
     <>
-      <rect className="fill-card" x="10" y="30" width="100" height="60" rx="3" />
-      <path className="fill-primary" d="M13 30H107a3 3 0 0 1 3 3V43H10V33a3 3 0 0 1 3-3Z" />
-      <rect className={TINT} x="52" y="51" width="50" height="13" rx="2" />
-      <path strokeWidth={THIN} d="M18 55h24M18 65h24M52 81h28" />
-      <path strokeWidth={THIN} d="M56 78q3-7 6 0t6 0t6 0" />
-      <circle className="fill-brand-accent" cx="93" cy="77" r="7" />
+      <rect className="fill-card" x="8" y="24" width="96" height="58" rx="3" />
+      <path className="fill-primary" d="M11 24H101a3 3 0 0 1 3 3V37H8V27a3 3 0 0 1 3-3Z" />
+      <rect className={TINT} x="48" y="45" width="48" height="13" rx="2" />
+      <path strokeWidth={THIN} d="M16 49h22M16 59h22M40 74h34" />
+      <path strokeWidth={THIN} d="M44 71q3-7 6 0t6 0t6 0t6 0" />
+      <path className="fill-brand-accent" d="M80 76 107 103 101 109 74 82Z" />
+      <path className="fill-card" d="M70 72 80 76 74 82Z" />
+      <path strokeWidth={THIN} d="M85 81l-6 6" />
     </>
   ),
 };
