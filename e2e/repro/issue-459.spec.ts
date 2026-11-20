@@ -34,4 +34,28 @@ test.describe("390pxタッチ", () => {
         .toBe(true);
     }
   });
+
+  // Portalで出したポップオーバーの中身へのフォーカスでページが飛ばない(レビュー指摘)
+  test("フィードバック表示中に「?」を開いてもスクロール位置が変わらない", async ({ page }) => {
+    await page.goto("/units/bad-debts/bad-debt-loss");
+    await page.getByRole("button", { name: "次へ →" }).click();
+    await page.getByRole("tablist", { name: "ペインの切り替え" }).getByRole("tab", { name: "ワークスペース" }).click();
+    const work = page.getByRole("region", { name: "ワークスペース" });
+    await work.getByLabel("借方の科目1").fill("売上");
+    await work.getByLabel("借方の金額1").fill("30000");
+    await work.getByLabel("貸方の科目1").fill("売掛金");
+    await work.getByLabel("貸方の金額1").fill("30000");
+    await work.getByRole("button", { name: "記帳する" }).click();
+    await expect(page.getByRole("status").filter({ hasText: "もう一歩" })).toBeVisible();
+
+    const help = work.getByRole("button", { name: "「仕訳帳に書く」の説明" });
+    // 誤答のあとに直そうとして少し下へスクロールした位置から開く
+    await page.evaluate(() => window.scrollTo(0, 140));
+    const before = await page.evaluate(() => scrollY);
+    expect(before).toBeGreaterThan(0);
+    await help.dispatchEvent("click");
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await page.waitForTimeout(300);
+    expect(await page.evaluate(() => scrollY)).toBe(before);
+  });
 });

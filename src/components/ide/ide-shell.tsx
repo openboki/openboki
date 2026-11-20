@@ -874,7 +874,8 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
   const revealFocused = (e: FocusEvent<HTMLElement>) => {
     const tabs = paneTabs.current;
     const bar = bottomBar.current;
-    if (e.target === e.currentTarget || !tabs?.offsetParent || !bar) return;
+    // Portalで出したポップオーバーの中身もReactのツリーではバブルしてくるが、位置決め前で画面外にあるので測らない
+    if (e.target === e.currentTarget || !e.currentTarget.contains(e.target) || !tabs?.offsetParent || !bar) return;
     const r = e.target.getBoundingClientRect();
     const below = r.bottom - bar.getBoundingClientRect().top;
     const above = tabs.getBoundingClientRect().bottom - r.top;
