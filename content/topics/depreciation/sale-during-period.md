@@ -136,6 +136,12 @@ wrong_patterns:
   - match: { debit: [{ account: accumulated_depreciation, amount: 300000 }, { account: depreciation_expense, amount: 60000 }], credit: [{ account: accumulated_depreciation, amount: 60000 }] }
     no_misconception: 当期分を累計額に積んでから消す2つの仕訳をまとめた形で、考え方の誤解ではない(Issue #444)
     feedback: 考え方は合っています。今年の分60,000を累計額に積んでから消す2つの仕訳を合わせると、この形になります。ただ、積んでもすぐに消すので、この単元では累計額には積まず、消す累計額は期首の240,000、60,000は減価償却費として左に書く4行の形で記帳します。
+  - match: { debit: [{ account: accumulated_depreciation_equipment, amount: 300000 }, { account: depreciation_expense, amount: 60000 }], credit: [{ account: accumulated_depreciation, amount: 60000 }] }
+    no_misconception: 合算形の左右で個別の累計額と総称の累計額を混ぜた形。減価償却費は書いているので、下の300,000だけのパターンに落とすと書いていないと言ってしまう(Issue #457)
+    feedback: 考え方は合っています。今年の分60,000を累計額に積んでから消す2つの仕訳を合わせると、この形になります。ただ、積んでもすぐに消すので、この単元では累計額には積まず、消す累計額は期首の240,000、60,000は減価償却費として左に書く4行の形で記帳します。なお、左右で累計額の科目名が違うと帳簿では別の科目として扱われるので、使うときは同じ科目にそろえましょう。
+  - match: { debit: [{ account: accumulated_depreciation, amount: 300000 }, { account: depreciation_expense, amount: 60000 }], credit: [{ account: accumulated_depreciation_equipment, amount: 60000 }] }
+    no_misconception: 合算形の左右で総称の累計額と個別の累計額を混ぜた形(Issue #457)
+    feedback: 考え方は合っています。今年の分60,000を累計額に積んでから消す2つの仕訳を合わせると、この形になります。ただ、積んでもすぐに消すので、この単元では累計額には積まず、消す累計額は期首の240,000、60,000は減価償却費として左に書く4行の形で記帳します。なお、左右で累計額の科目名が違うと帳簿では別の科目として扱われるので、使うときは同じ科目にそろえましょう。
   - match: { debit: [{ account: accumulated_depreciation_equipment, amount: 300000 }] }
     misconception: sale_ignores_current_depreciation
     feedback: 今年の分60,000を減価償却費にせず、帳簿に無い累計額まで消しています。帳簿にある累計額は期首の240,000だけなので、消すのは240,000です。4月から9月までに使った60,000は、減価償却費として左に書きましょう。
@@ -314,6 +320,12 @@ wrong_patterns:
   - match: { debit: [{ account: accumulated_depreciation, amount: 162000 }, { account: depreciation_expense, amount: 54000 }], credit: [{ account: accumulated_depreciation, amount: 54000 }] }
     no_misconception: 当期分を累計額に積んでから消す2つの仕訳をまとめた形で、考え方の誤解ではない(Issue #444)
     feedback: 考え方は合っています。今年の分54,000を累計額に積んでから消す2つの仕訳を合わせると、この形になります。ただ、積んでもすぐに消すので、この単元では累計額には積まず、消す累計額は期首の108,000、54,000は減価償却費として左に書く形で記帳します。
+  - match: { debit: [{ account: accumulated_depreciation_vehicle, amount: 162000 }, { account: depreciation_expense, amount: 54000 }], credit: [{ account: accumulated_depreciation, amount: 54000 }] }
+    no_misconception: 合算形の左右で個別の累計額と総称の累計額を混ぜた形。減価償却費は書いているので、下の162,000だけのパターンに落とすと書いていないと言ってしまう(Issue #457)
+    feedback: 考え方は合っています。今年の分54,000を累計額に積んでから消す2つの仕訳を合わせると、この形になります。ただ、積んでもすぐに消すので、この単元では累計額には積まず、消す累計額は期首の108,000、54,000は減価償却費として左に書く形で記帳します。なお、左右で累計額の科目名が違うと帳簿では別の科目として扱われるので、使うときは同じ科目にそろえましょう。
+  - match: { debit: [{ account: accumulated_depreciation, amount: 162000 }, { account: depreciation_expense, amount: 54000 }], credit: [{ account: accumulated_depreciation_vehicle, amount: 54000 }] }
+    no_misconception: 合算形の左右で総称の累計額と個別の累計額を混ぜた形(Issue #457)
+    feedback: 考え方は合っています。今年の分54,000を累計額に積んでから消す2つの仕訳を合わせると、この形になります。ただ、積んでもすぐに消すので、この単元では累計額には積まず、消す累計額は期首の108,000、54,000は減価償却費として左に書く形で記帳します。なお、左右で累計額の科目名が違うと帳簿では別の科目として扱われるので、使うときは同じ科目にそろえましょう。
   - match: { debit: [{ account: accumulated_depreciation_vehicle, amount: 162000 }] }
     misconception: sale_ignores_current_depreciation
     feedback: 今年の分54,000を減価償却費にせず、帳簿に無い累計額まで消しています。帳簿にある累計額は期首の108,000だけなので、消すのは108,000です。4月から12月までに使った54,000は、減価償却費として左に書きましょう。
