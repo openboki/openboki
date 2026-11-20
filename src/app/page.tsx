@@ -4,6 +4,7 @@ import { LEVEL_LABELS, nextUnit, sortedDomains, sortedPaths, sortedTopics, units
 import { HomeStart } from "@/components/home-start";
 import type { HomeStartUnit } from "@/lib/home-start";
 import { pageMetadata } from "@/lib/site";
+import { SpotIllustration } from "@/components/illustrations/spot-illustration";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const metadata = pageMetadata({ path: "/" });
@@ -57,14 +58,17 @@ export default function Home() {
                   const units = unitsOfTopic(t.id);
                   const levels = [...new Set(units.map((u) => u.level))].map((l) => LEVEL_LABELS[l]).join("・");
                   return (
-                    <li key={t.id} className="rounded-md border p-3">
-                      <Link href={`/topics/${t.id}`} className="font-medium hover:underline">
-                        {t.title}
-                      </Link>
-                      <p className="text-sm text-muted-foreground">{t.summary}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {units.length}単元({levels})
-                      </p>
+                    <li key={t.id} className="flex items-start gap-3 rounded-md border p-3">
+                      <div className="min-w-0 flex-1">
+                        <Link href={`/topics/${t.id}`} className="font-medium hover:underline">
+                          {t.title}
+                        </Link>
+                        <p className="text-sm text-muted-foreground">{t.summary}</p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {units.length}単元({levels})
+                        </p>
+                      </div>
+                      {t.illustration && <SpotIllustration name={t.illustration} className="w-16 shrink-0" />}
                     </li>
                   );
                 })}
