@@ -68,7 +68,7 @@ export function JournalEditor({ accounts, value, onChange, readOnly = false, sho
       <div className="space-y-1.5">
         {value[side].map((line, i) => {
           const account = findAccountByName(line.accountName, accounts);
-          const style = account ? ELEMENT_STYLE[account.element] : null;
+          const style = account && !account.mixed ? ELEMENT_STYLE[account.element] : null;
           const parsed = parseAmount(line.amount, false, currency);
           // 空欄はまだ入力していないだけなので理由を出さない
           const amountError = line.amount.trim() && "reason" in parsed ? parsed.reason : null;
@@ -125,9 +125,11 @@ export function JournalEditor({ accounts, value, onChange, readOnly = false, sho
               <div className="mt-1 min-h-4 flex flex-wrap items-center gap-x-1 text-[10px] min-w-0">
                 {account ? (
                   <div className="flex items-start gap-1 min-w-0">
-                    <span className="shrink-0">
-                      <ElementBadge element={account.element} contra={account.contra} temporary={account.temporary} size="xs" />
-                    </span>
+                    {!account.mixed && (
+                      <span className="shrink-0">
+                        <ElementBadge element={account.element} contra={account.contra} temporary={account.temporary} size="xs" />
+                      </span>
+                    )}
                     <span className="mt-px leading-4 text-muted-foreground">{account.short}</span>
                   </div>
                 ) : accountUnknown ? (

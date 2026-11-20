@@ -328,7 +328,8 @@ export default defineConfig({
             // 結果ペインの段階。none: 帳簿なし、ledger: 元帳と試算まで、statements: 財務諸表まで(docs/ide-design.md 11章)
             view: s.enum(["none", "ledger", "statements"]).default("statements"),
             // この単元だけで使う勘定科目(人名勘定、航海ごとの商品勘定)。全体マスタにも用語集にも載せない。readingは科目欄の候補検索で引くひらがなの読み、conceptsは「もっと見る」から進める概念
-            accounts: s.array(s.object({ id: s.string(), name: s.string(), reading: s.array(s.string()).default([]), element, why: s.string(), concepts: idList })).default([]),
+            // mixedは5要素のどれにも収まらない勘定(かかった額と売った額を1ページに集める口別の勘定)。elementは計算用に残し、要素のバッジと「増える側」を出さない(Issue #420)
+            accounts: s.array(s.object({ id: s.string(), name: s.string(), reading: s.array(s.string()).default([]), element, mixed: s.boolean().default(false), why: s.string(), concepts: idList })).default([]),
             opening: s.array(journalLine).default([]),
           }),
           path: s.path(),

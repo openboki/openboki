@@ -14,6 +14,8 @@ export interface AccountInfo {
   contra: boolean;
   // 仮勘定(現金過不足)。残高が逆側に出たら、その側の部に正の金額で並べる
   temporary?: boolean;
+  // 5要素のどれにも収まらない勘定(口別の勘定)。要素のバッジと増える側を出さない
+  mixed?: boolean;
   // 一文の説明と、なぜその要素に属するか。ホバー解説と要素分類のフィードバックに使う
   short: string;
   why: string;
