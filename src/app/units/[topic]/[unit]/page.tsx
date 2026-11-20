@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { units } from "#content";
-import { dependsOnUnit, glossaryMap, misconceptionMap, nextUnit, sortedTopics, unitAccountList, unitMap } from "@/lib/content";
+import { dependsOnUnit, glossaryMap, ideAccountList, misconceptionMap, nextUnit, sortedTopics, unitMap } from "@/lib/content";
 import { Markdown } from "@/components/markdown";
 import { pageMetadata } from "@/lib/site";
 import { IdeShell, type MisconceptionInfo } from "@/components/ide/ide-shell";
@@ -51,7 +51,7 @@ export default async function UnitPage({ params }: { params: Promise<{ topic: st
         next: next ? { id: next.id, title: next.title } : undefined,
         requires: unit.requires.map((id) => ({ id, title: unitMap.get(id)!.title })),
       }}
-      accounts={unitAccountList(unit.scenario.accounts)}
+      accounts={ideAccountList(unit)}
       netIncomeTerm={glossaryMap.get("net_income")!}
       misconceptions={misconceptions}
       returnTitles={returnTitles}
