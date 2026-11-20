@@ -105,20 +105,19 @@ const DRAWINGS: Record<IllustrationName, ReactNode> = {
   bakery: (
     <>
       <path d="M8 104H112" />
-      <path strokeWidth={THIN} d="M79 8q-4 4 0 8" />
-      <rect className="fill-card" x="72" y="18" width="12" height="14" rx="1" />
-      <rect className="fill-card" x="24" y="52" width="72" height="52" />
-      <path className="fill-primary" d="M32 26H88L102 52H18Z" />
-      <circle className="fill-brand-accent" cx="46" cy="39" r="9" />
-      <circle className="fill-foreground" cx="43" cy="37" r="1.2" />
-      <circle className="fill-foreground" cx="49" cy="38" r="1.2" />
-      <circle className="fill-foreground" cx="45" cy="43" r="1.2" />
-      <rect className={TINT} x="30" y="62" width="36" height="28" rx="2" />
-      <path strokeWidth={THIN} d="M30 80H66" />
-      <ellipse className="fill-brand-accent" cx="39" cy="76" rx="5" ry="4" />
-      <ellipse className="fill-brand-accent" cx="52" cy="76" rx="5" ry="4" />
-      <rect className="fill-primary" x="74" y="64" width="16" height="40" rx="2" />
-      <circle className="fill-card" cx="78.500" cy="85" r="1.5" />
+      <rect className="fill-card" x="20" y="46" width="80" height="58" />
+      <path className="fill-brand-accent" d="M36 32V18a12 11 0 0 1 24 0a12 11 0 0 1 24 0V32Z" />
+      <path strokeWidth={THIN} d="M48 16v8M60 19v7M72 16v8" />
+      <rect className="fill-primary" x="14" y="32" width="92" height="16" rx="4" />
+      <rect className={TINT} x="26" y="58" width="42" height="32" rx="2" />
+      <path strokeWidth={THIN} d="M26 74H68" />
+      <rect className="fill-brand-accent" x="31" y="64" width="15" height="10" rx="4" />
+      <circle className="fill-brand-accent" cx="57" cy="68.500" r="5.5" />
+      <ellipse className="fill-brand-accent" cx="38" cy="85" rx="7" ry="5" />
+      <ellipse className="fill-brand-accent" cx="56" cy="85" rx="7" ry="5" />
+      <rect className="fill-primary" x="76" y="60" width="18" height="44" rx="2" />
+      <rect className={TINT} x="80" y="64" width="10" height="12" rx="1.500" />
+      <circle className="fill-card" cx="80.500" cy="86" r="1.5" />
     </>
   ),
 };
