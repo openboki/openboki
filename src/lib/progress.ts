@@ -168,6 +168,21 @@ export async function resetOutOfRangeStep(unitId: string, stepCount: number): Pr
   if (error) throw new Error(`進捗の修正に失敗しました: ${error.message}`);
 }
 
+/** 同じタブで単元を離れて戻るための控え(Issue #83)を置くsessionStorageのキー */
+export const unitSessionKey = (unitId: string) => `ide-session:${unitId}`;
+
+/** 完了した単元を未完了に戻す(Issue #492)。回答は消さず、fetchProgressが戻した時刻より前の回答を復元に使わなくなる */
+export async function resetUnitProgress(unitId: string): Promise<void> {
+  const { error } = await supabase.rpc("reset_unit_progress", { p_unit_id: unitId });
+  if (error) throw new Error(`未完了に戻せませんでした: ${error.message}`);
+  // このタブの控えには完了時の位置と答えが残っている
+  try {
+    window.sessionStorage.removeItem(unitSessionKey(unitId));
+  } catch {
+    // sessionStorageを使えないブラウザには控えも無い
+  }
+}
+
 // PostgRESTのmax_rows(既定1000)を超えた行はエラーなしで切られる
 const ATTEMPTS_PAGE_SIZE = 1000;
 
@@ -177,7 +192,7 @@ async function queryAttempts() {
   for (;;) {
     const page = await supabase
       .from("attempts")
-      .select("unit_id,exercise_id,correct,misconception_id,answer")
+      .select("unit_id,exercise_id,correct,misconception_id,answer,created_at")
       .order("created_at")
       .order("id")
       .range(rows.length, rows.length + ATTEMPTS_PAGE_SIZE - 1);
@@ -188,7 +203,7 @@ async function queryAttempts() {
 }
 
 function queryProgress() {
-  return Promise.all([supabase.from("unit_progress").select("unit_id,status,step,updated_at"), queryAttempts()]);
+  return Promise.all([supabase.from("unit_progress").select("unit_id,status,step,updated_at,reset_at"), queryAttempts()]);
 }
 
 /** セッションが無ければnull(まだ何も回答していない閲覧者) */
@@ -206,7 +221,13 @@ export async function fetchProgress(): Promise<Progress | null> {
   if (unitsRes.error) throw new Error(unitsRes.error.message);
   if (attemptsRes.error) throw new Error(attemptsRes.error.message);
   const units: Progress["units"] = {};
-  for (const row of unitsRes.data) units[row.unit_id] = { status: row.status as UnitStatus, step: row.step as number, updatedAt: row.updated_at as string };
+  const resetAt: Record<string, number> = {};
+  for (const row of unitsRes.data) {
+    if (row.reset_at) resetAt[row.unit_id] = Date.parse(row.reset_at);
+    // 未完了に戻した単元は、次のステップへ進むまで未着手として扱う(Issue #492)
+    if (row.reset_at && row.status === "started" && row.step === 0) continue;
+    units[row.unit_id] = { status: row.status as UnitStatus, step: row.step as number, updatedAt: row.updated_at as string };
+  }
   const misconceptions: Record<string, number> = {};
   const solved: Progress["solved"] = {};
   const answers: Progress["answers"] = {};
@@ -217,6 +238,8 @@ export async function fetchProgress(): Promise<Progress | null> {
     const index = Number((row.exercise_id as string).split("#")[1]);
     const unitId = row.unit_id as string;
     if (!Number.isInteger(index)) continue;
+    // 未完了に戻す前の回答は、解いた状態の復元に使わない(誤解の回数には数える)
+    if (Date.parse(row.created_at as string) <= (resetAt[unitId] ?? -Infinity)) continue;
     (answers[unitId] ??= {})[index] = row.answer;
     if (row.correct && !solved[unitId]?.includes(index)) (solved[unitId] ??= []).push(index);
     if (!row.correct) (wrong[unitId] ??= {})[index] = (wrong[unitId][index] ?? 0) + 1;
