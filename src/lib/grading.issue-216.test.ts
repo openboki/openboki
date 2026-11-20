@@ -11,7 +11,7 @@ const entry = (debit: JournalEntry["debit"], credit: JournalEntry["credit"]): Jo
 
 const postCases: { name: string; step: number; entry: JournalEntry; misconception?: string; word: string }[] = [
   { name: "運賃まで掛けにする", step: 2, entry: entry([line("purchases", 52000)], [line("accounts_payable", 52000)]), word: "運賃" },
-  { name: "返品を繰越商品から減らす", step: 3, entry: entry([line("accounts_payable", 10000)], [line("merchandise_inventory", 10000)]), misconception: "return_as_new_transaction", word: "仕入" },
+  { name: "返品を繰越商品から減らす", step: 3, entry: entry([line("accounts_payable", 10000)], [line("merchandise_inventory", 10000)]), misconception: "purchase_is_asset", word: "仕入" },
   { name: "返品を売上と取り違える", step: 3, entry: entry([line("accounts_payable", 10000)], [line("sales", 10000)]), misconception: "return_as_new_transaction", word: "仕入" },
   { name: "買掛金を売掛金と取り違える", step: 3, entry: entry([line("accounts_receivable", 10000)], [line("purchases", 10000)]), misconception: "receivable_payable_confused", word: "買掛金" },
   { name: "運賃をお客さんに請求する", step: 4, entry: entry([line("accounts_receivable", 31500)], [line("sales", 31500)]), misconception: "shipping_mixed_into_sale", word: "運賃" },
