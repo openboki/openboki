@@ -294,24 +294,26 @@ const DRAWINGS: Record<IllustrationName, ReactNode> = {
   ),
   passbook: (
     <>
-      <rect className="fill-primary" x="20" y="10" width="80" height="98" rx="5" />
-      <rect className="fill-card" x="27" y="17" width="66" height="43" />
-      <rect className="fill-card" x="27" y="60" width="66" height="41" />
-      <path strokeWidth={THIN} d="M34 28h30M34 38h30M34 48h30M74 28h12M74 38h12M74 48h12M34 71h30M74 71h12M34 92h30M74 92h12" />
-      <rect className="fill-brand-accent" x="34" y="77" width="52" height="9" rx="2" />
+      <rect className="fill-card" x="28" y="18" width="62" height="88" rx="5" />
+      <rect className="fill-primary" x="22" y="12" width="62" height="88" rx="5" />
+      <path className="stroke-card" strokeWidth={THIN} d="M45 44v10M53 44v10M61 44v10M41 56h24" />
+      <path className="fill-card" d="M39 42 53 31 67 42Z" />
+      <rect className="fill-card" x="33" y="68" width="40" height="18" rx="2" />
+      <path strokeWidth={THIN} d="M39 74h28M39 80h16" />
+      <circle className="fill-brand-accent" cx="94" cy="92" r="12" />
+      <circle strokeWidth={THIN} cx="94" cy="92" r="7" />
     </>
   ),
   showcase: (
     <>
       <rect className="fill-card" x="20" y="100" width="12" height="7" rx="1.500" />
       <rect className="fill-card" x="88" y="100" width="12" height="7" rx="1.500" />
-      <path className={TINT} d="M16 72V34a12 12 0 0 1 12-12H92a12 12 0 0 1 12 12V72Z" />
-      <path d="M16 48H104" />
-      <path strokeWidth={THIN} d="M26 38l8-8M26 45l15-15" />
-      <rect className="fill-primary" x="12" y="72" width="96" height="30" rx="3" />
-      <path className="stroke-card" strokeWidth={THIN} d="M60 72V102" />
-      <circle className="fill-brand-accent" cx="52" cy="87" r="3" />
-      <circle className="fill-brand-accent" cx="68" cy="87" r="3" />
+      <rect className={TINT} x="18" y="22" width="84" height="60" />
+      <path d="M18 42H102M18 62H102" />
+      <path strokeWidth={THIN} d="M27 35l7-7M27 41l13-13" />
+      <rect className="fill-primary" x="13" y="14" width="94" height="9" rx="2" />
+      <rect className="fill-primary" x="13" y="82" width="94" height="19" rx="3" />
+      <rect className="fill-brand-accent" x="22" y="88" width="76" height="6" rx="2" />
     </>
   ),
   chair: (
