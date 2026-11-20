@@ -9,7 +9,7 @@ import type { GlossaryEntry } from "@/lib/content";
 import { ElementBadge } from "@/components/element-badge";
 import { Input } from "@/components/ui/input";
 
-// 用語集の検索。名前・別名・読み・shortの部分一致。規模が小さいので配列のフィルタで足りる
+// 用語集の検索。名前・別名・読み・short・summaryの部分一致。規模が小さいので配列のフィルタで足りる
 
 type GlossarySearchProps = {
   entries: GlossaryEntry[];
@@ -45,7 +45,10 @@ export function GlossarySearch({ entries, domainTitles, domainOf, urlQuery = "" 
     window.history.replaceState(null, "", next ? `?q=${encodeURIComponent(next)}` : window.location.pathname);
   };
   const q = normalizeSearchText(query);
-  const hits = q ? entries.filter((e) => [e.name, ...e.aliases, ...e.reading, e.short].some((t) => normalizeSearchText(t).includes(q))) : entries;
+  const includes = (texts: string[]) => texts.some((t) => normalizeSearchText(t).includes(q));
+  const hits = q ? entries.filter((e) => includes([e.name, ...e.aliases, ...e.reading, e.short])) : entries;
+  // 単元名に出る人物(パチョーリ)のように説明文にしか無い語でも引けるようにする。名前やshortで引けた項目より後ろにまとめる(Issue #421)
+  const summaryHits = q ? entries.filter((e) => !hits.includes(e) && includes([e.summary])) : [];
   // 説明文にだけ語を含む項目が分野の順で先に並ぶと、探している項目が埋もれる(Issue #86)
   // 途中まで打った語(「借入」)でも名前で探しているので、前方一致も先頭に出す(Issue #298)
   // 一致した名前の短い順に並べ、完全一致と入力に近い名前(「現」なら現金、現金過不足の順)を先にする
@@ -60,6 +63,7 @@ export function GlossarySearch({ entries, domainTitles, domainOf, urlQuery = "" 
     { title: "一致する用語", items: matched },
     ...Object.entries(domainTitles).map(([id, title]) => ({ title, items: concepts.filter((c) => domainOf[c.id] === id) })),
     { title: "勘定科目", items: accounts },
+    { title: "説明文に一致する用語", items: summaryHits },
   ].filter((g) => g.items.length > 0);
 
   return (
@@ -117,7 +121,7 @@ export function GlossarySearch({ entries, domainTitles, domainOf, urlQuery = "" 
           </dl>
         </section>
       ))}
-      {hits.length === 0 && (
+      {hits.length + summaryHits.length === 0 && (
         <p className="text-sm text-muted-foreground">該当する用語がありません。読みで見つからないときは、漢字の一部(例: 「現」)で試してください。</p>
       )}
     </div>
