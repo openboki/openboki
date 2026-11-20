@@ -468,6 +468,18 @@ misconceptions:
     correct: 報告で減るのは担当者の手元の小口現金。当座預金が減るのは、使った分を小切手で補給するとき。報告と同時に補給する場合だけ、費用の相手を当座預金にする
     concepts: [petty_cash, imprest_system, checking_account]
     remediation: cash-and-deposits/petty-cash
+  - id: petty_cash_as_suspense
+    name: 前もって渡すお金は仮払金
+    description: 担当者に前もって渡すお金という共通点から、小口現金を仮払金で記録してしまう。仮払金は出張の旅費のように、使い道や金額がまだ決まっていないお金を一時的に置く科目
+    correct: 細かい支払いのために決まった金額を渡し、使い道の報告を受けて補給するお金は小口現金。前渡しで増やしたのが小口現金なら、報告で減らすのも小口現金。仮払金は使い道と金額が決まるまで置く科目で、あとの単元で扱う
+    concepts: [petty_cash, imprest_system, suspense_accounts]
+    remediation: receivables-and-payables/temporary-and-deposits
+  - id: reported_payments_as_miscellaneous_loss
+    name: 細かい支払いはまとめて雑損
+    description: 担当者から使い道の報告があった細かい支払いを、合計して雑損で記録してしまう
+    correct: 雑損は原因の分からない現金の不足などに使う。使い道の報告がある支払いは原因がはっきりしているので、切手代は通信費、文房具代は消耗品費、電車代は旅費交通費と使い道ごとの費用に分ける
+    concepts: [petty_cash, expense, miscellaneous_loss_gain]
+    remediation: cash-and-deposits/petty-cash
   - id: postage_as_supplies
     name: 切手代も消耗品費
     description: 切手も文房具と同じように店で買う物なので、切手代を消耗品費で記録してしまう
