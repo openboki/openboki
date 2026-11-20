@@ -26,5 +26,6 @@ test("仕入の返品で右を現金にした誤答に、右を直す説明が�
   // 既に書けている「買掛金を減らす」ではなく、右の仕入に触れる
   await expect(status).toContainText("仕入");
   await expect(status).not.toContainText("減るのは買掛金");
-  await expect(page.getByText("よくある思い込み: 返品を新しい取引として記録")).toBeVisible();
+  // 右に現金を書く誤答の誤解は、#443で「掛けで買っても現金が減る」に付け替えた
+  await expect(page.getByText("よくある思い込み: 掛けで買っても現金が減る")).toBeVisible();
 });
