@@ -102,7 +102,7 @@ test("「自由に試す」で科目名を打ち切ってEnterで記帳した後
     await work.getByLabel(`${el}の予想`, { exact: true }).selectOption(v);
   await work.getByRole("button", { name: "予想して記帳する" }).click();
   await next.click();
-  await fill(["減価償却費", "50000"], ["減価償却累計額", "50000"]);
+  await fill(["減価償却費", "50000"], ["備品減価償却累計額", "50000"]);
   await work.getByRole("button", { name: "記帳する" }).click();
   await next.click();
   await work.getByPlaceholder("金額(円)").fill("900000");

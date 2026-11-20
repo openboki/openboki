@@ -37,7 +37,7 @@ test("自由に試すで上限を超える金額は記帳できず、上限の�
     await work.getByLabel(`${el}の予想`, { exact: true }).selectOption(v);
   await work.getByRole("button", { name: "予想して記帳する" }).click();
   await next.click();
-  await post(["減価償却費", "50000"], ["減価償却累計額", "50000"]);
+  await post(["減価償却費", "50000"], ["備品減価償却累計額", "50000"]);
   await next.click();
   await work.getByPlaceholder("金額(円)").fill("900000");
   await work.getByRole("button", { name: "確認する" }).click();

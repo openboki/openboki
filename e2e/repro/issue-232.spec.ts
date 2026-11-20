@@ -40,7 +40,8 @@ const toStep7 = async (page: Page) => {
   await next(page, 7);
 };
 
-for (const wrong of ["建物減価償却累計額", "車両運搬具減価償却累計額"]) {
+// 総称の「減価償却累計額」もIssue #416で正解から外した
+for (const wrong of ["建物減価償却累計額", "車両運搬具減価償却累計額", "減価償却累計額"]) {
   test(`コーヒーマシン(備品)の貸方に「${wrong}」と書くと正解にならない`, async ({ page }) => {
     await toStep7(page);
     await post(page, "減価償却費", wrong, 50000);
@@ -50,7 +51,7 @@ for (const wrong of ["建物減価償却累計額", "車両運搬具減価償却
   });
 }
 
-for (const right of ["備品減価償却累計額", "減価償却累計額"]) {
+for (const right of ["備品減価償却累計額"]) {
   test(`コーヒーマシン(備品)の貸方に「${right}」と書くと正解になる`, async ({ page }) => {
     await toStep7(page);
     await post(page, "減価償却費", right, 50000);

@@ -74,8 +74,8 @@ misconceptions:
     remediation: depreciation/what-is-depreciation
   - id: accumulated_depreciation_any_asset
     name: 累計額はどの資産の分でもよい
-    description: 減価償却累計額は資産の種類を問わず、建物・車両・備品のどの累計額に積んでも同じだと思っている
-    correct: 累計額は資産ごとに分けて積み、その資産の取得原価から引いて帳簿価額を出す。備品の減りは備品減価償却累計額に積み、建物や車両の累計額には混ぜない
+    description: 減価償却累計額は資産の種類を問わず、建物・車両・備品のどの累計額に積んでも同じ、または総称の「減価償却累計額」で書いても同じだと思っている
+    correct: 累計額は資産ごとに分けて積み、その資産の取得原価から引いて帳簿価額を出す。備品の減りは備品減価償却累計額に積み、建物や車両の累計額には混ぜない。総称の減価償却累計額は資産ごとの科目をまとめて呼ぶ言葉で、帳簿では別の勘定になる
     concepts: [contra_account, book_value]
     remediation: depreciation/what-is-depreciation
   - id: contra_increase_as_asset_increase
