@@ -1377,7 +1377,8 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
             >
               <label className="text-sm font-semibold block">
                 {task.question}
-                <Input inputMode="numeric" className="mt-1" value={calcValue} readOnly={result?.correct === true} onChange={(e) => {
+                {/* iOSのnumeric / decimalのテンキーには負号が無いので、inputModeを付けない */}
+                <Input className="mt-1" value={calcValue} readOnly={result?.correct === true} onChange={(e) => {
                     setCalcValue(e.target.value);
                     setCalcError(null);
                   }}
