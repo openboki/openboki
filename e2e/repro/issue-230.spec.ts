@@ -60,10 +60,10 @@ test("定額法 ステップ7の自然な誤答に、汎用文でない説明を
   await post(page, "車両運搬具", "現金", "1200000");
   await expect(status.getByText("できました")).toBeVisible();
   await next.click();
-  await work.getByRole("slider").nth(2).fill("6");
+  await work.getByRole("slider", { name: /耐用年数/ }).fill("6");
   await expect(next).not.toHaveAttribute("aria-disabled", "true");
   await next.click();
-  await work.getByRole("slider").nth(1).fill("300000");
+  await work.getByRole("slider", { name: /残存価額/ }).fill("300000");
   await expect(next).not.toHaveAttribute("aria-disabled", "true");
   await next.click();
   await calc(page, "100000");

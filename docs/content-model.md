@@ -119,7 +119,7 @@ success: 結果の貸借対照表に、現金と資本金が同時に現れま�
 | observe | `entries`(自動で記帳する仕訳。省略可) | なし |
 | post | `transaction`、`answer`(仕訳)、`alternatives`、`wrong_patterns`(swapped / unbalanced / debit / credit)、`hint`、`success` | 仕訳の一致(行順不同)。不一致なら誤答パターンで誤解を判定(swappedは金額を問わず科目の左右が逆なら当たる。行パターンは、正解にもパターンにも無い行がその側にあると当たらない) |
 | predict | `transaction`、`entry`(確認後に記帳される仕訳)、`answer`(5要素のincrease / decrease / none)、`elements`(問う要素。省略すれば5要素すべて。まだ定義していない要素を問わないために絞る)、`wrong_patterns`(部分一致。`elements`で問う要素だけ) | 予想と答えの一致。外れても実際の動きを見せて進める。一致した誤答パターンはすべて説明する |
-| tweak | `formula`(straight_line)、`params`(id / label / value / min / max / step / unit)、`goal`(output / equals / label)。straight_lineの当期分と期末の帳簿価額は`months`をparamsに含めたときだけ出る | 式の出力が目標値と一致 |
+| tweak | `formula`(straight_line)、`params`(id / label / value / min / max / step / unit / fixed。`fixed: true`の条件は値だけ表示して動かせない。動かす条件を1つに絞るときに使う)、`goal`(output / equals / label)。straight_lineの当期分と期末の帳簿価額は`months`をparamsに含めたときだけ出る | 式の出力が目標値と一致 |
 | classify | `accounts`(科目IDの配列)か、`labels`(箱のID → 表示名)と`items`(項目のID・表示・正解の箱。7.2)。`misconceptions`(項目 → 間違えた箱 → 誤解ID) | 全項目が正しい箱 |
 | calc | `question`、`answer`、`wrong_patterns`(値) | 値の一致 |
 
@@ -161,7 +161,7 @@ content/
   name: 現金過不足
   element: asset              # 仮勘定でも、残高をふだん置く側を書く
   temporary: true             # 仮勘定。決算の財務諸表に載せられず、必ず本来の科目へ振り替える科目だけに付ける(仮払金・仮受金は資産・負債のまま)
-  why: 原因が分かるまで現金の差額を置いておく仮の科目(仮勘定)で、資産でも負債でもないからです。
+  why: 原因が分かるまで現金の差額を置いておく仮の科目(仮勘定)で、資産でも負債でもなく、決算の財務諸表には載せられないからです。
 ```
 仮勘定の残高が`element`と逆の側に出たとき(現金過不足の貸方残)、結果の貸借対照表は△を付けずに逆側の部(負債の部)へ正の金額で並べ、科目名に「(仮)」を付ける。用語集とポップオーバーのバッジは要素ではなく「仮勘定」と出す。5要素への影響(`computeImpact`)は`element`の側で数える。
 
@@ -318,6 +318,7 @@ scenario:
 - classifyは箱を任意にできる。`accounts`の代わりに`labels`(箱のIDと表示名)と`items`(並べる項目のID・表示・正解の箱)を書く。`misconceptions`は`項目 → 間違えた箱 → 誤解ID`。`accounts`を書いた従来の形は、箱を5要素とみなす。
 - debug(バグ探し。M3)は、`entries`(記帳済みの仕訳。1件だけ誤りがあり、片側が空でもよい)の中から誤りの行を指し、直す課題。`answer`は`index`(0始まり)と`entry`(直した仕訳)。`wrong_patterns`の`match`は、行の選び間違いなら`{ index }`、行は合っていて直した仕訳が違う場合はpostと同じ形(`debit` / `credit` / `swapped` / `unbalanced`)。学習者が行を選び、仕訳を直して確認すると、試算の左右がそろう。原稿の例は`birth-of-double-entry/venture-profit-and-double-entry`の「写し忘れを見つける」。
 - observeの`entries`は`scenario.accounts`の科目も使える。historyの単元では、現代の科目(`cash`など)と単元限定の科目を混ぜてよい。
+- historyの単元の科目欄は、単元限定の科目と、その単元が参照する全体マスタの科目(`opening`と課題の仕訳・誤答パターン・classifyの科目)だけを候補に出し、入力でも受け付ける。時代に無い現代の科目(買掛金、売上など)は選べない(Issue #331)。
 
 ### 7.3 パスのfrontmatter
 `exam`を任意にし、試験に紐づかないパスは`era`(時代順の説明)を持てる。`exam`と`era`の両方を省いたパスは拒否する。

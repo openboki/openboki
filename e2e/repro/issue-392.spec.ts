@@ -17,10 +17,10 @@ test("定額法の月割りと2台分の合計の誤答に、取り違えを言�
   await work.getByRole("button", { name: "記帳する" }).click();
   await expect(page.getByText("できました", { exact: true })).toBeVisible();
   await next.click();
-  await work.getByRole("slider").nth(2).fill("6");
+  await work.getByRole("slider", { name: /耐用年数/ }).fill("6");
   await expect(page.getByText("できました", { exact: true })).toBeVisible();
   await next.click();
-  await work.getByRole("slider").nth(1).fill("300000");
+  await work.getByRole("slider", { name: /残存価額/ }).fill("300000");
   await expect(page.getByText("できました", { exact: true })).toBeVisible();
   await next.click();
   const amount = work.getByPlaceholder(/金額/);
