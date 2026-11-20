@@ -17,7 +17,7 @@ type Task =
   | { type: "observe" }
   | { type: "post"; answer: { debit: Line[]; credit: Line[] } }
   | { type: "predict"; answer: Record<string, string> }
-  | { type: "tweak"; params: { id: string; label?: string; min: number; max: number; step: number }[] }
+  | { type: "tweak"; params: { id: string; label?: string; min: number; max: number; step: number; fixed?: boolean }[] }
   | { type: "classify"; accounts?: string[]; labels?: Record<string, string>; items?: { id: string; label: string; answer: string }[] }
   | { type: "calc"; answer: number }
   | { type: "debug"; entries: unknown[]; answer: { index: number; entry: { debit: Line[]; credit: Line[] } } };
@@ -127,7 +127,7 @@ export const ACTIONS: { name: string; weight: number; when: (s: State) => boolea
     } },
   { name: "条件を変える", weight: 4, when: (s) => s.task?.type === "tweak", run: async (page, s, rnd) => {
       const t = s.task as Extract<Task, { type: "tweak" }>;
-      for (const p of t.params) {
+      for (const p of t.params.filter((q) => !q.fixed)) {
         const v = p.min + Math.round((rnd() * (p.max - p.min)) / p.step) * p.step;
         await work(page).getByRole("slider", { name: p.label ?? p.id }).fill(String(v)).catch(() => {});
       }

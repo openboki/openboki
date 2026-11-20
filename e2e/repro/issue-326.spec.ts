@@ -46,8 +46,9 @@ for (const broken of [`{"useful_life":-3,"cost":1e308,"residual_value":5e307}`, 
     expect(years).toBeLessThanOrEqual(12);
     await expect(work(page).getByText(`${years} 年`, { exact: true })).toBeVisible();
     // 償却費は結果の表から読む。取得原価のラベルと混同しない
-    const cost = Number(await page.getByRole("slider", { name: /取得原価/ }).inputValue());
-    const residual = Number(await page.getByRole("slider", { name: /残存価額/ }).inputValue());
+    // ステップ3は取得原価と残存価額が固定(Issue #454)
+    const cost = 1200000;
+    const residual = 0;
     await expect(work(page).locator("dd").first()).toHaveText(`${Math.floor((cost - residual) / years).toLocaleString("ja-JP")}円`);
     await expect(work(page).getByRole("status").filter({ hasText: "目標:" })).toContainText("達成");
     await expect(page.getByRole("button", { name: "次へ →" })).not.toHaveAttribute("aria-disabled", "true");

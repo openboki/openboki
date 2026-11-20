@@ -15,7 +15,7 @@ const post = async (page: Page, debit: string, credit: string, amount: number) =
   await work(page).getByRole("button", { name: "記帳する" }).click();
 };
 const slide = async (page: Page, index: number, presses: number) => {
-  const slider = work(page).getByRole("slider").nth(index);
+  const slider = work(page).getByRole("slider", { name: [/取得原価/, /残存価額/, /耐用年数/][index] });
   await slider.focus();
   await page.keyboard.press("Home");
   for (let i = 0; i < presses; i++) await page.keyboard.press("ArrowRight");
