@@ -55,6 +55,7 @@ interface HelpTopic {
   target?: string;            // data-tourの値。「場所を示す」で光らせる
   pane?: "guide" | "work" | "result";
   when?: (ctx: HelpContext) => boolean; // 「いまの画面」に入れる条件。無ければ常に
+  views?: View[];             // 結果ペインがこの段階(scenario.view)の単元にだけある機能。外れる単元では「すべての機能」にも出さない
 }
 interface HelpContext {
   taskType: TaskType;         // 現在のステップの課題の種類
@@ -73,10 +74,11 @@ interface HelpContext {
 | impact | ワークスペース | 影響の表示 | 影響の行の横 | – | post / predict / 自由に試す |
 | posted | ワークスペース | 記帳済みの一覧 | 置かない(見れば分かる) | – | 常に |
 | ledger | ワークスペース | 総勘定元帳(T勘定) | タブ列の右端 | – | 常に |
-| statements | 結果(見る) | 貸借対照表と損益計算書 | 見出し「貸借対照表」の横 | – | 常に |
-| shape | 結果 | 会社のかたち | 帯の右上 | – | 記帳が1件以上 |
+| statements | 結果(見る) | 貸借対照表と損益計算書 | 見出し「貸借対照表」の横 | – | 常に(view: statementsだけ) |
+| shape | 結果 | 会社のかたち | 帯の右上 | – | 記帳が1件以上(view: statementsだけ) |
+| trial | 結果 | 試算 | 置かない | – | 常に(view: ledgerだけ) |
 | rewind | 結果 | 帳簿をさかのぼる | ラベルの横 | – | 記帳が2件以上 |
-| changed | 結果 | このステップで動いた要素 | 置かない(見出しが説明になっている) | – | 動いた要素があるとき |
+| changed | 結果 | このステップで動いた要素 | 置かない(見出しが説明になっている) | – | 動いた要素があるとき(view: statementsだけ) |
 | predict | 課題の種類 | 予想して記帳する | 見出し「記帳すると…」の横 | ○ | predict |
 | classify | 課題の種類 | 箱に分ける | ボードの見出しの横 | ○ | classify |
 | calc | 課題の種類 | 金額で答える | 入力欄の見出しの横 | ○ | calc |
