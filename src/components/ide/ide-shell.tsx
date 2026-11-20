@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { JournalEditor } from "@/components/journal-editor";
 import { StatementsPane } from "./statements-pane";
-import { ImpactCompare } from "./impact-compare";
+import { DIFF_ROW_CLASS, DiffMark, ImpactCompare } from "./impact-compare";
 import { ClassifyBoard } from "./classify-board";
 import { TweakPanel } from "./tweak-panel";
 import { LedgerTab, TrialBalanceTable } from "./ledger-tab";
@@ -1856,8 +1856,8 @@ function PredictCompare({ predicted, elements, entry, accounts }: { predicted: P
           const actual = toChange(el === "equity" ? impact.equityTotal : impact[el]);
           const differs = predicted[el] !== actual;
           return (
-            <tr key={el} className={differs ? "text-diff-fg font-medium" : ""}>
-              <td className="py-0.5"><ElementBadge element={el} size="xs" /></td>
+            <tr key={el} className={differs ? DIFF_ROW_CLASS : ""}>
+              <td className="py-0.5"><DiffMark differs={differs} /><ElementBadge element={el} size="xs" /></td>
               <td className="text-right">{predicted[el] ? CHANGE_LABELS[predicted[el]] : "—"}</td>
               <td className="text-right">{CHANGE_LABELS[actual]}</td>
             </tr>
