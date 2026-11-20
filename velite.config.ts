@@ -156,7 +156,14 @@ export type Task = z.infer<typeof taskSchema>;
 
 // 図解ブロック(docs/visual-guidelines.md 5章)。altは必須
 const amountItem = s.object({ account: s.string().optional(), label: s.string().optional(), amount: s.number().int() });
+const party = s.object({ illustration: s.enum(ILLUSTRATION_NAMES), label: s.string() });
 const simpleFigure = s.discriminatedUnion("type", [
+  s.object({
+    type: s.literal("parties"),
+    alt: s.string(),
+    // leftは自分の会社、rightは相手。directionはお金や物が動く向き
+    rows: s.array(s.object({ left: party, right: party, direction: s.enum(["left", "right"]), label: s.string(), note: s.string().optional() })).min(1).max(3),
+  }),
   s.object({
     type: s.literal("elements"),
     alt: s.string(),
@@ -295,7 +302,7 @@ export default defineConfig({
     topics: {
       name: "Topic",
       pattern: "topics/*/topic.yaml",
-      schema: s.object({ id: s.string(), title: s.string(), domain: s.string(), summary: s.string(), order: s.number(), hidden: s.boolean().default(false) }),
+      schema: s.object({ id: s.string(), title: s.string(), domain: s.string(), summary: s.string(), order: s.number(), hidden: s.boolean().default(false), illustration: s.enum(ILLUSTRATION_NAMES).optional() }),
     },
     units: {
       name: "Unit",

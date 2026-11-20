@@ -621,6 +621,30 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     }
   };
 
+  // DBの「続きから」では入力欄が空なので、採点した誤答を入力欄にも戻してから結果を戻す。空の入力に前回の説明だけが付かないように(Issue #460)
+  const restoreResumeGraded = (t: Task, key: string) => {
+    const graded = JSON.parse(key);
+    if (t.type === "post") {
+      if (!isEntry(graded, accountMap)) return;
+      setDraft(fromJournalEntry(graded, accountMap));
+    }
+    if (t.type === "calc") {
+      if (typeof graded !== "number") return;
+      setCalcValue(String(graded));
+    }
+    if (t.type === "classify") {
+      const boxIds = classifyBoard(t, accountMap).boxes.map((b) => b.id);
+      if (!isObject(graded) || !Object.values(graded).every((v) => typeof v === "string" && boxIds.includes(v))) return;
+      setPlaced(graded as Record<string, string>);
+    }
+    if (t.type === "debug") {
+      if (!isObject(graded) || !Number.isInteger(graded.index) || !isEntry(graded.entry, accountMap)) return;
+      setDebugRow(graded.index as number);
+      setDraft(fromJournalEntry(graded.entry as JournalEntry, accountMap));
+    }
+    restoreGraded(t, key);
+  };
+
   const goTo = (index: number) => {
     const target = unit.steps[index];
     // ツアーはステップ1からの台本なので、案内と同じくツアー中は取り込まない
@@ -658,7 +682,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     if (sessionAnswer !== undefined) restoreStep(index, sessionAnswer);
     else if (resumeGraded.current?.step === index) {
       // 同じタブで離れて戻ったときと同じく、1回だけ使う
-      restoreGraded(target.task, resumeGraded.current.key);
+      restoreResumeGraded(target.task, resumeGraded.current.key);
       resumeGraded.current = null;
     }
     const top = Math.max(index, reached, savedStep.current);
@@ -705,7 +729,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     const answer = answered.current.get(stepIndex);
     if (answer !== undefined) restoreStep(stepIndex, answer);
     else if (resumeGraded.current?.step === stepIndex) {
-      restoreGraded(step.task, resumeGraded.current.key);
+      restoreResumeGraded(step.task, resumeGraded.current.key);
       resumeGraded.current = null;
     }
     // resumeStepが届いたときに1回だけ行う

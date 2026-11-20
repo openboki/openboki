@@ -33,12 +33,19 @@ scenario:
 マメノキ自身も、開業のときに銀行から300,000円を借りています。貸したお金は後で返してもらう権利、借りたお金は後で返す義務。この2つをまとめて[[loan|貸付金・借入金]]と呼びます。
 
 ```figure
-type: elements
-alt: 貸付金は後で返してもらう権利なので資産の箱、借入金は後で返す義務なので負債の箱に入る
-items:
-  - { account: loans_receivable, highlight: true }
-  - { account: loans_payable, highlight: true }
-  - { account: bank_deposit }
+type: parties
+alt: マメノキは銀行から300,000円を借りていて、焼き菓子店に100,000円を貸す。借りたお金は後で返す義務、貸したお金は後で返してもらう権利になる
+rows:
+  - left: { illustration: cafe, label: マメノキ }
+    right: { illustration: bank, label: 銀行 }
+    direction: left
+    label: 300,000円を借りた
+    note: 後で返す義務(借入金)
+  - left: { illustration: cafe, label: マメノキ }
+    right: { illustration: bakery, label: 焼き菓子店 }
+    direction: right
+    label: 100,000円を貸す
+    note: 後で返してもらう権利(貸付金)
 ```
 
 ## お金を貸す
