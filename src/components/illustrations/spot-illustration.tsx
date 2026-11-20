@@ -200,28 +200,21 @@ const DRAWINGS: Record<IllustrationName, ReactNode> = {
   "office-building": (
     <>
       <path d="M8 104H112" />
-      <rect className="fill-card" x="74" y="56" width="28" height="48" />
-      <rect className={TINT} x="80" y="64" width="16" height="7" />
-      <rect className={TINT} x="80" y="77" width="16" height="7" />
-      <rect className={TINT} x="80" y="90" width="16" height="7" />
-      <path d="M36 16V8" />
-      <rect className="fill-card" x="52" y="10" width="16" height="8" rx="1" />
-      <rect className="fill-card" x="22" y="22" width="56" height="82" />
-      <rect className="fill-primary" x="18" y="16" width="64" height="8" rx="2" />
-      <rect className={TINT} x="29" y="31" width="42" height="9" />
-      <rect className={TINT} x="29" y="45" width="42" height="9" />
-      <rect className={TINT} x="29" y="59" width="42" height="9" />
-      <rect className={TINT} x="29" y="73" width="42" height="9" />
-      <path strokeWidth={THIN} d="M43 31v9M57 31v9M43 45v9M57 45v9M43 59v9M57 59v9M43 73v9M57 73v9" />
-      <rect className="fill-primary" x="39" y="90" width="22" height="14" />
-      <path className="stroke-card" strokeWidth={THIN} d="M50 90V104" />
-      <rect className="fill-brand-accent" x="35" y="86" width="30" height="5" rx="2" />
+      <rect className="fill-card" x="32" y="22" width="56" height="82" />
+      <rect className="fill-primary" x="28" y="16" width="64" height="8" rx="2" />
+      <rect className={TINT} x="39" y="31" width="42" height="9" />
+      <rect className={TINT} x="39" y="45" width="42" height="9" />
+      <rect className={TINT} x="39" y="59" width="42" height="9" />
+      <rect className={TINT} x="39" y="73" width="42" height="9" />
+      <path strokeWidth={THIN} d="M53 31v9M67 31v9M53 45v9M67 45v9M53 59v9M67 59v9M53 73v9M67 73v9" />
+      <rect className="fill-primary" x="49" y="90" width="22" height="14" />
+      <path className="stroke-card" strokeWidth={THIN} d="M60 90V104" />
+      <rect className="fill-brand-accent" x="45" y="86" width="30" height="5" rx="2" />
     </>
   ),
   "delivery-truck": (
     <>
       <rect className="fill-primary" x="10" y="32" width="62" height="52" rx="3" />
-      <path className="stroke-card" d="M25 52H55M46 43l9 9-9 9" />
       <path className="fill-card" d="M72 46H92L108 64V84H72Z" />
       <path className={TINT} d="M79 53H90L99.500 65H79Z" />
       <circle className="fill-brand-accent" cx="104" cy="75" r="2.5" />
@@ -239,8 +232,6 @@ const DRAWINGS: Record<IllustrationName, ReactNode> = {
       <rect className="fill-brand-accent" x="49" y="52" width="16" height="20" />
       <rect className="fill-card" x="24" y="80" width="28" height="18" rx="2" />
       <path strokeWidth={THIN} d="M29 86h18M29 92h11" />
-      <rect className="fill-primary" x="68" y="78" width="22" height="22" rx="2" />
-      <path className="stroke-card" strokeWidth={THIN} d="M79 95V83M74 88l5-5 5 5" />
     </>
   ),
 };
