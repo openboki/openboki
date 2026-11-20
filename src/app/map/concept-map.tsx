@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "cn";
 import { normalizeSearchText } from "@/lib/accounting";
-import type { ConceptLink } from "@/lib/concept-graph";
+import { CATEGORY_SHAPES, type ConceptLink } from "@/lib/concept-graph";
 import { Input } from "@/components/ui/input";
 import { GraphCanvas, type GraphNode } from "./graph-canvas";
 
@@ -32,7 +32,15 @@ interface Props {
   domains: { id: string; title: string }[];
 }
 
-const swatch = (category: number) => ({ background: `var(--cat-${category})` });
+/** 分野の印。図の点と同じ色と形で描く */
+function CategoryMark({ category }: { category: number }) {
+  const shape = CATEGORY_SHAPES[category - 1];
+  return (
+    <svg viewBox="-1.3 -1.3 2.6 2.6" className="size-3 shrink-0" fill={`var(--cat-${category})`} data-category-mark={category} aria-hidden>
+      {shape ? <polygon points={shape.map((p) => p.join(",")).join(" ")} /> : <circle r={1} />}
+    </svg>
+  );
+}
 
 export function ConceptMap({ concepts, links, domains }: Props) {
   const byId = useMemo(() => new Map(concepts.map((c) => [c.id, c])), [concepts]);
@@ -100,7 +108,7 @@ export function ConceptMap({ concepts, links, domains }: Props) {
         {groups.map((g) => (
           <section key={g.id}>
             <h3 className="flex items-center gap-1.5 py-1 text-xs text-muted-foreground">
-              <span className="size-2.5 rounded-full" style={swatch(category[g.id])} aria-hidden />
+              <CategoryMark category={category[g.id]} />
               {g.title}
             </h3>
             <ul>
@@ -130,10 +138,10 @@ export function ConceptMap({ concepts, links, domains }: Props) {
               {/* 図の中に重ねる。図の幅を変えても説明の欄にはみ出さない */}
               <div className="pointer-events-none absolute bottom-3 left-3 space-y-2 text-xs text-muted-foreground">
                 <p className="hidden lg:block">ドラッグで移動 · ホイールで拡大 · 点を押すと説明</p>
-                <ul className="flex max-w-xs flex-wrap gap-x-3 gap-y-1" aria-label="分野の色">
+                <ul className="flex max-w-xs flex-wrap gap-x-3 gap-y-1" aria-label="分野の色と形">
                   {domains.map((d) => (
                     <li key={d.id} className="flex items-center gap-1.5">
-                      <span className="size-2.5 rounded-full" style={swatch(category[d.id])} aria-hidden />
+                      <CategoryMark category={category[d.id]} />
                       {d.title}
                     </li>
                   ))}

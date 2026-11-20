@@ -2,9 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import type ForceGraph from "force-graph";
-import { CATEGORY_COLORS, type ConceptLink } from "@/lib/concept-graph";
+import { CATEGORY_COLORS, CATEGORY_SHAPES, type ConceptLink } from "@/lib/concept-graph";
 
-// 概念マップの図。force-graph(canvas)で、分野の色の点と線を力学モデルで配置する。
+// 概念マップの図。force-graph(canvas)で、分野の色と形の点と線を力学モデルで配置する。
 // 名前は、ポインタを載せた点、選んだ点とその隣、拡大したときにだけ出す(一覧が常に見える索引なので、図は形とつながりを見せる)
 
 export interface GraphNode {
@@ -21,6 +21,18 @@ type RenderLink = { source: RenderNode | string; target: RenderNode | string };
 const LABEL_ZOOM = 2.2;
 const radius = (n: GraphNode, anchor: boolean) => 4 + Math.min(7, n.degree * 0.45) + (anchor ? 3 : 0);
 const endId = (end: RenderNode | string) => (typeof end === "string" ? end : end.id);
+
+/** 分野の形で点の輪郭をなぞる */
+function tracePoint(ctx: CanvasRenderingContext2D, category: number, x: number, y: number, r: number) {
+  const shape = CATEGORY_SHAPES[category - 1];
+  ctx.beginPath();
+  if (!shape) {
+    ctx.arc(x, y, r, 0, 2 * Math.PI);
+    return;
+  }
+  shape.forEach(([px, py], i) => (i === 0 ? ctx.moveTo : ctx.lineTo).call(ctx, x + px * r, y + py * r));
+  ctx.closePath();
+}
 
 /** #rrggbbに不透明度を付ける。トークンは16進で定義している */
 function alpha(hex: string, a: number): string {
@@ -84,13 +96,13 @@ export function GraphCanvas({ nodes, links, selectedId, anchorId, matchedIds, on
       }
 
       ctx.globalAlpha = filtered ? 0.15 : near ? 1 : 0.75;
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, r, 0, 2 * Math.PI);
+      tracePoint(ctx, n.category, n.x, n.y, r);
       ctx.fillStyle = color;
       ctx.fill();
       if (selected || near) {
         // 選んだ点は太い輪、隣は細い輪。色だけに頼らず形でも分かるようにする
         ctx.lineWidth = (selected ? 3 : 1.5) / scale;
+        ctx.lineJoin = "round";
         ctx.strokeStyle = colors.foreground;
         ctx.stroke();
       }
