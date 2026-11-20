@@ -45,7 +45,7 @@ describe.each(tasks)("$nameの誤答", ({ task, amount, vehicle }) => {
   });
 
   it("既存のパターンと正解の判定は変わらない", () => {
-    expect(gradePost(task, entry("depreciation_expense", "accumulated_depreciation", amount)).correct).toBe(true);
+    expect(gradePost(task, entry("depreciation_expense", "accumulated_depreciation_equipment", amount)).correct).toBe(true);
     expect(gradePost(task, entry("accumulated_depreciation", "depreciation_expense", amount)).misconception).toBe("debit_means_increase");
     expect(gradePost(task, entry("depreciation_expense", "equipment", amount)).misconception).toBe("direct_writeoff_vs_contra");
     expect(gradePost(task, entry("depreciation_expense", "cash", amount)).misconception).toBe("depreciation_as_cash_outflow");
