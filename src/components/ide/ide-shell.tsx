@@ -243,8 +243,9 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
   const [attempts, setAttempts] = useState(0);
   const [showHint, setShowHint] = useState(false);
   const [pane, setPane] = useState<Pane>("guide");
-  // 初回バナーの判定。進捗を読み終えるまではfalseにして、記録のある学習者にバナーが一瞬出ないようにする
-  const [noRecord, setNoRecord] = useState(false);
+  // 初回バナーの判定に使う、どこに回答の記録があるか。進捗を読み終えるまでは"loading"にして、記録のある学習者にバナーが一瞬出ないようにする
+  // チュートリアル単元だけの記録はツアーを途中で離れた人なので、案内を続ける(Issue #327)
+  const [recordScope, setRecordScope] = useState<"loading" | "none" | "tutorial" | "other">("loading");
   const [resumeStep, setResumeStep] = useState<number | null>(null);
   // 完了した単元は途中扱いの「前回はステップNまで」にしない(Issue #276)
   const [resumeCompleted, setResumeCompleted] = useState(false);
@@ -388,7 +389,8 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
   useEffect(() => {
     fetchProgress()
       .then((p) => {
-        setNoRecord(!p || (Object.keys(p.units).length === 0 && Object.keys(p.answers).length === 0));
+        const recorded = p ? [...Object.keys(p.units), ...Object.keys(p.answers)] : [];
+        setRecordScope(recorded.length === 0 ? "none" : recorded.every((id) => id === TUTORIAL_UNIT_ID) ? "tutorial" : "other");
         if (p) progressUser.current ??= p.userId;
         const saved = p?.units[unit.id];
         const outOfRange = saved !== undefined && saved.step >= unit.steps.length;
@@ -494,7 +496,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
   // 回答前の進捗は保存されない(Issue #214)ので、最初の回答でサインインしたら、いまの位置もそのユーザーで残す
   // 回答した時点で記録のある学習者になる。別タブのlocalStorage.clearでtutorialがpendingに戻っても初回バナーを出さない(Issue #246)
   const record = (r: GradeResult, answer: unknown) => {
-    setNoRecord(false);
+    setRecordScope((scope) => (unit.id === TUTORIAL_UNIT_ID && scope !== "other" ? "tutorial" : "other"));
     let attemptUser: string | null = null;
     const attempt = async () => {
       attemptUser = await recordAttempt({ unitId: unit.id, exerciseId: `${unit.id}#${stepIndex}`, correct: r.correct, misconceptionId: r.misconception, answer });
@@ -1216,9 +1218,17 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
               </Link>
             </p>
           )}
-          {!isTutorialUnit && noRecord && tutorial.status !== "done" && tutorial.enabled && (
+          {!isTutorialUnit &&
+            recordScope !== "loading" &&
+            (recordScope !== "other" || tutorial.optedIn) &&
+            tutorial.status !== "done" &&
+            tutorial.enabled && (
             <div className="mb-3 rounded-md border border-primary/30 bg-primary/5 p-3 text-sm flex flex-wrap items-center gap-2" role="note">
-              <span className="flex-1">初めてですか? 2分のチュートリアルで、実際に1件記帳しながら使い方を覚えられます。</span>
+              <span className="flex-1">
+                {recordScope === "none"
+                  ? "初めてですか? 2分のチュートリアルで、実際に1件記帳しながら使い方を覚えられます。"
+                  : "チュートリアルがまだ終わっていません。2分のツアーで、実際に1件記帳しながら使い方を確かめられます。"}
+              </span>
               <Button size="sm" asChild>
                 {/* skippedでもバナーは出るので、statusに頼らずツアーを始める(Issue #165) */}
                 <Link href={`/units/${TUTORIAL_UNIT_ID}?tour=1&from=${encodeURIComponent(unit.id)}`}>はじめる</Link>
