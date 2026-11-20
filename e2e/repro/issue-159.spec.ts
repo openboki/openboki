@@ -81,7 +81,7 @@ test("「自由に試す」で科目名を打ち切ってEnterで記帳した後
     await work.getByLabel("貸方の金額1").fill(credit[1]);
   };
   const slide = async (i: number, steps: number) => {
-    const s = page.getByRole("slider").nth(i);
+    const s = page.getByRole("slider", { name: [/取得原価/, /残存価額/, /耐用年数/][i] });
     await s.focus();
     await page.keyboard.press("Home");
     for (let k = 0; k < steps; k++) await page.keyboard.press("ArrowRight");

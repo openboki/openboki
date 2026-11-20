@@ -154,13 +154,13 @@ export function tweakRestoreValues(task: TaskOf<"tweak">, saved: unknown): Recor
   const reaches = (values: Record<string, number>) => evaluateFormula(task.formula, values).outputs[task.goal.output] === task.goal.equals;
   if (typeof saved === "object" && saved !== null && !Array.isArray(saved)) {
     const values = saved as Record<string, unknown>;
-    if (task.params.every((p) => onSlider(p, values[p.id]))) {
+    if (task.params.every((p) => (p.fixed ? values[p.id] === p.value : onSlider(p, values[p.id])))) {
       const picked = Object.fromEntries(task.params.map((p) => [p.id, values[p.id] as number]));
       if (reaches(picked)) return picked;
     }
   }
   const initial = Object.fromEntries(task.params.map((p) => [p.id, p.value]));
-  for (const p of task.params) {
+  for (const p of task.params.filter((q) => !q.fixed)) {
     for (let i = 0; p.min + i * p.step <= p.max; i++) {
       const values = { ...initial, [p.id]: p.min + i * p.step };
       if (reaches(values)) return values;

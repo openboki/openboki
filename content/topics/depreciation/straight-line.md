@@ -84,8 +84,8 @@ label: 軽バンの取得原価
 type: tweak
 formula: straight_line
 params:
-  - { id: cost, label: 取得原価, value: 1200000, min: 600000, max: 1800000, step: 100000, unit: 円 }
-  - { id: residual_value, label: 残存価額, value: 0, min: 0, max: 600000, step: 50000, unit: 円 }
+  - { id: cost, label: 取得原価, value: 1200000, min: 600000, max: 1800000, step: 100000, unit: 円, fixed: true }
+  - { id: residual_value, label: 残存価額, value: 0, min: 0, max: 600000, step: 50000, unit: 円, fixed: true }
   - { id: useful_life, label: 耐用年数, value: 4, min: 1, max: 12, step: 1, unit: 年 }
 goal: { output: annual_depreciation, equals: 200000, label: 1年分の減価償却費 }
 hint: 1,200,000 ÷ 6 = 200,000。
@@ -101,9 +101,9 @@ success: (取得原価 − 残存価額)÷ 耐用年数 で、1年分が200,000�
 type: tweak
 formula: straight_line
 params:
-  - { id: cost, label: 取得原価, value: 1200000, min: 600000, max: 1800000, step: 100000, unit: 円 }
+  - { id: cost, label: 取得原価, value: 1200000, min: 600000, max: 1800000, step: 100000, unit: 円, fixed: true }
   - { id: residual_value, label: 残存価額, value: 0, min: 0, max: 600000, step: 50000, unit: 円 }
-  - { id: useful_life, label: 耐用年数, value: 6, min: 1, max: 12, step: 1, unit: 年 }
+  - { id: useful_life, label: 耐用年数, value: 6, min: 1, max: 12, step: 1, unit: 年, fixed: true }
 goal: { output: annual_depreciation, equals: 150000, label: 1年分の減価償却費 }
 hint: (1,200,000 − 残存価額)÷ 6 = 150,000になる残存価額です。
 success: 配分するのは、取得原価から残存価額を引いた分です。それを耐用年数で割って、1年分が150,000円になりました。

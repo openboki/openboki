@@ -30,7 +30,7 @@ test("全角数字の金額でも記帳・確認でき、読めない金額に�
   await expect(page.getByText("できました", { exact: true })).toBeVisible();
 
   const slide = async (i: number, steps: number) => {
-    const s = page.getByRole("slider").nth(i);
+    const s = page.getByRole("slider", { name: [/取得原価/, /残存価額/, /耐用年数/][i] });
     await s.focus();
     await page.keyboard.press("Home");
     for (let k = 0; k < steps; k++) await page.keyboard.press("ArrowRight");
