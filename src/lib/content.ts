@@ -154,3 +154,43 @@ export function unitAccountList(local: Unit["scenario"]["accounts"]): GlossaryAc
     })),
   ];
 }
+
+type JournalLines = { debit: { account?: string }[]; credit: { account?: string }[] };
+
+/** 単元の開始残高と課題(誤答パターンを含む)が参照する科目ID */
+function referencedAccountIds(unit: Unit): Set<string> {
+  const entries: Partial<JournalLines>[] = [{ debit: unit.scenario.opening, credit: [] }];
+  const ids: string[] = [];
+  for (const { task } of unit.steps) {
+    switch (task.type) {
+      case "observe":
+        entries.push(...task.entries);
+        break;
+      case "post":
+        entries.push(task.answer, ...task.alternatives, ...task.wrong_patterns.map((p) => p.match));
+        break;
+      case "predict":
+        entries.push(task.entry);
+        break;
+      case "classify":
+        ids.push(...(task.accounts ?? []), ...Object.keys(task.misconceptions));
+        break;
+      case "debug":
+        entries.push(...task.entries, task.answer.entry, ...task.wrong_patterns.map((p) => p.match as Partial<JournalLines>));
+        break;
+    }
+  }
+  for (const e of entries) for (const l of [...(e.debit ?? []), ...(e.credit ?? [])]) if (l.account) ids.push(l.account);
+  return new Set(ids);
+}
+
+/**
+ * 単元のIDEに渡す科目。historyの単元は時代に無い科目を候補に出さないため、
+ * 全体マスタの科目をその単元が参照するものだけに絞る(Issue #331)
+ */
+export function ideAccountList(unit: Unit): GlossaryAccount[] {
+  const accounts = unitAccountList(unit.scenario.accounts);
+  if (unit.kind !== "history") return accounts;
+  const used = referencedAccountIds(unit);
+  return accounts.filter((a) => a.glossary.local || used.has(a.id));
+}

@@ -14,7 +14,8 @@ test("ヴェネツィアの単元で現金の候補に「会社」が出ない",
   await next.click();
   await next.click();
   await expect(page.getByText("ステップ4 / 9")).toBeVisible();
-  await work.getByLabel("借方の科目1").fill("現金");
+  // 候補が入力と同じ1件だけだと一覧を閉じるので、途中まで打つ(Issue #331で小口現金などが候補から外れた)
+  await work.getByLabel("借方の科目1").fill("現");
   const list = page.getByRole("listbox", { name: "科目の候補" });
   await expect(list).toContainText("現金");
   await expect(list).not.toContainText("会社");
