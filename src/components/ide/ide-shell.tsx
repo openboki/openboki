@@ -1504,6 +1504,12 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
               )}
             </form>
           )}
+          {/* 仕訳帳のタブを出さない時代は、何もしない列だと伝えないと空白の列に見える(Issue #341) */}
+          {task.type === "observe" && unit.view === "none" && (
+            <p className="text-sm text-muted-foreground">
+              {isLast ? "このステップは読むだけです。これでこの単元は終わりです。" : "このステップは読むだけです。読み終えたら「次へ →」で進みます。"}
+            </p>
+          )}
 
           {unit.view !== "none" && (
           <Tabs defaultValue="journal">
