@@ -11,13 +11,15 @@ export interface TutorialState {
   status: TutorialStatus;
   // 初回の案内(バナーと自動開始)を出すか。設定から切り替えられ、「今はしない」とスキップでも切れる
   enabled: boolean;
+  // 「使い方」で学習者が自分で案内をオンにした。ほかの単元に記録があってもバナーを出す(Issue #327)
+  optedIn: boolean;
   // 初出の案内を閉じた(または課題を済ませた)話題id
   seen: string[];
 }
 
 const KEY = "tutorial-state";
-const DEFAULT: TutorialState = { status: "pending", enabled: true, seen: [] };
-const SERVER: TutorialState = { status: "done", enabled: false, seen: [...FIRST_TIME_IDS] };
+const DEFAULT: TutorialState = { status: "pending", enabled: true, optedIn: false, seen: [] };
+const SERVER: TutorialState = { status: "done", enabled: false, optedIn: false, seen: [...FIRST_TIME_IDS] };
 const listeners = new Set<() => void>();
 let cache: TutorialState | null = null;
 // 保存に失敗した変更はcacheにしかないので、読み直して失わないようにする
@@ -27,10 +29,11 @@ let unsaved = false;
 function parse(raw: string): TutorialState {
   const value: unknown = JSON.parse(raw);
   if (typeof value !== "object" || value === null || Array.isArray(value)) return DEFAULT;
-  const { status, enabled, seen } = value as Record<string, unknown>;
+  const { status, enabled, optedIn, seen } = value as Record<string, unknown>;
   return {
     status: status === "pending" || status === "skipped" || status === "done" ? status : DEFAULT.status,
     enabled: typeof enabled === "boolean" ? enabled : DEFAULT.enabled,
+    optedIn: typeof optedIn === "boolean" ? optedIn : DEFAULT.optedIn,
     seen: Array.isArray(seen) && seen.every((id) => typeof id === "string") ? seen : DEFAULT.seen,
   };
 }
