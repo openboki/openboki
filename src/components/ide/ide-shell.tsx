@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Fragment, type MouseEvent, type ReactNode, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { Fragment, type FocusEvent, type MouseEvent, type ReactNode, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { flushSync } from "react-dom";
 import type { Unit } from "#content";
 import type { GlossaryAccount, GlossaryEntry } from "@/lib/content";
@@ -869,6 +869,19 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
   };
   const showResultPane = () => switchPane("result");
 
+  // スマホ幅でTab(キーボードの「次へ」)で移った欄が固定したタブ列や下部バーの裏にあると、ビューポートの内側なのでブラウザはスクロールしない。
+  // 誤答の説明でバーが画面の半分まで伸びたときに入力中の欄が見えなくなるので、2つの間に入るまで動かす(Issue #459)
+  const revealFocused = (e: FocusEvent<HTMLElement>) => {
+    const tabs = paneTabs.current;
+    const bar = bottomBar.current;
+    if (e.target === e.currentTarget || !tabs?.offsetParent || !bar) return;
+    const r = e.target.getBoundingClientRect();
+    const below = r.bottom - bar.getBoundingClientRect().top;
+    const above = tabs.getBoundingClientRect().bottom - r.top;
+    if (below > 0) window.scrollBy({ top: below + 8 });
+    else if (above > 0) window.scrollBy({ top: -(above + 8) });
+  };
+
   const check = () => {
     if (answeredStep.current === stepIndex) return;
     // 答えを変えずに押し直したときは採点も記録もしない(答えを変えれば数える)
@@ -1210,7 +1223,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
           )}
         </section>
 
-        <section ref={workPane} id="pane-work" role="region" aria-label="ワークスペース" tabIndex={-1} className={`${paneClass("work")} bg-surface-work lg:border-r space-y-4 ${FOCUS_TARGET_CLASS}`}>
+        <section ref={workPane} id="pane-work" role="region" aria-label="ワークスペース" tabIndex={-1} onFocus={revealFocused} className={`${paneClass("work")} bg-surface-work lg:border-r space-y-4 ${FOCUS_TARGET_CLASS}`}>
           {showFirstTime && <FirstTimeNote topic={firstTime} ctx={helpCtx} onMore={(button) => openHelpTopic(firstTime.id, button)} onDismiss={() => {
             // 入力欄へ移すとスマートフォンでキーボードが開くので、ペイン自体へ移す
             workPane.current?.focus();
