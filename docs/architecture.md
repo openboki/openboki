@@ -79,6 +79,7 @@ create table unit_progress (
   status      text not null check (status in ('started','completed')),
   updated_at  timestamptz not null default now(),
   step        integer not null default 0,         -- 最後に到達したステップ。before updateトリガーで後退させない(completedも戻さない。範囲外の値だけreset_out_of_range_stepで0に戻す)
+  reset_at    timestamptz,                         -- 完了を未完了に戻した時刻(reset_unit_progressだけが書く)。これより前のattemptsは解いた状態の復元に使わない
   primary key (user_id, unit_id)
 );
 

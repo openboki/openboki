@@ -155,7 +155,7 @@ for (const unit of units) {
     }
     // 最後のステップに到達すると完了として保存される
     await page.goto(`/topics/${unit.id.split("/")[0]}`);
-    await expect(page.getByRole("listitem").filter({ hasText: unit.title }).getByText("完了")).toBeVisible();
+    await expect(page.getByRole("listitem").filter({ hasText: unit.title }).getByText("完了", { exact: true })).toBeVisible();
   });
 }
 
