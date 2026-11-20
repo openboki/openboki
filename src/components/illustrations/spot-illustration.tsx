@@ -102,6 +102,27 @@ const DRAWINGS: Record<IllustrationName, ReactNode> = {
       <rect className="fill-card" x="25" y="92" width="10" height="16" rx="1" />
     </>
   ),
+  bakery: (
+    <>
+      <path d="M8 104H112" />
+      <rect className="fill-card" x="22" y="48" width="76" height="56" />
+      <path className="fill-card" d="M38 36V30a22 16 0 0 1 44 0V36Z" />
+      <path className="fill-card" d="M54.500 27h11l-1.500 6h-8Z" />
+      <path className="fill-brand-accent" d="M52 27a8 7 0 0 1 16 0Z" />
+      <rect className="fill-primary" x="16" y="36" width="88" height="14" rx="3" />
+      <rect className={TINT} x="28" y="60" width="44" height="32" rx="2" />
+      <path strokeWidth={THIN} d="M28 85H72" />
+      <path className="fill-card" d="M34 79h8l-1 6h-6Z" />
+      <path className="fill-brand-accent" d="M32.5 79a5.500 5.500 0 0 1 11 0Z" />
+      <path className="fill-card" d="M46 79h8l-1 6h-6Z" />
+      <path className="fill-brand-accent" d="M44.5 79a5.500 5.500 0 0 1 11 0Z" />
+      <path className="fill-card" d="M58 79h8l-1 6h-6Z" />
+      <path className="fill-brand-accent" d="M56.5 79a5.500 5.500 0 0 1 11 0Z" />
+      <rect className="fill-primary" x="78" y="62" width="16" height="42" rx="2" />
+      <rect className={TINT} x="81.500" y="66" width="9" height="11" rx="1.500" />
+      <circle className="fill-card" cx="82" cy="87" r="1.5" />
+    </>
+  ),
 };
 
 export function SpotIllustration({ name, className }: { name: IllustrationName; className?: string }) {
