@@ -65,6 +65,13 @@ const looseJournalEntry = s.object({
   credit: s.array(journalLine),
 });
 const journalLinePattern = s.object({ account: s.string().optional(), amount: s.number().int().optional() });
+// 仕訳の誤答パターン。postと、debugで直した仕訳に使う
+const entryMatch = s.object({
+  swapped: s.literal(true).optional(),
+  unbalanced: s.literal(true).optional(),
+  debit: s.array(journalLinePattern).optional(),
+  credit: s.array(journalLinePattern).optional(),
+});
 const effect = s.object({ asset: change, liability: change, equity: change, revenue: change, expense: change });
 const effectPattern = effect.partial();
 
@@ -82,18 +89,7 @@ export const taskSchema = s.discriminatedUnion("type", [
     transaction: s.string(),
     answer: journalEntry,
     alternatives: s.array(journalEntry).default([]),
-    wrong_patterns: s
-      .array(
-        wrongPattern(
-          s.object({
-            swapped: s.literal(true).optional(),
-            unbalanced: s.literal(true).optional(),
-            debit: s.array(journalLinePattern).optional(),
-            credit: s.array(journalLinePattern).optional(),
-          }),
-        ),
-      )
-      .default([]),
+    wrong_patterns: s.array(wrongPattern(entryMatch)).default([]),
   }),
   s.object({
     ...taskBase,
@@ -149,7 +145,8 @@ export const taskSchema = s.discriminatedUnion("type", [
     entries: s.array(looseJournalEntry).min(2),
     // indexは0始まりの誤りの行、entryは直した仕訳
     answer: s.object({ index: s.number().int().min(0), entry: journalEntry }),
-    wrong_patterns: s.array(wrongPattern(s.object({ index: s.number().int().min(0) }))).default([]),
+    // { index }は行の選び間違い、それ以外は行が合っているときの仕訳の誤り(Issue #452)
+    wrong_patterns: s.array(wrongPattern(s.union([s.object({ index: s.number().int().min(0) }), entryMatch]))).default([]),
   }),
 ]);
 export type Task = z.infer<typeof taskSchema>;
@@ -532,7 +529,10 @@ export default defineConfig({
           case "debug":
             debugErrors(t).forEach((e) => errors.push(`${w}: ${e}`));
             [...t.entries, t.answer.entry].forEach((e) => [...e.debit, ...e.credit].forEach((l) => requireAccount(l.account, w)));
-            t.wrong_patterns.forEach((p) => checkPatternMisconception(p, w));
+            t.wrong_patterns.forEach((p) => {
+              checkPatternMisconception(p, w);
+              if (!("index" in p.match)) [...(p.match.debit ?? []), ...(p.match.credit ?? [])].forEach((l) => l.account && requireAccount(l.account, w));
+            });
             break;
         }
       });

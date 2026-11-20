@@ -774,6 +774,12 @@ misconceptions:
     correct: もうけは現金が増えたことではなく、元手(または利益と損失)が増えたこと。代金を現金で受け取ったかどうかとは別で、もうけを移しても現金は動かない
     concepts: [venture_accounting, double_entry]
     remediation: birth-of-double-entry/venture-profit-and-double-entry
+  - id: venture_account_mixed
+    name: 航海の口を取り違える
+    description: 2つの航海を並行して扱うとき、売った額やもうけを別の航海の口のページに書いている。ワインを売ったのに胡椒の口の右に書く、胡椒の口のもうけをワインの口から移すなど
+    correct: 口別計算では航海ごとにページを分ける。売った額はその商品の口の右に書き、もうけもその口に残る。別の航海の口には書かない
+    concepts: [venture_accounting]
+    remediation: birth-of-double-entry/venture-profit-and-double-entry
   - id: closing_side_confused
     name: 残高を移す側を取り違える
     description: 口や利益と損失のページの残りを元手などへ移すとき、残っている側と同じ側に書いて、残高を消すどころか倍にしてしまう
