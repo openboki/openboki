@@ -146,6 +146,11 @@ wrong_patterns:
     feedback: この行は現金の左とマッテオの右に同じ45があり、両側そろっています。
   - match: { index: 0 }
     feedback: この行はワインの左と現金の右に同じ80があり、両側そろっています。
+  - match: { credit: [{ account: pepper_voyage }] }
+    misconception: venture_account_mixed
+    feedback: 売ったのはワインです。売った額はその商品の口の右に書くので、右は胡椒ではなくワイン(クレタ航海)のページです。
+  - match: { credit: [{ account: cash }] }
+    feedback: 代金はまだ受け取っていません。ジョヴァンニの左の50は、彼がこちらに負う分です。右に書くのは、売ったワインのページです。
 hint: 左右の差はいくつでしょう。その額が片側にしか無い行を探します。
 success: 見つけました。ジョヴァンニの左に50を書いたのに、ワインのページの右が空でした。右に50を足すと、試算の左右がそろいます。
 ```
@@ -174,6 +179,9 @@ wrong_patterns:
   - match: { debit: [{ amount: 60 }] }
     misconception: venture_costs_only_price
     feedback: 60は胡椒の代金120だけを引いた額です。運賃20と関税10もこの航海にかかった額なので、180から150を引いた30を移します。
+  - match: { debit: [{ account: wine_voyage }] }
+    misconception: venture_account_mixed
+    feedback: 元手に移すのは胡椒の航海のもうけです。もうけ30が右に残っているのは胡椒(アレクサンドリア航海)のページなので、左に30を書くのはワインではなく胡椒のページです。
   - match: { unbalanced: true }
     feedback: 2つのページには同じ額を書きます。どちらも30にしましょう。
 hint: 右に残った30を左に書いて消し、同じ30を元手の右に書きます。
