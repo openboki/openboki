@@ -90,12 +90,6 @@ answer:
     - { account: accumulated_depreciation_vehicle, amount: 300000 }
     - { account: loss_on_sale_of_fixed_assets, amount: 50000 }
   credit: [{ account: vehicle, amount: 1200000 }]
-alternatives:
-  - debit:
-      - { account: cash, amount: 850000 }
-      - { account: accumulated_depreciation, amount: 300000 }
-      - { account: loss_on_sale_of_fixed_assets, amount: 50000 }
-    credit: [{ account: vehicle, amount: 1200000 }]
 wrong_patterns:
   - match: { swapped: true }
     misconception: outflow_on_debit
@@ -115,6 +109,9 @@ wrong_patterns:
   - match: { credit: [{ account: accumulated_depreciation }] }
     misconception: contra_always_credit
     feedback: 累計額を右に書くと、さらに積み増すことになります。売るときは積んできた300,000を消すので、反対側の左に書きます。
+  - match: { debit: [{ account: accumulated_depreciation }] }
+    misconception: accumulated_depreciation_any_asset
+    feedback: 減価償却累計額は、資産ごとの累計額をまとめて呼ぶ総称です。帳簿では科目名ごとに別の勘定になるので、総称で消しても車両運搬具減価償却累計額の300,000は残ります。積んであるのと同じ車両運搬具減価償却累計額を左に書きましょう。
   - match: { credit: [{ account: vehicle, amount: 900000 }] }
     misconception: accumulated_depreciation_left_on_sale
     feedback: 車両運搬具は取得原価の1,200,000で帳簿に載っています。右で1,200,000をすべて消し、累計額300,000も左で消しましょう。900,000だけ消すと、売った軽バンの金額と累計額が帳簿に残ります。
@@ -196,13 +193,6 @@ answer:
   credit:
     - { account: equipment, amount: 600000 }
     - { account: gain_on_sale_of_fixed_assets, amount: 30000 }
-alternatives:
-  - debit:
-      - { account: accounts_receivable_other, amount: 480000 }
-      - { account: accumulated_depreciation, amount: 150000 }
-    credit:
-      - { account: equipment, amount: 600000 }
-      - { account: gain_on_sale_of_fixed_assets, amount: 30000 }
 wrong_patterns:
   - match: { swapped: true }
     misconception: outflow_on_debit
@@ -228,6 +218,9 @@ wrong_patterns:
   - match: { credit: [{ account: accumulated_depreciation }] }
     misconception: contra_always_credit
     feedback: 累計額を右に書くと、さらに積み増すことになります。売るときは積んできた150,000を消すので、反対側の左に書きます。
+  - match: { debit: [{ account: accumulated_depreciation }] }
+    misconception: accumulated_depreciation_any_asset
+    feedback: 減価償却累計額は、資産ごとの累計額をまとめて呼ぶ総称です。帳簿では科目名ごとに別の勘定になるので、総称で消しても備品減価償却累計額の150,000は残ります。積んであるのと同じ備品減価償却累計額を左に書きましょう。
   - match: { credit: [{ account: equipment, amount: 450000 }] }
     misconception: accumulated_depreciation_left_on_sale
     feedback: 備品は取得原価の600,000で帳簿に載っています。右で600,000をすべて消し、累計額150,000も左で消しましょう。450,000だけ消すと、売ったマシンの金額と累計額が帳簿に残ります。

@@ -90,7 +90,7 @@ label: コーヒーマシンの取得原価
 
 備品の600,000円はそのまま残し、減った分を別の科目に積んでいく書き方を[[indirect_method|間接法]]と呼びます。
 
-減った分を積む科目は資産ごとに分け、備品なら備品減価償却累計額、建物なら[[accumulated_depreciation_building|建物減価償却累計額]]です。資産の種類を問わずに呼ぶときは[[accumulated_depreciation|減価償却累計額]]と言い、仕訳にこの総称を書いても構いません。こうした「資産のマイナス」を表す科目が[[contra_account|評価勘定]]です。
+減った分を積む科目は資産ごとに分け、備品なら備品減価償却累計額、建物なら[[accumulated_depreciation_building|建物減価償却累計額]]です。資産の種類を問わずに呼ぶときは[[accumulated_depreciation|減価償却累計額]]と言いますが、これは科目をまとめて呼ぶ総称です。帳簿では科目名ごとに別の勘定になるので、仕訳には備品減価償却累計額のように資産ごとの科目を書きます。こうした「資産のマイナス」を表す科目が[[contra_account|評価勘定]]です。
 
 ```figure
 type: compare
@@ -118,9 +118,6 @@ transaction: 決算にあたり、コーヒーマシン(備品)の1年分の減�
 answer:
   debit: [{ account: depreciation_expense, amount: 100000 }]
   credit: [{ account: accumulated_depreciation_equipment, amount: 100000 }]
-alternatives:
-  - debit: [{ account: depreciation_expense, amount: 100000 }]
-    credit: [{ account: accumulated_depreciation, amount: 100000 }]
 wrong_patterns:
   - match: { swapped: true }
     misconception: debit_means_increase
@@ -128,6 +125,9 @@ wrong_patterns:
   - match: { debit: [{ account: accumulated_depreciation }], credit: [{ account: depreciation_expense }] }
     misconception: debit_means_increase
     feedback: 減価償却費は費用なので左で増えます。左右を入れ替えてみましょう。
+  - match: { credit: [{ account: accumulated_depreciation }] }
+    misconception: accumulated_depreciation_any_asset
+    feedback: 減価償却累計額は、備品減価償却累計額や建物減価償却累計額をまとめて呼ぶ総称です。帳簿では科目名ごとに別の勘定になるので、この単元では資産ごとの科目で書きます。マシンの減りは備品減価償却累計額に積みましょう。
   - match: { credit: [{ account: accumulated_depreciation_building }] }
     misconception: accumulated_depreciation_any_asset
     feedback: 建物減価償却累計額は、建物の価値の減りを積む科目です。累計額は資産ごとに分けて積み、その資産の取得原価から引いて帳簿価額を出します。マシンの減りは備品減価償却累計額に積みましょう。
@@ -215,9 +215,6 @@ transaction: 2年目の決算にあたり、コーヒーマシン(備品)の1年
 answer:
   debit: [{ account: depreciation_expense, amount: 100000 }]
   credit: [{ account: accumulated_depreciation_equipment, amount: 100000 }]
-alternatives:
-  - debit: [{ account: depreciation_expense, amount: 100000 }]
-    credit: [{ account: accumulated_depreciation, amount: 100000 }]
 wrong_patterns:
   - match: { swapped: true }
     misconception: debit_means_increase
@@ -225,6 +222,9 @@ wrong_patterns:
   - match: { debit: [{ account: accumulated_depreciation }], credit: [{ account: depreciation_expense }] }
     misconception: debit_means_increase
     feedback: 減価償却費は費用なので左で増えます。左右を入れ替えてみましょう。
+  - match: { credit: [{ account: accumulated_depreciation }] }
+    misconception: accumulated_depreciation_any_asset
+    feedback: 減価償却累計額は、資産ごとの累計額をまとめて呼ぶ総称です。帳簿では科目名ごとに別の勘定になるので、総称で書くと1年目の100,000とは別の行に載ります。1年目と同じ備品減価償却累計額に積むと、累計額が200,000にまとまります。
   - match: { credit: [{ account: accumulated_depreciation_building }] }
     misconception: accumulated_depreciation_any_asset
     feedback: 建物減価償却累計額は、建物の価値の減りを積む科目です。累計額は資産ごとに分けて積み、その資産の取得原価から引いて帳簿価額を出します。マシンの減りは備品減価償却累計額に積みましょう。
