@@ -292,6 +292,63 @@ const DRAWINGS: Record<IllustrationName, ReactNode> = {
       <path strokeWidth={THIN} d="M85 81l-6 6" />
     </>
   ),
+  passbook: (
+    <>
+      <rect className="fill-card" x="28" y="18" width="62" height="88" rx="5" />
+      <rect className="fill-primary" x="22" y="12" width="62" height="88" rx="5" />
+      <path className="stroke-card" strokeWidth={THIN} d="M45 44v10M53 44v10M61 44v10M41 56h24" />
+      <path className="fill-card" d="M39 42 53 31 67 42Z" />
+      <rect className="fill-card" x="33" y="68" width="40" height="18" rx="2" />
+      <path strokeWidth={THIN} d="M39 74h28M39 80h16" />
+      <circle className="fill-brand-accent" cx="94" cy="92" r="12" />
+      <circle strokeWidth={THIN} cx="94" cy="92" r="7" />
+    </>
+  ),
+  showcase: (
+    <>
+      <rect className="fill-card" x="20" y="100" width="12" height="7" rx="1.500" />
+      <rect className="fill-card" x="88" y="100" width="12" height="7" rx="1.500" />
+      <rect className={TINT} x="18" y="22" width="84" height="60" />
+      <path d="M18 42H102M18 62H102" />
+      <path strokeWidth={THIN} d="M27 35l7-7M27 41l13-13" />
+      <rect className="fill-primary" x="13" y="14" width="94" height="9" rx="2" />
+      <rect className="fill-primary" x="13" y="82" width="94" height="19" rx="3" />
+      <rect className="fill-brand-accent" x="22" y="88" width="76" height="6" rx="2" />
+    </>
+  ),
+  chair: (
+    <>
+      <path strokeWidth={5.5} d="M36 40V106M80 68V106" />
+      <path d="M36 88H80" />
+      <rect className="fill-primary" x="30" y="14" width="12" height="38" rx="4" />
+      <rect className="fill-brand-accent" x="38" y="51" width="46" height="9" rx="3" />
+      <rect className="fill-primary" x="30" y="59" width="56" height="10" rx="3" />
+    </>
+  ),
+  "pay-envelope": (
+    <>
+      <rect className="fill-card" x="34" y="14" width="48" height="34" rx="2" />
+      <rect className="fill-primary" x="62" y="14" width="10" height="24" />
+      <circle strokeWidth={THIN} cx="47" cy="26" r="5" />
+      <rect className={TINT} x="28" y="36" width="60" height="70" rx="3" />
+      <rect className="fill-card" x="38" y="56" width="40" height="22" rx="2" />
+      <path strokeWidth={THIN} d="M44 63h28M44 71h16" />
+      <circle className="fill-brand-accent" cx="94" cy="95" r="11" />
+      <circle strokeWidth={THIN} cx="94" cy="95" r="6.500" />
+    </>
+  ),
+  suitcase: (
+    <>
+      <path strokeWidth={4} d="M46 34V24a5 5 0 0 1 5-5H69a5 5 0 0 1 5 5V34" />
+      <rect className="fill-card" x="24" y="98" width="12" height="8" rx="2" />
+      <rect className="fill-card" x="84" y="98" width="12" height="8" rx="2" />
+      <rect className="fill-primary" x="14" y="34" width="92" height="66" rx="9" />
+      <rect className="fill-brand-accent" x="31" y="34" width="9" height="66" />
+      <rect className="fill-brand-accent" x="80" y="34" width="9" height="66" />
+      <rect className="fill-card" x="29" y="58" width="13" height="10" rx="2" />
+      <rect className="fill-card" x="78" y="58" width="13" height="10" rx="2" />
+    </>
+  ),
 };
 
 export function SpotIllustration({ name, className }: { name: IllustrationName; className?: string }) {
