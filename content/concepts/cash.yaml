@@ -24,10 +24,10 @@ concepts:
     name: 仮勘定
     reading: [かりかんじょう]
     short: 正しい科目や金額が決まるまで、金額を一時的に置いておく科目
-    summary: 原因や内容がまだ分からない金額を、分かるまで置いておくための勘定科目。現金過不足が代表。資産でも負債でもなく、分かった時点で本来の科目へ振り替え、決算の財務諸表には残さない。
+    summary: 原因や内容がまだ分からない金額を、分かるまで置いておくための勘定科目。現金過不足のほか、仮払金と仮受金も仮勘定の仲間。どれも分かった時点で本来の科目へ振り替える。仮払金は資産、仮受金は負債の性質を持つが、現金過不足は資産でも負債でもなく、決算の財務諸表には載せられないので決算までに必ず片づける。
     example: 金庫の現金が帳簿より3,000円少ないとき、原因が分かるまで3,000円を現金過不足に置く。切手代と分かれば通信費へ移す。
     requires: [account_title]
-    related: [cash_over_and_short, transfer_entry]
+    related: [cash_over_and_short, suspense_accounts, transfer_entry]
     contrasts: []
   - id: transfer_entry
     name: 振替

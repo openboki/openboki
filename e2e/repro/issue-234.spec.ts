@@ -8,7 +8,7 @@ const next = async (page: Page, to: number) => {
   await expect(page.getByText(`ステップ${to} / 9`)).toBeVisible();
 };
 const slide = async (page: Page, index: number, presses: number) => {
-  const slider = work(page).getByRole("slider").nth(index);
+  const slider = work(page).getByRole("slider", { name: [/取得原価/, /残存価額/, /耐用年数/][index] });
   await slider.focus();
   await page.keyboard.press("Home");
   for (let i = 0; i < presses; i++) await page.keyboard.press("ArrowRight");

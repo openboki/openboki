@@ -10,7 +10,7 @@ type Task =
   | { type: "observe" }
   | { type: "post"; answer: Entry }
   | { type: "predict"; answer: Record<string, string>; elements?: string[] }
-  | { type: "tweak"; formula: string; params: { id: string; value: number; min: number; max: number; step: number }[]; goal: { output: string; equals: number } }
+  | { type: "tweak"; formula: string; params: { id: string; value: number; min: number; max: number; step: number; fixed?: boolean }[]; goal: { output: string; equals: number } }
   | { type: "classify"; accounts?: string[]; labels?: Record<string, string>; items?: { id: string; label: string; answer: string }[] }
   | { type: "calc"; answer: number }
   | { type: "debug"; answer: { index: number; entry: Entry } };
@@ -54,7 +54,7 @@ function solveTweak(task: Extract<Task, { type: "tweak" }>): Record<string, numb
     const period = Math.floor((annual * (v.months ?? 12)) / 12);
     return { annual_depreciation: annual, period_depreciation: period, book_value_end: (v.cost ?? 0) - period }[task.goal.output];
   };
-  for (const p of task.params) {
+  for (const p of task.params.filter((q) => !q.fixed)) {
     for (let x = p.min; x <= p.max; x += p.step) {
       const trial = { ...values, [p.id]: x };
       if (compute(trial) === task.goal.equals) return trial;
@@ -102,7 +102,7 @@ for (const unit of units) {
         }
         case "tweak": {
           const solution = solveTweak(task);
-          for (const p of task.params) {
+          for (const p of task.params.filter((q) => !q.fixed)) {
             const slider = work.getByRole("slider", { name: unitLabel(unit, i, p.id) });
             await slider.fill(String(solution[p.id]));
           }

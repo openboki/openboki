@@ -27,12 +27,12 @@ describe("tutorial-storeの保存値の検査", () => {
   it.each(["null", "1", '"abc"', "[]"])("保存値がオブジェクトでない%sは既定の状態にする", async (raw) => {
     const { useTutorialState } = await load(raw);
     const { result } = renderHook(() => useTutorialState());
-    expect(result.current).toEqual({ status: "pending", enabled: true, seen: [] });
+    expect(result.current).toEqual({ status: "pending", enabled: true, optedIn: false, seen: [] });
   });
 
   it("statusとenabledが想定外なら既定に戻し、正しい値は残す", async () => {
     const { useTutorialState } = await load(JSON.stringify({ status: "weird", enabled: "yes", seen: ["calc"] }));
     const { result } = renderHook(() => useTutorialState());
-    expect(result.current).toEqual({ status: "pending", enabled: true, seen: ["calc"] });
+    expect(result.current).toEqual({ status: "pending", enabled: true, optedIn: false, seen: ["calc"] });
   });
 });

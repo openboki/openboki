@@ -13,6 +13,7 @@ export interface TweakParam {
   max: number;
   step: number;
   unit: string;
+  fixed?: boolean;
 }
 
 interface Props {
@@ -30,7 +31,15 @@ export function TweakPanel({ formula, params, values, onChange, goal, currency }
   return (
     <div className="space-y-4">
       <div className="space-y-3">
-        {params.map((p) => (
+        {params.map((p) =>
+          p.fixed ? (
+            <div key={p.id} className="flex justify-between text-sm text-muted-foreground">
+              <span>{p.label}(このステップでは固定)</span>
+              <span className="font-mono tabular-nums">
+                {formatAmount(p.value)} {p.unit}
+              </span>
+            </div>
+          ) : (
           <label key={p.id} className="block text-sm">
             <div className="flex justify-between">
               <span className="font-medium">{p.label}</span>
@@ -49,7 +58,8 @@ export function TweakPanel({ formula, params, values, onChange, goal, currency }
               aria-valuetext={`${formatAmount(values[p.id] ?? p.value)} ${p.unit}`}
             />
           </label>
-        ))}
+          ),
+        )}
       </div>
       <dl className="rounded-md bg-muted/50 p-2 text-sm grid grid-cols-[1fr_auto] gap-x-3 gap-y-1">
         {Object.entries(result.outputs).map(([k, v]) => (

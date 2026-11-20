@@ -17,7 +17,7 @@ test("自由に試すで上限を超える金額は記帳できず、上限の�
     await work.getByRole("button", { name: "記帳する" }).click();
   };
   const slide = async (i: number, steps: number) => {
-    const s = page.getByRole("slider").nth(i);
+    const s = page.getByRole("slider", { name: [/取得原価/, /残存価額/, /耐用年数/][i] });
     await s.focus();
     await page.keyboard.press("Home");
     for (let k = 0; k < steps; k++) await page.keyboard.press("ArrowRight");
