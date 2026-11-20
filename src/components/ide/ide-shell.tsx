@@ -14,7 +14,7 @@ import { type EditableEntry, emptyEntry, fromJournalEntry, isIncompleteLine, par
 import { type ClassifyResult, type DebugAnswer, type EffectAnswer, type GradeResult, type PredictResult, type Task, canRevealAnswer, classifyBoard, gradeCalc, gradeClassify, gradeDebug, gradePost, gradePredict, gradeTweak, predictElements, tweakRestoreValues } from "@/lib/grading";
 import { evaluateFormula } from "@/lib/formulas";
 import { type OpeningLine, computeBalances, diffBalances } from "@/lib/ledger";
-import { CookieBlockedError, fetchProgress, recordAttempt, resetOutOfRangeStep, setUnitProgress } from "@/lib/progress";
+import { CookieBlockedError, fetchProgress, recordAttempt, resetOutOfRangeStep, setUnitProgress, unitSessionKey } from "@/lib/progress";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { JournalEditor } from "@/components/journal-editor";
@@ -30,6 +30,7 @@ import { TutorialTour } from "./tutorial-tour";
 import { HelpDialog } from "./help-dialog";
 import { HelpControlsContext, HelpIcon } from "./help-icon";
 import { FirstTimeNote } from "./first-time-note";
+import { ResetUnitDialog } from "@/components/reset-unit-dialog";
 import { Spotlight } from "./spotlight";
 import { SpotIllustration } from "@/components/illustrations/spot-illustration";
 import type { IllustrationName } from "@/lib/illustrations";
@@ -160,7 +161,6 @@ interface SessionSnapshot {
   // debugで選んでいる行
   debugRow?: number | null;
 }
-const sessionKey = (unitId: string) => `ide-session:${unitId}`;
 const isObject = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 const isStepIndex = (v: unknown, stepCount: number) => Number.isInteger(v) && (v as number) >= 0 && (v as number) < stepCount;
 const isPair = (v: unknown) => Array.isArray(v) && v.length === 2 && Number.isInteger(v[0]);
@@ -184,7 +184,7 @@ function answerKey(answer: unknown) {
 // 科目IDが変わったあとの記帳も、貸借対照表が合わなくなるので捨てる
 function readSession(unitId: string, stepCount: number, accounts: ReadonlyMap<string, AccountInfo>): SessionSnapshot | null {
   try {
-    const raw = window.sessionStorage.getItem(sessionKey(unitId));
+    const raw = window.sessionStorage.getItem(unitSessionKey(unitId));
     const s: unknown = raw ? JSON.parse(raw) : null;
     if (!isObject(s)) return null;
     const valid =
@@ -647,7 +647,8 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     restoreGraded(t, key);
   };
 
-  const goTo = (index: number) => {
+  // saveReached = falseは未完了に戻した直後。DBは戻し終えているので、戻す前の到達位置で上書きしない
+  const goTo = (index: number, saveReached = true) => {
     const target = unit.steps[index];
     // ツアーはステップ1からの台本なので、案内と同じくツアー中は取り込まない
     if (!tourActive && resumeStep !== null && !resumeAdopted.current && index > 0) adoptResume(resumeStep);
@@ -687,6 +688,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
       restoreResumeGraded(target.task, resumeGraded.current.key);
       resumeGraded.current = null;
     }
+    if (!saveReached) return;
     const top = Math.max(index, reached, savedStep.current);
     setReached(Math.max(index, reached));
     savedStep.current = top;
@@ -709,7 +711,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     setResumeStep(null);
   };
 
-  // 完了した単元を最初から解き直す(Issue #481)。保存済みの答えは取り込まない。DBの完了とこれまでの回答は残し、解き直しの回答は追記する
+  // 完了した単元を未完了に戻したあと、この画面もステップ1から未回答にする(Issue #492)。DBはResetUnitDialogが戻し終えている
   const restart = () => {
     setPosted(replayEntries(unit.steps, 0));
     answered.current.clear();
@@ -717,24 +719,14 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
     resumeAdopted.current = true;
     resumeGraded.current = null;
     setResumeStep(null);
-    goTo(0);
+    savedStep.current = 0;
+    goTo(0, false);
     // goToは離れるステップの誤答回数を控えるので、そのあとで消す
     stepAttempts.current.clear();
     setAttempts(0);
     setReached(0);
   };
-  const restartButton = (
-    <Button
-      size="sm"
-      variant="ghost"
-      onClick={() => {
-        flushSync(restart);
-        stepHeading.current?.focus();
-      }}
-    >
-      最初からやり直す
-    </Button>
-  );
+  const [resetOpen, setResetOpen] = useState(false);
 
   // DBの進捗が届いた時点で案内の「続きから」と同じことをする。同じタブではsessionStorageの復元が先に効き、resumeStepは立たない
   useEffect(() => {
@@ -817,7 +809,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
       debugRow,
     };
     try {
-      window.sessionStorage.setItem(sessionKey(unit.id), JSON.stringify(snapshot));
+      window.sessionStorage.setItem(unitSessionKey(unit.id), JSON.stringify(snapshot));
     } catch {
       // 保存できないブラウザでは従来どおりDBの「続きから」だけで再開する
     }
@@ -1154,6 +1146,14 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
           ステップ{stepIndex + 1} / {unit.steps.length}
         </span>
         <span className="flex-1" />
+        <ResetUnitDialog
+          unitId={unit.id}
+          unitTitle={unit.title}
+          open={resetOpen}
+          onOpenChange={setResetOpen}
+          onReset={() => flushSync(restart)}
+          focusAfterReset={() => stepHeading.current?.focus()}
+        />
         <HelpDialog
           open={helpOpen}
           onOpenChange={(o) => {
@@ -1251,7 +1251,11 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
             <div className="mb-3 rounded-md bg-muted/60 p-2 text-sm flex flex-wrap items-center justify-between gap-2">
               <span>{resumeCompleted ? "この単元は完了しています。" : `前回はステップ${resumeStep + 1}まで進みました。`}</span>
               <div className="ml-auto flex items-center gap-2">
-                {resumeCompleted && !isTutorialUnit && restartButton}
+                {resumeCompleted && !isTutorialUnit && (
+                  <Button size="sm" variant="ghost" onClick={() => setResetOpen(true)}>
+                    未完了に戻してやり直す
+                  </Button>
+                )}
                 <Button
                   size="sm"
                   variant="outline"
@@ -1636,9 +1640,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
               <p className="whitespace-pre-wrap">{result.feedback}</p>
               {/* 歴史の単元はページの左右で教えるので、5要素の比較表は出さない(Issue #274) */}
               {(task.type === "post" || task.type === "debug") && !result.correct && gradedEntry && unit.kind !== "history" && (
-                <div className="rounded bg-background/70 p-2">
-                  <ImpactCompare yours={gradedEntry} expected={task.type === "post" ? task.answer : task.answer.entry} accounts={accountMap} />
-                </div>
+                <ImpactCompare yours={gradedEntry} expected={task.type === "post" ? task.answer : task.answer.entry} accounts={accountMap} />
               )}
               {task.type === "predict" && <PredictCompare predicted={effect} elements={askedElements} entry={task.entry} accounts={accountMap} />}
               {"wrong" in result && result.wrong.length > 0 && (
@@ -1684,8 +1686,6 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
               答えを見る
             </Button>
           )}
-          {/* チュートリアルのやり直しは「使い方」の「チュートリアルを最初から」が受け持つ */}
-          {isLast && done && stepIndex > 0 && !isTutorialUnit && restartButton}
           <span className="flex-1" />
           {!done && !revealNote && <span className="text-xs text-muted-foreground">課題ができると次へ進めます</span>}
           {/* 狭い幅で折り返すときも「次へ →」を右下に残すため、前後のボタンはひとまとまりで次の段の右端へ回す */}
