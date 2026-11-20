@@ -60,6 +60,9 @@ wrong_patterns:
   - match: { debit: [{ account: cash }] }
     misconception: petty_cash_is_cash
     feedback: 担当者に渡したお金は、店の金庫の現金とは分けて小口現金という科目で管理します。増えるのは現金ではなく小口現金です。
+  - match: { debit: [{ account: suspense_payment }] }
+    misconception: petty_cash_as_suspense
+    feedback: 細かい支払いのために決まった金額を渡し、使い道の報告を受けて補給するお金は小口現金です。仮払金は、出張の旅費のように使い道や金額がまだ決まっていないお金を置く科目で、あとの単元で扱います。
   - match: { unbalanced: true }
     feedback: 左の合計と右の合計がそろっていません。どちらも30,000にしましょう。
 hint: 左に小口現金30,000、右に当座預金30,000です。
@@ -95,6 +98,12 @@ wrong_patterns:
   - match: { credit: [{ account: cash }] }
     misconception: petty_cash_is_cash
     feedback: 担当者の手元のお金は、店の金庫の現金とは分けて小口現金という科目で管理しています。支払いに使ったので、減るのは小口現金です。
+  - match: { credit: [{ account: suspense_payment }] }
+    misconception: petty_cash_as_suspense
+    feedback: ステップ2で担当者に渡して増やしたのは小口現金なので、支払いの報告で減らすのも小口現金です。仮払金は、出張の旅費のように使い道や金額がまだ決まっていないお金を置く科目で、あとの単元で扱います。
+  - match: { debit: [{ account: miscellaneous_loss }] }
+    misconception: reported_payments_as_miscellaneous_loss
+    feedback: 雑損は、原因が分からないまま減った現金の不足などに使う科目です。担当者から切手代、文房具代、電車代と使い道の報告があるので、通信費・消耗品費・旅費交通費に分けて記録します。
   - match: { debit: [{ account: supplies_expense, amount: 4000 }, { account: supplies_expense, amount: 6500 }] }
     misconception: postage_as_supplies
     feedback: 切手代4,000円は、郵便のための代金なので通信費です。消耗品費にするのは文房具代6,500円だけです。
