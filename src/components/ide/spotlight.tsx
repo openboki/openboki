@@ -20,7 +20,7 @@ export function useTargetRect(target?: string, { reveal = false }: { reveal?: bo
         pendingReveal = false;
         revealIfCovered(el);
       }
-      setRect(el ? el.getBoundingClientRect() : null);
+      setRect(el ? visibleRect(el) : null);
     };
     const raf = requestAnimationFrame(measure);
     const timer = setInterval(measure, 300);
@@ -34,6 +34,24 @@ export function useTargetRect(target?: string, { reveal = false }: { reveal?: bo
   return rect;
 }
 
+// PC幅のペインは中でスクロールする(paneClassのlg:overflow-y-auto)。ペインに切られた部分まで枠を描くと、
+// 枠の穴からペインの外の下のバーや見出しが見えるので、ペインの見えている範囲に切り詰める(#456)
+function scrollPane(el: HTMLElement) {
+  for (let e = el.parentElement; e && e !== document.body; e = e.parentElement) {
+    if (["auto", "scroll"].includes(getComputedStyle(e).overflowY) && e.scrollHeight > e.clientHeight) return e;
+  }
+  return null;
+}
+
+function visibleRect(el: HTMLElement) {
+  const r = el.getBoundingClientRect();
+  const p = scrollPane(el)?.getBoundingClientRect();
+  if (!p) return r;
+  const top = Math.max(r.top, p.top);
+  const bottom = Math.min(r.bottom, p.bottom);
+  return bottom > top ? new DOMRect(r.left, top, r.width, bottom - top) : r;
+}
+
 // 固定バーの裏や画面外にある対象だけを動かす。固定バー自身の中の対象まで中央へ寄せると、ページだけが無駄に動く。
 // 画面より高いペインは中央へ寄せると先頭が切れるので動かさない
 function revealIfCovered(el: HTMLElement) {
@@ -43,6 +61,14 @@ function revealIfCovered(el: HTMLElement) {
   const hitAt = (y: number) => document.elementsFromPoint(r.left + r.width / 2, y).find((e) => !e.closest("[data-tour-card]"));
   const center = hitAt(r.top + r.height / 2);
   if (!center || !el.contains(center)) return el.scrollIntoView({ block: "center" });
+  // 誤答の説明で下のバーが伸びるとペインが縮み、仕訳エディタの貸方や「記帳する」がペインの下に切れる(#456)。
+  // ペインに収まらない対象でも、操作のある下端側を見せる
+  const pane = scrollPane(el);
+  const clipped = pane ? r.bottom - pane.getBoundingClientRect().bottom : 0;
+  if (pane && clipped > 0) {
+    pane.scrollTop += clipped + 8;
+    return;
+  }
   // 中心が見えていても下半分が下の固定バーに隠れることがある(#269)。バーの上端まで持ち上げるが、
   // 上端が画面外か上の固定バーに入るなら(結果ペインのように上下のバーの間に収まらない対象)動かさない
   const barAt = (y: number) => {
