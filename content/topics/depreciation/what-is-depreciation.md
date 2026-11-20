@@ -125,9 +125,6 @@ wrong_patterns:
   - match: { debit: [{ account: accumulated_depreciation }], credit: [{ account: depreciation_expense }] }
     misconception: debit_means_increase
     feedback: 減価償却費は費用なので左で増えます。左右を入れ替えてみましょう。
-  - match: { credit: [{ account: accumulated_depreciation }] }
-    misconception: accumulated_depreciation_any_asset
-    feedback: 減価償却累計額は、備品減価償却累計額や建物減価償却累計額をまとめて呼ぶ総称です。帳簿では科目名ごとに別の勘定になるので、この単元では資産ごとの科目で書きます。マシンの減りは備品減価償却累計額に積みましょう。
   - match: { credit: [{ account: accumulated_depreciation_building }] }
     misconception: accumulated_depreciation_any_asset
     feedback: 建物減価償却累計額は、建物の価値の減りを積む科目です。累計額は資産ごとに分けて積み、その資産の取得原価から引いて帳簿価額を出します。マシンの減りは備品減価償却累計額に積みましょう。
@@ -155,6 +152,9 @@ wrong_patterns:
   - match: { debit: [{ account: supplies_expense }] }
     misconception: depreciation_as_supplies_expense
     feedback: 消耗品費は、文房具のようにすぐ使い切る物の費用です。何年も使うマシンの使った分には、減価償却のための費用の科目があります。
+  - match: { credit: [{ account: accumulated_depreciation }] }
+    misconception: accumulated_depreciation_any_asset
+    feedback: 減価償却累計額は、備品減価償却累計額や建物減価償却累計額をまとめて呼ぶ総称です。帳簿では科目名ごとに別の勘定になるので、この単元では資産ごとの科目で書きます。マシンの減りは備品減価償却累計額に積みましょう。
   - match: { unbalanced: true }
     feedback: 左の合計と右の合計がそろっていません。どちらも100,000にしましょう。
 hint: 左に減価償却費100,000、右に備品減価償却累計額100,000です。
@@ -222,9 +222,6 @@ wrong_patterns:
   - match: { debit: [{ account: accumulated_depreciation }], credit: [{ account: depreciation_expense }] }
     misconception: debit_means_increase
     feedback: 減価償却費は費用なので左で増えます。左右を入れ替えてみましょう。
-  - match: { credit: [{ account: accumulated_depreciation }] }
-    misconception: accumulated_depreciation_any_asset
-    feedback: 減価償却累計額は、資産ごとの累計額をまとめて呼ぶ総称です。帳簿では科目名ごとに別の勘定になるので、総称で書くと1年目の100,000とは別の行に載ります。1年目と同じ備品減価償却累計額に積むと、累計額が200,000にまとまります。
   - match: { credit: [{ account: accumulated_depreciation_building }] }
     misconception: accumulated_depreciation_any_asset
     feedback: 建物減価償却累計額は、建物の価値の減りを積む科目です。累計額は資産ごとに分けて積み、その資産の取得原価から引いて帳簿価額を出します。マシンの減りは備品減価償却累計額に積みましょう。
@@ -251,6 +248,9 @@ wrong_patterns:
   - match: { debit: [{ account: supplies_expense }] }
     misconception: depreciation_as_supplies_expense
     feedback: 消耗品費は、文房具のようにすぐ使い切る物の費用です。何年も使うマシンの使った分には、減価償却のための費用の科目があります。
+  - match: { credit: [{ account: accumulated_depreciation }] }
+    misconception: accumulated_depreciation_any_asset
+    feedback: 減価償却累計額は、資産ごとの累計額をまとめて呼ぶ総称です。帳簿では科目名ごとに別の勘定になるので、総称で書くと1年目の100,000とは別の行に載ります。1年目と同じ備品減価償却累計額に積むと、累計額が200,000にまとまります。
   - match: { unbalanced: true }
     feedback: 左の合計と右の合計がそろっていません。どちらも100,000にしましょう。
 hint: 1年目とまったく同じ仕訳です。右は備品減価償却累計額です。

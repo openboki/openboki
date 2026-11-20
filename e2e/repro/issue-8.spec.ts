@@ -32,7 +32,7 @@ test("定額法 ステップ8: 誤答1,000,000の説明とsuccessの年数が計
   await work.getByRole("button", { name: "予想して記帳する" }).click();
   await expect(next).toHaveAttribute("aria-disabled", "false");
   await next.click();
-  await post("減価償却費", "減価償却累計額", "50000");
+  await post("減価償却費", "備品減価償却累計額", "50000");
   await next.click();
   await expect(page.getByText("ステップ8 / 9")).toBeVisible();
 

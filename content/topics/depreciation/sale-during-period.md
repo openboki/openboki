@@ -150,9 +150,6 @@ wrong_patterns:
   - match: { credit: [{ account: accumulated_depreciation }] }
     misconception: contra_always_credit
     feedback: 累計額を右に書くと、さらに積み増すことになります。期首までの240,000は消すので左に書き、今年の分60,000は累計額に積まず減価償却費として左に書きます。
-  - match: { debit: [{ account: accumulated_depreciation }] }
-    misconception: accumulated_depreciation_any_asset
-    feedback: 減価償却累計額は、資産ごとの累計額をまとめて呼ぶ総称です。帳簿では科目名ごとに別の勘定になるので、総称で消しても備品減価償却累計額の240,000は残ります。積んであるのと同じ備品減価償却累計額を左に書きましょう。
   - match: { credit: [{ account: equipment, amount: 420000 }] }
     misconception: accumulated_depreciation_left_on_sale
     feedback: 備品は取得原価の720,000で帳簿に載っています。右で720,000をすべて消し、累計額240,000は左で消しましょう。
@@ -171,6 +168,9 @@ wrong_patterns:
   - match: { debit: [{ account: bank_deposit }] }
     misconception: deposit_is_cash
     feedback: 取引文では代金を現金で受け取っています。普通預金は動いていないので、左は現金です。
+  - match: { debit: [{ account: accumulated_depreciation }] }
+    misconception: accumulated_depreciation_any_asset
+    feedback: 減価償却累計額は、資産ごとの累計額をまとめて呼ぶ総称です。帳簿では科目名ごとに別の勘定になるので、総称で消しても備品減価償却累計額の240,000は残ります。積んであるのと同じ備品減価償却累計額を左に書きましょう。
   - match: { unbalanced: true, debit: [{ account: loss_on_sale_of_fixed_assets }] }
     no_misconception: 売却損の行は書いていて金額の打ち間違いなので、下の書き漏れの案内に流さない(Issue #422)
     feedback: 左の合計と右の合計がそろっていません。どちらも720,000にしましょう。
@@ -326,9 +326,6 @@ wrong_patterns:
   - match: { credit: [{ account: accumulated_depreciation }] }
     misconception: contra_always_credit
     feedback: 累計額を右に書くと、さらに積み増すことになります。期首までの108,000は消すので左に書き、今年の分54,000は累計額に積まず減価償却費として左に書きます。
-  - match: { debit: [{ account: accumulated_depreciation }] }
-    misconception: accumulated_depreciation_any_asset
-    feedback: 減価償却累計額は、資産ごとの累計額をまとめて呼ぶ総称です。帳簿では科目名ごとに別の勘定になるので、総称で消しても車両運搬具減価償却累計額の108,000は残ります。積んであるのと同じ車両運搬具減価償却累計額を左に書きましょう。
   - match: { credit: [{ account: gain_on_sale_of_fixed_assets, amount: 210000 }] }
     misconception: sale_proceeds_is_gain
     feedback: 210,000がまるごともうけではありません。売る日の帳簿価額198,000のスクーターを手放しているので、売却益は差の12,000です。
@@ -347,6 +344,9 @@ wrong_patterns:
   - match: { credit: [{ account: equipment }] }
     misconception: vehicle_is_equipment
     feedback: 備品はマシンのような機器の科目です。スクーターは車両運搬具なので、右では車両運搬具360,000を消します。
+  - match: { debit: [{ account: accumulated_depreciation }] }
+    misconception: accumulated_depreciation_any_asset
+    feedback: 減価償却累計額は、資産ごとの累計額をまとめて呼ぶ総称です。帳簿では科目名ごとに別の勘定になるので、総称で消しても車両運搬具減価償却累計額の108,000は残ります。積んであるのと同じ車両運搬具減価償却累計額を左に書きましょう。
   - match: { unbalanced: true, credit: [{ account: gain_on_sale_of_fixed_assets }] }
     no_misconception: 売却益の行は書いていて金額の打ち間違いなので、下の書き漏れの案内に流さない(Issue #422)
     feedback: 左の合計と右の合計がそろっていません。どちらも372,000にしましょう。

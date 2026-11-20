@@ -19,11 +19,12 @@ describe.each([
   { name: "減価償却とは何か2年目", task: postAt("depreciation/what-is-depreciation", "2年目の決算"), amount: 100000 },
   { name: "定額法 マシン", task: postAt("depreciation/straight-line", "決算にあたり、コーヒーマシン"), amount: 50000 },
 ])("$name(備品)", ({ task, amount }) => {
-  it.each(["accumulated_depreciation_equipment", "accumulated_depreciation"])("%sは正解", (credit) => {
-    expect(gradePost(task, entry(credit, amount)).correct).toBe(true);
+  it("accumulated_depreciation_equipmentは正解", () => {
+    expect(gradePost(task, entry("accumulated_depreciation_equipment", amount)).correct).toBe(true);
   });
 
-  it.each(["accumulated_depreciation_building", "accumulated_depreciation_vehicle"])("%sは不正解で、資産ごとに積むと説明する", (credit) => {
+  // 総称のaccumulated_depreciationはIssue #416で正解から外した
+  it.each(["accumulated_depreciation_building", "accumulated_depreciation_vehicle", "accumulated_depreciation"])("%sは不正解で、資産ごとに積むと説明する", (credit) => {
     const result = gradePost(task, entry(credit, amount));
     expect(result.correct).toBe(false);
     expect(result.misconception).toBe("accumulated_depreciation_any_asset");
