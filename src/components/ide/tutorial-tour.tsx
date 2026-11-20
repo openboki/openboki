@@ -77,6 +77,8 @@ export function TutorialTour({
   const last = index === STEPS.length - 1;
   const satisfied = step.done ? step.done(ctx) : true;
   const card = useRef<HTMLDivElement>(null);
+  // 入力欄を使ったまま段を進めたときは、カードへフォーカスを移さない(Issue #446)
+  const keepFocus = useRef(false);
   // 記入の段で先に記帳した瞬間を捉える。件数の大小で見ると、記帳後に「← 前へ」で記入の段をたどり直せなくなる(Issue #437)
   const [seenPosted, setSeenPosted] = useState(ctx.postedCount);
   const justPosted = ctx.postedCount > seenPosted;
@@ -100,8 +102,40 @@ export function TutorialTour({
   // 操作待ちの段では主ボタンが無効になってフォーカスがbodyに落ちるため(Issue #51)。
   // 「次へ →」でステップが変わった時も、続きの操作はカードにあるので移す(Issue #84)
   useEffect(() => {
+    if (keepFocus.current) {
+      keepFocus.current = false;
+      return;
+    }
     card.current?.focus();
   }, [index, ctx.stepIndex]);
+
+  // 入力の段を済ませた学習者がTabで案内先より後ろの欄へ移ったら、その欄を使ったまま次の段へ進める。
+  // カードの「次へ」はDOMの末尾で入力欄からは遠く、進めないと貸方を書く間も「借方に書く」が残る(Issue #446)。
+  // マウスで移った学習者はカードの「次へ」を押せるので、これまでどおりカードで進める
+  const leavesForward = !!step.done && !step.autoAdvance && satisfied && !!step.target;
+  useEffect(() => {
+    if (!leavesForward) return;
+    let tabbed = false;
+    const onKeyDown = (e: KeyboardEvent) => {
+      tabbed = e.key === "Tab" && !e.shiftKey;
+    };
+    const onFocusIn = (e: FocusEvent) => {
+      if (!tabbed) return;
+      tabbed = false;
+      const el = e.target as HTMLElement;
+      const area = document.querySelector(`[data-tour="${step.target}"]`);
+      if (!area || area.contains(el) || el.closest("[data-tour-card]")) return;
+      if (!(area.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING)) return;
+      keepFocus.current = true;
+      setIndex(index + 1);
+    };
+    document.addEventListener("keydown", onKeyDown, true);
+    document.addEventListener("focusin", onFocusIn);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown, true);
+      document.removeEventListener("focusin", onFocusIn);
+    };
+  }, [leavesForward, step.target, index]);
 
   // 最後のカードを読んだら、閉じずにタブを離れても済んだ扱いにする(Issue #397)
   useEffect(() => {
