@@ -368,8 +368,8 @@ misconceptions:
     remediation: merchandise/cost-of-goods-sold
   - id: credit_purchase_paid_in_cash
     name: 掛けで買っても現金が減る
-    description: 商品を掛けで仕入れたときに、代金をまだ払っていないのに現金の減少として記録してしまう
-    correct: 掛けは代金を後で払う約束。仕入れた時点では現金は動かず、後で払う義務を買掛金(負債)として記録する
+    description: 商品を掛けで仕入れたり返品したりしたときに、代金をまだ払っていないのに現金の減少や戻りとして記録してしまう
+    correct: 掛けは代金を後で払う約束。仕入れた時点では現金は動かず、後で払う義務を買掛金(負債)として記録する。掛けで買った商品を返したときも現金は戻らず、買掛金が減る
     concepts: [accounts_payable, purchase]
     remediation: merchandise/credit-transactions
   - id: shortage_is_loss

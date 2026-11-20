@@ -15,16 +15,17 @@ function entry(debit: string, credit: string, amount: number) {
   return { debit: [{ account: debit, amount }], credit: [{ account: credit, amount }] };
 }
 
+// 仕入の返品で左に現金を書く誤答は、#443で「掛けで買っても現金が減る」に付け替えた
 describe.each([
-  { step: 2, debit: "cash", credit: "purchases", amount: 10000, word: "買掛金" },
-  { step: 4, debit: "miscellaneous_loss", credit: "accounts_receivable", amount: 5000, word: "売上" },
-])("ステップ$step: 左$debit / 右$credit", ({ step, debit, credit, amount, word }) => {
-  it("返品を新しい取引として記録する誤解と、逆仕訳の案内を返す", () => {
+  { step: 2, debit: "cash", credit: "purchases", amount: 10000, word: "買掛金", misconception: "credit_purchase_paid_in_cash" },
+  { step: 4, debit: "miscellaneous_loss", credit: "accounts_receivable", amount: 5000, word: "売上", misconception: "return_as_new_transaction" },
+])("ステップ$step: 左$debit / 右$credit", ({ step, debit, credit, amount, word, misconception }) => {
+  it(`誤解${misconception}と、逆仕訳の案内を返す`, () => {
     const result = gradePost(task(step), entry(debit, credit, amount));
     expect(result.correct).toBe(false);
     expect(result.feedback).not.toContain(GENERIC);
     expect(result.feedback).toContain(word);
-    expect(result.misconception).toBe("return_as_new_transaction");
+    expect(result.misconception).toBe(misconception);
   });
 });
 

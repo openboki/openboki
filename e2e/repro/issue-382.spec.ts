@@ -1,7 +1,8 @@
 import { expect, test } from "@playwright/test";
 
 // 仕入の返品を「現金 / 仕入」、売上の返品を「雑損 / 売掛金」と記帳すると、誤解の説明が無く汎用文だけが出ていた
-test("返品を現金や雑損で記帳すると、返品を新しい取引として記録する誤解の説明が出る", async ({ page }) => {
+// (仕入の返品で左に現金を書く誤答は、#443で「掛けで買っても現金が減る」に付け替えた)
+test("返品を現金や雑損で記帳すると、それぞれの誤解の説明が出る", async ({ page }) => {
   const work = page.getByRole("region", { name: "ワークスペース" });
   const status = page.getByRole("status").filter({ hasText: "もう一歩" });
   const next = () => page.getByRole("button", { name: "次へ →" }).click();
@@ -37,7 +38,7 @@ test("返品を現金や雑損で記帳すると、返品を新しい取引と�
   await post([["現金", 10000]], [["仕入", 10000]]);
   await expect(status).not.toContainText("結果の表で何が動くはずか");
   await expect(status).toContainText("よくある思い込み");
-  await expect(status).toContainText("返品を新しい取引として記録");
+  await expect(status).toContainText("掛けで買っても現金が減る");
   await post([["買掛金", 10000]], [["仕入", 10000]]);
   await next();
   await post([["売掛金", 30000], ["発送費", 1500]], [["売上", 30000], ["現金", 1500]]);

@@ -96,13 +96,13 @@ wrong_patterns:
     misconception: return_as_new_transaction
     feedback: それは新しく仕入れたときの仕訳です。返品は取り消しなので、左右を逆にします。
   - match: { debit: [{ account: accounts_payable }], credit: [{ account: cash }] }
-    misconception: return_as_new_transaction
+    misconception: credit_purchase_paid_in_cash
     feedback: 左の買掛金は合っています。豆を返したので、現金は動きません。元の仕入を取り消すので、右に仕入を書きます。
   - match: { credit: [{ account: cash }] }
-    misconception: return_as_new_transaction
+    misconception: credit_purchase_paid_in_cash
     feedback: 掛けで買った豆なので、お金は動きません。減るのは買掛金(払う義務)です。
   - match: { debit: [{ account: cash }] }
-    misconception: return_as_new_transaction
+    misconception: credit_purchase_paid_in_cash
     feedback: 掛けで買った豆なので、返してもお金は戻ってきません。月末に払う金額が減るので、左は買掛金(払う義務)です。
   - match: { debit: [{ account: sales }] }
     misconception: return_as_new_transaction
@@ -111,7 +111,7 @@ wrong_patterns:
     misconception: return_as_new_transaction
     feedback: 問屋に返すのは「売る」ことではないので、売上は動きません。元の仕入を取り消すので、右に仕入を書きます。
   - match: { credit: [{ account: merchandise_inventory }] }
-    misconception: return_as_new_transaction
+    misconception: purchase_is_asset
     feedback: 返品は、元の仕訳の取り消しです。豆を買ったときに左に書いたのは仕入なので、取り消すときは右に仕入を書きます。
   - match: { debit: [{ account: accounts_receivable }] }
     misconception: receivable_payable_confused
