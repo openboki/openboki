@@ -116,6 +116,21 @@ wrong_patterns:
   - match: { debit: [{ account: travel_expense, amount: 12500 }] }
     misconception: petty_expenses_lumped
     feedback: 旅費交通費になるのは電車代だけです。報告された3つの支払いは使い道が違うので、切手代と文房具代はそれぞれの費用の科目に分けます。
+  - match: { debit: [{ account: communication_expense, amount: 4000 }, { account: supplies_expense, amount: 8500 }] }
+    misconception: petty_expenses_lumped
+    feedback: 消耗品費8,500には電車代2,000円が入っています。電車代は乗り物に使ったお金なので旅費交通費です。報告された3つの支払いは使い道が違うので、消耗品費は文房具代6,500だけにして、旅費交通費の行を足します。
+  - match: { debit: [{ account: communication_expense, amount: 6000 }, { account: supplies_expense, amount: 6500 }] }
+    misconception: petty_expenses_lumped
+    feedback: 通信費6,000には電車代2,000円が入っています。電車代は乗り物に使ったお金なので旅費交通費です。報告された3つの支払いは使い道が違うので、通信費は切手代4,000だけにして、旅費交通費の行を足します。
+  - match: { debit: [{ account: communication_expense, amount: 4000 }, { account: travel_expense, amount: 8500 }] }
+    misconception: petty_expenses_lumped
+    feedback: 旅費交通費8,500には文房具代6,500円が入っています。文房具代は使って無くなる物の代金なので消耗品費です。報告された3つの支払いは使い道が違うので、旅費交通費は電車代2,000だけにして、消耗品費の行を足します。
+  - match: { debit: [{ account: communication_expense, amount: 10500 }, { account: travel_expense, amount: 2000 }] }
+    misconception: petty_expenses_lumped
+    feedback: 通信費10,500には文房具代6,500円が入っています。文房具代は使って無くなる物の代金なので消耗品費です。報告された3つの支払いは使い道が違うので、通信費は切手代4,000だけにして、消耗品費の行を足します。
+  - match: { debit: [{ account: supplies_expense, amount: 6500 }, { account: travel_expense, amount: 6000 }] }
+    misconception: petty_expenses_lumped
+    feedback: 旅費交通費6,000には切手代4,000円が入っています。切手代は郵便のための代金なので通信費です。報告された3つの支払いは使い道が違うので、旅費交通費は電車代2,000だけにして、通信費の行を足します。
   - match: { debit: [{ account: communication_expense, amount: 4000 }, { account: supplies_expense, amount: 6500 }], credit: [{ account: petty_cash, amount: 10500 }] }
     misconception: petty_payment_omitted
     feedback: 報告された支払いは3つですが、電車代2,000円の分が書かれていません。旅費交通費の行を足して、右の小口現金も3つの合計にしましょう。
