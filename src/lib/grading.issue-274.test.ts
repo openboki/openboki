@@ -12,7 +12,8 @@ const accounts = new Map(unitAccountList(venture.scenario.accounts).map((a) => [
 describe("歴史の単元で5要素の動きが同じ誤答", () => {
   it("postでは、ページの左右の言葉で科目の見直しを促す", () => {
     const task = venture.steps[6].task as TaskOf<"post">;
-    const entry = { debit: [{ account: "wine_voyage", amount: 30 }], credit: [{ account: "owner_capital", amount: 30 }] };
+    // ワインの口は#452で専用の誤答パターンを持ったので、パターンの無い人名勘定で試す
+    const entry = { debit: [{ account: "giovanni", amount: 30 }], credit: [{ account: "owner_capital", amount: 30 }] };
     expect(gradePost(task, entry, accounts).feedback).toBe(SAME_IMPACT);
     const r = gradePost(task, entry, accounts, venture.kind);
     expect(r.correct).toBe(false);

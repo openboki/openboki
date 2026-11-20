@@ -174,6 +174,9 @@ wrong_patterns:
   - match: { debit: [{ amount: 60 }] }
     misconception: venture_costs_only_price
     feedback: 60は胡椒の代金120だけを引いた額です。運賃20と関税10もこの航海にかかった額なので、180から150を引いた30を移します。
+  - match: { debit: [{ account: wine_voyage }] }
+    misconception: venture_account_mixed
+    feedback: 元手に移すのは胡椒の航海のもうけです。もうけ30が右に残っているのは胡椒(アレクサンドリア航海)のページなので、左に30を書くのはワインではなく胡椒のページです。
   - match: { unbalanced: true }
     feedback: 2つのページには同じ額を書きます。どちらも30にしましょう。
 hint: 右に残った30を左に書いて消し、同じ30を元手の右に書きます。
