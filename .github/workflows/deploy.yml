@@ -1,0 +1,67 @@
+name: Deploy
+
+# productionへのpushでイメージをビルドしてGHCRに置き、承認のあとVPSでデプロイを起動する(ADR 0006、ADR 0012)。
+# 手動実行(workflow_dispatch)は、ビルド済みのコミットを指定してデプロイし直す。巻き戻しに使う(docs/deployment.md)
+on:
+  push:
+    branches: [production]
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: デプロイし直すコミットのSHA(40桁。そのコミットのイメージがGHCRにあること)
+        required: true
+
+concurrency: deploy
+
+env:
+  IMAGE: ghcr.io/${{ github.repository }}
+
+jobs:
+  build:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ env.IMAGE }}:${{ github.sha }}
+          # どれもブラウザに配られる値なので、SecretsではなくVariablesに置く
+          build-args: |
+            CONTENT_VERSION=${{ github.sha }}
+            NEXT_PUBLIC_SUPABASE_URL=${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+            NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ vars.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+            UMAMI_URL=${{ vars.UMAMI_URL }}
+            UMAMI_WEBSITE_ID=${{ vars.UMAMI_WEBSITE_ID }}
+
+  deploy:
+    needs: build
+    # 手動実行ではbuildが飛ばされるので、失敗でなければ進める
+    if: ${{ !cancelled() && needs.build.result != 'failure' }}
+    runs-on: ubuntu-latest
+    # 必須レビュアーを置いた環境。人が承認するまでここから先は始まらない
+    environment: production
+    steps:
+      # VPS側の鍵はデプロイのコマンドに固定してあり(authorized_keysのcommand=)、渡せるのはSHAだけ
+      - name: VPSでデプロイを起動する
+        env:
+          SHA: ${{ inputs.sha || github.sha }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ vars.DEPLOY_KNOWN_HOSTS }}
+          DEPLOY_TARGET: ${{ vars.DEPLOY_USER }}@${{ vars.DEPLOY_HOST }}
+        run: |
+          [[ "$SHA" =~ ^[0-9a-f]{40}$ ]] || { echo "SHAは40桁で指定してください"; exit 1; }
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          ssh -i ~/.ssh/deploy -o StrictHostKeyChecking=yes "$DEPLOY_TARGET" "$SHA"
