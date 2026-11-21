@@ -78,6 +78,8 @@ interface Props {
   accounts: GlossaryAccount[];
   /** 結果ペインの「当期純利益」の行で開く用語 */
   netIncomeTerm: GlossaryEntry;
+  balanceSheetTerm: GlossaryEntry;
+  incomeStatementTerm: GlossaryEntry;
   misconceptions: Record<string, MisconceptionInfo>;
   // ステップごとの説明文(サーバーでMarkdownを描画済み)
   narratives: ReactNode[];
@@ -218,7 +220,7 @@ function isRepeatedClick(e: MouseEvent<HTMLElement>) {
   return e.detail > 1;
 }
 
-export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narratives, returnTitles }: Props) {
+export function IdeShell({ unit, accounts, netIncomeTerm, balanceSheetTerm, incomeStatementTerm, misconceptions, narratives, returnTitles }: Props) {
   const accountMap = useMemo(() => new Map(accounts.map((a) => [a.id, a])), [accounts]);
   const [stepIndex, setStepIndex] = useState(0);
   const [posted, setPosted] = useState<Posted[]>(() => replayEntries(unit.steps, 0));
@@ -1583,7 +1585,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, misconceptions, narrat
               )}
             </div>
           )}
-          {unit.view === "statements" && <StatementsPane accounts={accountMap} netIncomeTerm={netIncomeTerm} balances={view.balances} diff={view.diff} company={unit.company} />}
+          {unit.view === "statements" && <StatementsPane accounts={accountMap} netIncomeTerm={netIncomeTerm} balanceSheetTerm={balanceSheetTerm} incomeStatementTerm={incomeStatementTerm} balances={view.balances} diff={view.diff} company={unit.company} />}
           {unit.view === "ledger" && (
             <div className="space-y-5 text-sm">
               <section aria-label="試算" data-tour="trial">

@@ -53,6 +53,8 @@ export default async function UnitPage({ params }: { params: Promise<{ topic: st
       }}
       accounts={ideAccountList(unit)}
       netIncomeTerm={glossaryMap.get("net_income")!}
+      balanceSheetTerm={glossaryMap.get("balance_sheet")!}
+      incomeStatementTerm={glossaryMap.get("income_statement")!}
       misconceptions={misconceptions}
       returnTitles={returnTitles}
       narratives={unit.steps.map((s, i) => (
