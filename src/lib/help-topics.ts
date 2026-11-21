@@ -23,7 +23,7 @@ export interface HelpTopic {
   short: string | ((ctx: HelpContext) => string);
   // 「使い方」用。手順とキーボードの別手段。4文まで。課題の種類で言えることが変わる話題は関数にする
   body: string | ((ctx: HelpContext) => string);
-  // 「いまの画面でできること」に入れる条件。無ければ常に
+  // 「いまの画面でできること」に入れる条件。無ければ入れない(「すべての機能」にだけ出す)
   when?: (ctx: HelpContext) => boolean;
   // 結果ペインがこの段階の単元にだけある機能。外れる単元では「使い方」に出さない。無ければすべての段階
   views?: HelpContext["view"][];
@@ -42,6 +42,9 @@ export const HELP_CATEGORIES: { id: HelpCategory; label: string }[] = [
 
 const isSandbox = (c: HelpContext) => c.taskType === "observe" && c.isLast && c.view !== "none";
 const canWrite = (c: HelpContext) => c.taskType === "post" || isSandbox(c);
+// 説明だけのステップは画面に操作が無いので、「いまの画面」で読み方と進め方を案内する(Issue #449)
+const READ_ONLY_IDS = ["guide", "steps"];
+const isReadOnly = (c: HelpContext) => c.taskType === "observe" && !isSandbox(c);
 
 /** 「自由に試す」の記帳は保存しない(永続化はroadmapのサンドボックス機能で決める。Issue #160)。見出しの下にも出す */
 export const SANDBOX_NOT_SAVED = "ここで記帳した仕訳はこのページを開いている間だけ残り、再読み込みすると消えます。";
@@ -57,7 +60,10 @@ export const HELP_TOPICS: HelpTopic[] = [
     target: "guide",
     pane: "guide",
     short: "ガイドに、物語と「やること」が出ます。読んだらすぐ手を動かします。",
-    body: "ガイドに、物語と「やること」が出ます。ステップごとに短い説明を読んだら、すぐ手を動かします。問題文の金額を押すと、仕訳帳の金額欄に入ります。",
+    body: (c) =>
+      isReadOnly(c)
+        ? "ガイドに、物語と「やること」が出ます。このステップは読むだけで、答える課題はありません。読み終えたら下の「次へ →」で進みます。"
+        : "ガイドに、物語と「やること」が出ます。ステップごとに短い説明を読んだら、すぐ手を動かします。問題文の金額を押すと、仕訳帳の金額欄に入ります。",
   },
   {
     id: "hint",
@@ -236,7 +242,10 @@ export const HELP_TOPICS: HelpTopic[] = [
     title: "ステップと「次へ」",
     target: "next-button",
     short: "上の「ステップn / N」が進み具合です。課題ができると下の「次へ →」が押せます。",
-    body: "上の「ステップn / N」が進み具合です。課題ができると下の「次へ →」が押せます。「← 前へ」で見直しに戻れ、達成したステップには「次へ」でまた進めます。",
+    body: (c) =>
+      isReadOnly(c)
+        ? "上の「ステップn / N」が進み具合です。読むだけのステップでは、下の「次へ →」がすぐ押せます。「← 前へ」で見直しに戻れます。"
+        : "上の「ステップn / N」が進み具合です。課題ができると下の「次へ →」が押せます。「← 前へ」で見直しに戻れ、達成したステップには「次へ」でまた進めます。",
   },
   {
     id: "resume",
@@ -284,5 +293,6 @@ export function canShowTarget(t: HelpTopic, ctx: HelpContext): boolean {
 
 /** 「いまの画面でできること」。ガイド → ワークスペース → 結果 → 課題の順(表の順)で、条件を満たす話題だけ */
 export function currentTopics(ctx: HelpContext): HelpTopic[] {
-  return HELP_TOPICS.filter((t) => t.when && onView(t, ctx) && t.when(ctx));
+  // guideとstepsはwhenを持たせない。canShowTargetがwhenで絞るため、付けると他のステップで「場所を示す」が消える
+  return HELP_TOPICS.filter((t) => onView(t, ctx) && (t.when ? t.when(ctx) : isReadOnly(ctx) && READ_ONLY_IDS.includes(t.id)));
 }

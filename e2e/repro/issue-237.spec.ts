@@ -9,7 +9,7 @@ test("「使い方」のガイドの読み方が、ステップの文の数を�
   await page.getByRole("button", { name: "使い方" }).first().click();
   const help = page.getByRole("dialog").last();
   await help.locator("summary").first().click();
-  await expect(help).toContainText("すぐ手を動かします");
+  await expect(help).toContainText("ガイドに、物語と「やること」が出ます");
   expect(await help.innerText()).not.toMatch(COUNT_CLAIM);
 });
 

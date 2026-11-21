@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { HELP_CATEGORIES, HELP_TOPICS, SANDBOX_NOT_SAVED, currentTopics, firstTimeTopic, helpTopic, topicBody, topicShort } from "./help-topics";
+import { HELP_CATEGORIES, HELP_TOPICS, SANDBOX_NOT_SAVED, canShowTarget, currentTopics, firstTimeTopic, helpTopic, topicBody, topicShort } from "./help-topics";
 
 // 「いまの画面でできること」は、現在のステップで画面に出ている機能だけに絞る(docs/help-design.md 4章)
 
@@ -29,6 +29,19 @@ describe("help topics", () => {
   it("最後のobserveは自由に試す扱い", () => {
     const ids = currentTopics({ ...base, taskType: "observe", isLast: true }).map((t) => t.id);
     expect(ids).toEqual(["journal", "impact", "sandbox"]);
+  });
+
+  it("説明だけのobserveでは、ガイドの読み方とステップの進め方が出る(Issue #449)", () => {
+    const observe = { ...base, taskType: "observe" } as const;
+    expect(currentTopics(observe).map((t) => t.id)).toEqual(["guide", "steps"]);
+    for (const id of ["guide", "steps"]) {
+      const body = topicBody(helpTopic(id), observe);
+      expect(body).toContain("「次へ →」");
+      expect(body).not.toContain("仕訳帳");
+      // ガイドと「次へ →」はどのステップにもあるので、「場所を示す」は課題の種類によらず付く
+      for (const taskType of ["post", "predict", "classify", "calc", "debug", "tweak"] as const) expect(canShowTarget(helpTopic(id), { ...base, taskType })).toBe(true);
+      expect(canShowTarget(helpTopic(id), { ...observe, isLast: true })).toBe(true);
+    }
   });
 
   it("「答えを見る」は、それが出る課題の説明にだけ書く(Issue #113)", () => {
@@ -90,8 +103,8 @@ describe("first-time topics", () => {
 describe("scenario.viewごとの自由に試す", () => {
   const last = { ...base, taskType: "observe", isLast: true } as const;
 
-  it("view: noneでは記帳の場が無いので、自由に試すも初出の案内も出さない", () => {
-    expect(currentTopics({ ...last, view: "none" })).toEqual([]);
+  it("view: noneでは記帳の場が無いので、自由に試すも初出の案内も出さず、説明だけのステップと同じに扱う", () => {
+    expect(currentTopics({ ...last, view: "none" }).map((t) => t.id)).toEqual(["guide", "steps"]);
     expect(firstTimeTopic({ ...last, view: "none" })).toBeNull();
   });
 
