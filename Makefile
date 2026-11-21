@@ -2,7 +2,7 @@
 # 実体はpackage.jsonのscriptsとscripts/*.sh。引数は環境変数で渡す(例: make monkey MONKEY_UNTIL=22:00)。
 .DEFAULT_GOAL := help
 .PHONY: help install hooks setup env-local dev db-start db-stop db-reset services-up services-down services-status \
-        content lint typecheck test test-watch e2e check full-check build start docker-build icons illustrations readme-demo \
+        content lint typecheck test test-watch e2e check full-check publish build start docker-build icons illustrations readme-demo \
         monkey monkey-stop monkey-scripted triage issue issue-loop issue-stop issue-status issue-verify quality-night labels
 
 ##@ セットアップ
@@ -67,6 +67,9 @@ check: ## lint / 型 / テスト / ビルド / E2Eを一括(push前・統合前�
 full-check: ## mainのHEADを専用のworktreeに出し、E2Eを全件つきで確認する(issue-loopの終了時にも走る。FULL_CHECK_ISSUE=1で失敗を起票)
 	scripts/full-check.sh
 
+publish: ## productionをmainまで進めて公開を始める(全件チェックを通ったときだけ。PUBLISH_REF=<コミット>で途中まで。docs/deployment.md)
+	scripts/publish.sh $(PUBLISH_REF)
+
 ##@ ビルド・起動
 
 build: ## 本番ビルド(Velite → next build。standalone出力)
@@ -75,12 +78,13 @@ build: ## 本番ビルド(Velite → next build。standalone出力)
 start: ## 本番ビルドを起動する(先にmake build)
 	pnpm start
 
-docker-build: ## 本番用のDockerイメージを作る(DOCKER_IMAGE=openboki:latest。Supabaseの値は環境変数NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEYから、SITE_URLは任意)
+docker-build: ## 本番用のDockerイメージを作る(DOCKER_IMAGE=openboki:latest。Supabaseの値は環境変数NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEYから、SITE_URLとUMAMI_URL / UMAMI_WEBSITE_IDは任意)
 	docker build \
 		--build-arg CONTENT_VERSION=$$(git rev-parse --short HEAD) \
 		--build-arg NEXT_PUBLIC_SUPABASE_URL \
 		--build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY \
 		$(if $(SITE_URL),--build-arg SITE_URL=$(SITE_URL)) \
+		$(if $(UMAMI_URL),--build-arg UMAMI_URL=$(UMAMI_URL) --build-arg UMAMI_WEBSITE_ID=$(UMAMI_WEBSITE_ID)) \
 		-t $(or $(DOCKER_IMAGE),openboki:latest) .
 
 icons: ## src/app/icon.svgからfavicon.ico、apple-icon.png、OG画像を書き出す(icon.svgを変えたら回す)
