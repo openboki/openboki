@@ -7,7 +7,7 @@ test("/aboutに運営者・ライセンス・貢献の入口が載っている",
   await expect(page).toHaveTitle("このサイトについて | Open簿記");
   const main = page.getByRole("main");
   await expect(main.getByRole("heading", { level: 1, name: "このサイトについて" })).toBeVisible();
-  for (const name of ["目指していること", "運営者", "ライセンス", "使っている素材", "参加する", "問い合わせ先"]) {
+  for (const name of ["運営者", "ライセンス", "使っている素材", "参加する", "問い合わせ先"]) {
     await expect(main.getByRole("heading", { level: 2, name })).toBeVisible();
   }
   await expect(main.getByText("Open簿記運営が運営しています。")).toBeVisible();
@@ -15,9 +15,6 @@ test("/aboutに運営者・ライセンス・貢献の入口が載っている",
   await expect(main.getByRole("link", { name: /Apache License 2\.0/ })).toHaveAttribute("href", "https://github.com/openboki/openboki/blob/main/LICENSE");
   await expect(main.getByRole("link", { name: /CONTRIBUTING\.md/ })).toHaveAttribute("href", "https://github.com/openboki/openboki/blob/main/CONTRIBUTING.md");
   await expect(main.getByRole("link", { name: /GitHub Discussions/ }).first()).toHaveAttribute("href", "https://github.com/openboki/openboki/discussions");
-
-  await main.getByRole("link", { name: "プライバシーポリシー" }).click();
-  await expect(page).toHaveURL(/\/privacy$/);
 });
 
 test("幅390pxで/aboutに横スクロールが出ない", async ({ page }) => {

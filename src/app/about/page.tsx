@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { REPO_URL } from "@/lib/repo";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
   path: "/about",
   title: "このサイトについて",
-  description: "Open簿記が目指していること、運営者、ライセンス、参加の方法、問い合わせ先。すべての教材を無料で、ログインなしで使えます。",
+  description: "Open簿記の運営者、ライセンス、参加の方法、問い合わせ先。",
 });
 
 // 非公開の連絡先は未定(#76)。決まったら「問い合わせ先」に足す
@@ -28,30 +27,9 @@ export default function AboutPage() {
       <div className="space-y-2">
         <h1 className="text-2xl font-bold">このサイトについて</h1>
         <p className="text-muted-foreground">
-          Open簿記(オープン簿記)は、会計を原理から、手を動かして学ぶ学習サイトです。短い解説を読み、仕訳を記帳し、貸借対照表と損益計算書が動くのを見て確かめます。
+          Open簿記(オープン簿記)は、会計を原理から、手を動かして学ぶ学習サイトです。
         </p>
       </div>
-
-      <section className="space-y-2">
-        <h2>目指していること</h2>
-        <p>
-          日本の会計教育に、オープンソースの文化を持ち込むことです。誰でも無料で学べるようにし、教材を特定の個人や企業のものにせず、学習者・実務家・専門家が直しながら育てる共有財産にします。
-        </p>
-        <p>
-          試験対策だけのサイトではありません。資格の合格は途中の成果と考え、勘定科目がなぜその要素に属するのか、取引で財務諸表がどう変わるのかを、仕訳のたびに確かめられるようにしています。
-        </p>
-      </section>
-
-      <section className="space-y-2">
-        <h2>無料で、ログインは要りません</h2>
-        <p>
-          すべての教材と機能を無料で使えます。ログインも登録も要りません。学習の記録をどう保存し、いつ消すかは
-          <Link href="/privacy" className="underline underline-offset-2 hover:text-foreground">
-            プライバシーポリシー
-          </Link>
-          に書いています。
-        </p>
-      </section>
 
       <section className="space-y-2">
         <h2>運営者</h2>
