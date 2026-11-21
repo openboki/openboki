@@ -18,12 +18,13 @@ describe("航海の儲けと複式の発見で、ワインの口は売れ残り�
     expect(sold.reduce((t, n) => t + n, 0)).toBeLessThan(10);
   });
 
-  it("ステップ7の時点で、ワインの口は左が右より大きい(もうけが残っていない)", () => {
+  it("ステップ7の時点で、ワインの口は本文どおり左90・右80(もうけが残っていない)", () => {
     const fixed = debug.entries.map((e, i) => (i === debug.answer.index ? debug.answer.entry : { debit: e.debit, credit: e.credit }));
     const earlier = venture.steps.slice(0, 5).flatMap((s) => (s.task?.type === "observe" ? s.task.entries : s.task?.type === "post" ? [s.task.answer] : []));
     const tb = buildTrialBalance(venture.scenario.opening, [...earlier, ...fixed], accounts);
     const wine = tb.lines.find((l) => l.account === "wine_voyage")!;
-    expect(wine.debit).toBeGreaterThan(wine.credit);
+    expect(wine.debit).toBe(90);
+    expect(wine.credit).toBe(80);
   });
 
   it("ステップ7の本文と成功文が、ワインの航海が終わっていないことを言う", () => {
