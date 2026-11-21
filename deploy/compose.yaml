@@ -1,4 +1,4 @@
-# 本番のSupabase(ADR 0006)。Postgres、GoTrue、PostgREST、Kongの4サービスだけを動かす。
+# 本番のSupabase(ADR 0006)とUmami(ADR 0011)。SupabaseはPostgres、GoTrue、PostgREST、Kongの4サービスだけを動かす。
 # 値は.env(雛形は.env.example)から読む。作り方と確かめ方はREADME.md。
 name: openboki-supabase
 
@@ -93,6 +93,28 @@ services:
       test: ["CMD", "kong", "health"]
       interval: 10s
       timeout: 10s
+      retries: 10
+
+  umami:
+    # アクセス解析(ADR 0011)。データは同じPostgresのumamiデータベースに置く
+    image: ghcr.io/umami-software/umami:3.5.0
+    restart: unless-stopped
+    init: true
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://umami:${POSTGRES_PASSWORD}@db:5432/umami
+      APP_SECRET: ${UMAMI_APP_SECRET:?}
+      # 利用統計の送信と更新の確認で外へ通信させない
+      DISABLE_TELEMETRY: 1
+      DISABLE_UPDATES: 1
+    ports:
+      - 127.0.0.1:${UMAMI_PORT:-8200}:3000
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/heartbeat"]
+      interval: 10s
+      timeout: 5s
       retries: 10
 
 volumes:

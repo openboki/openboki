@@ -75,12 +75,13 @@ build: ## 本番ビルド(Velite → next build。standalone出力)
 start: ## 本番ビルドを起動する(先にmake build)
 	pnpm start
 
-docker-build: ## 本番用のDockerイメージを作る(DOCKER_IMAGE=openboki:latest。Supabaseの値は環境変数NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEYから、SITE_URLは任意)
+docker-build: ## 本番用のDockerイメージを作る(DOCKER_IMAGE=openboki:latest。Supabaseの値は環境変数NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEYから、SITE_URLとUMAMI_URL / UMAMI_WEBSITE_IDは任意)
 	docker build \
 		--build-arg CONTENT_VERSION=$$(git rev-parse --short HEAD) \
 		--build-arg NEXT_PUBLIC_SUPABASE_URL \
 		--build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY \
 		$(if $(SITE_URL),--build-arg SITE_URL=$(SITE_URL)) \
+		$(if $(UMAMI_URL),--build-arg UMAMI_URL=$(UMAMI_URL) --build-arg UMAMI_WEBSITE_ID=$(UMAMI_WEBSITE_ID)) \
 		-t $(or $(DOCKER_IMAGE),openboki:latest) .
 
 icons: ## src/app/icon.svgからfavicon.ico、apple-icon.png、OG画像を書き出す(icon.svgを変えたら回す)

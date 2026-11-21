@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Script from "next/script";
 import "./globals.css";
 import { fontVariables } from "@/themes/fonts";
 import { DEFAULT_THEME } from "@/themes";
@@ -15,6 +16,9 @@ export const metadata: Metadata = {
   title: { template: "%s | Open簿記", default: "Open簿記" },
   description: "Open簿記(オープン簿記)。会計を原理から、手を動かして学ぶ",
 };
+
+// アクセス解析(ADR 0011)。ビルド時に両方を渡したときだけ読み込む。ローカル開発、フォーク、E2Eでは何も要求しない
+const { UMAMI_URL, UMAMI_WEBSITE_ID } = process.env;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -51,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </header>
         <main id="main" className="flex-1">{children}</main>
         <SiteFooter />
+        {UMAMI_URL && UMAMI_WEBSITE_ID && <Script src={`${UMAMI_URL}/script.js`} data-website-id={UMAMI_WEBSITE_ID} />}
       </body>
     </html>
   );

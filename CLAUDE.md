@@ -24,7 +24,7 @@ Next.jsのAPIは学習データと異なる可能性があるので、書く前�
 - `src/components/ide/`: 会計IDE(`ide-shell.tsx`が状態とステップ進行、各ペインは別ファイル。`tutorial-tour.tsx`が操作ツアー、`help-dialog.tsx`が「使い方」、`help-icon.tsx`が機能横の「?」。文言は`src/lib/help-topics.ts`が正本。docs/help-design.md)
 - 品質確認はローカルが正(ADR 0005)。`git config core.hooksPath .githooks`でpush前にlint・型・テストが走る。GitHub Actionsは最小の1ジョブだけ
 - `src/lib/progress.ts`: 匿名サインインと回答・進捗の保存。`supabase/migrations/`: スキーマとRLS
-- `deploy/`: 本番のSupabase(Postgres、GoTrue、PostgREST、Kongのcompose。ADR 0006)。秘密の値の作り方とローカルでの確かめ方は`deploy/README.md`
+- `deploy/`: 本番のSupabase(Postgres、GoTrue、PostgREST、Kong。ADR 0006)とUmami(ADR 0011)のcompose。秘密の値の作り方とローカルでの確かめ方は`deploy/README.md`
 - `scripts/`: 無人ループ(`monkey-loop.sh` / `triage-agent.sh` / `issue-agent.sh` / `issue-loop.sh` / `issue-verify.sh` / `full-check.sh` / `quality-night.sh`)、`scripts/monkey/session.mjs`(Monkeyのオラクル)、`scripts/issue-agent/`(プロンプトとスキーマ、PreToolUseのguard)。`.claude/skills/monkey-test/`: 人格と手順。`e2e/repro/`: Issueの回帰テスト(`issue-<n>.spec.ts`)。`logs/`はgitignore
 - `src/app/map/`: 概念マップ(`concept-map.tsx`が一覧・図・説明の3ペイン、`graph-canvas.tsx`がforce-graphで図を描く)。線の組み立ては`src/lib/concept-graph.ts`
 - `src/components/illustrations/`: 物語のスポットイラスト(自作のSVG。名前の一覧は`src/lib/illustrations.ts`、絵柄の決まりはdocs/visual-guidelines.md 6章)。絵を足すときは`.claude/skills/spot-illustration/`の手順に従い、`make illustrations`の見本(`/illustrations`を全テーマで撮る)で既存の絵と見比べる
