@@ -7,7 +7,7 @@
 |---|---|---|---|
 | 方向 | `docs/roadmap.md`、vision、requirements、ADR | 人 | マイルストーン、何を検証するか、設計判断 |
 | 作業単位 | GitHub Issues | 人が切る(不具合はMonkeyが起票) | 1単元、1機能のスライス、1不具合。受け入れ条件つき |
-| 実行 | worktree → `make check` → PRのsquashで`main` | 人のセッション、並列セッション、夜間ループのどれでも | 同じ関門(lint / 型 / テスト / ビルド / E2E)を通す |
+| 実行 | worktree → `make check` → PRのsquashで`main` | 人のセッション、並列セッション、夜間ループのどれでも | 同じ関門(lint / 型 / テスト / ビルド / 差分に応じた範囲のE2E)を通す |
 
 ## 流れ
 
@@ -31,4 +31,4 @@ Issueにしないもの: 設計の検討や試行錯誤(結論だけADRかdocs�
 
 ## 品質確認
 
-品質確認はローカルで完結させる(ADR 0005)。`make setup`が有効にするgit hookで、push前にlint・型・単体テストが走る。E2E(`make e2e`)はコンテンツやUIを変えたときにローカルで回す。GitHub Actionsはlint・型・単体テスト・ビルドの1ジョブ(約45秒)だけ。
+品質確認はローカルで完結させる(ADR 0005)。`make setup`が有効にするgit hookで、push前にlint・型・単体テストが走る。関門(`make check`)のE2Eはmainとの差分で決めた範囲だけを回し、全件はissue-loopの終了時(`scripts/full-check.sh`)と`production`を進める前(`make check CHECK_E2E=full`)に回す。GitHub Actionsはlint・型・単体テスト・ビルドの1ジョブ(約45秒)だけ。

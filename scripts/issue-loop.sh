@@ -13,6 +13,7 @@
 #   ISSUE_PARALLEL   同時に処理するIssueの数(既定1。3程度まで。mainへの統合はissue-agent側で1件ずつ)
 #   ISSUE_WAIT=1     対象のIssueが無くても終了時刻まで待つ(トリアージと並走させるとき)
 #   ISSUE_LOG_DIR    ログ置き場(既定logs/issue-agent)
+#   ISSUE_FULL_CHECK 1件でも統合したら、終了時にmainで全件チェック(scripts/full-check.sh)を回す(既定1。0で省く)
 #   そのほかissue-agent.shの環境変数はそのまま渡る
 set -u
 cd "$(dirname "$0")/.."
@@ -111,3 +112,7 @@ while :; do
 done
 [ -n "$stop_reason" ] && echo "$stop_reason"
 echo "反復回数: $i、統合: ${merged}件、スキップ: ${skipped}件。ログは$LOG_DIR/"
+# 関門はE2Eを差分の範囲に絞っている(ADR 0005)。範囲の外で壊れたテストを、統合後のmainの全件で拾う
+if [ "$merged" -gt 0 ] && [ "${ISSUE_FULL_CHECK:-1}" = 1 ]; then
+  FULL_CHECK_ISSUE=1 FULL_CHECK_MERGED="$processed" scripts/full-check.sh
+fi

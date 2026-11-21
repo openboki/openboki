@@ -19,7 +19,7 @@ SupabaseクラウドはFreeだと1週間アクセスがないと停止し、Pro�
 - **Coolify** をPaaS層にする。TLS(Let's Encrypt)、ヘルスチェック付きの無停止デプロイ、通知、サービスの管理を任せる。設定は公式CLI(`coolify`)とREST APIで行い、Web画面での手作業を残さない。
 - **Coolifyの管理画面とAPIは外に公開しない。** パケットフィルタは22 / 80 / 443だけを開け、管理画面にはSSHトンネルで入る。Coolify本体は月1回を目安に更新する。
 - **Next.js** はGitHub ActionsでDockerイメージをビルドしてGHCRにpushし、Coolifyはそれをpullして起動するだけにする(VPS上でビルドしない)。`output: 'standalone'`は維持する。`CONTENT_VERSION`はActionsの`github.sha`をbuild-argで渡す。Supabaseの接続先もビルド時に焼き込まれるので、同じくbuild-argで渡す。
-- **公開は`production`ブランチで行う。** ビルドとデプロイのワークフローは`production`へのpushだけで動く。mainは今までどおり品質改善ループと手作業の統合先にし、公開するときに`production`をmainの位置までfast-forwardで進める。進めるのは`make check`(E2E込み)が通ったコミットだけで、夜間ループの最後か、手で打つMakefileのコマンドから行う。戻すときは、前のコミットのイメージを指定してデプロイし直す。
+- **公開は`production`ブランチで行う。** ビルドとデプロイのワークフローは`production`へのpushだけで動く。mainは今までどおり品質改善ループと手作業の統合先にし、公開するときに`production`をmainの位置までfast-forwardで進める。進めるのは`make check CHECK_E2E=full`(E2Eを全件。ADR 0005)が通ったコミットだけで、夜間ループの最後か、手で打つMakefileのコマンドから行う。戻すときは、前のコミットのイメージを指定してデプロイし直す。
 - **デプロイの起動はSSHで行う。** ワークフローはイメージをpushしたあと、VPSにSSHで入り、Coolifyのデプロイ用APIをVPSの中から呼ぶ。GitHubに置く鍵は、そのコマンドだけを実行できるよう制限する。
 - **Supabase** はセルフホストをPostgres、GoTrue(Auth)、PostgREST、Kongの4サービスに削って動かす。Realtime、Storage、Studio、ログ分析、Edge Functionsは入れない(architecture.md 3章の方針通り)。構成はリポジトリ内のcompose 1本に書き、Coolifyにはそれを読ませる(Coolifyの画面に構成を持たせない)。匿名サインインはGoTrueの`GOTRUE_EXTERNAL_ANONYMOUS_USERS_ENABLED=true`で有効化する。
 - **マイグレーションは自動デプロイに含めない。** 手で`pg_dump`を取ってから`supabase db push --db-url`で適用する。

@@ -27,7 +27,7 @@
 - **回帰テストを必ず追加する。** Issueの再現スクリプトを`e2e/repro/issue-$ISSUE.spec.ts`に置く(UIの不具合)か、
   採点・会計計算・コンテンツなら`src/lib/*.issue-$ISSUE.test.ts`にVitestで書く。修正前に失敗し、修正後に通ることを確かめる。
   ファイル名に`issue-$ISSUE`を含めること(統合後の再検証がこの名前で探す)。
-- 完了前に`scripts/check.sh`(lint / typecheck / test / build / E2E。E2Eは3100番で本番ビルドを起動する)を通す。
+- 完了前に`scripts/check.sh`(lint / typecheck / test / build / E2E。E2Eは3100番で本番ビルドを起動し、mainとの差分に応じた範囲だけ回す)を通す。
   スクリプトが同じ`scripts/check.sh`を独立に再実行するので、通っていない状態で`done`と申告しても差し戻される。
 - すべての変更をコミットする(未コミットの変更を残さない)。コミットメッセージは既存の履歴に倣い、
   1行目に変更の要約、本文に「なぜその実装なのか」と`Closes #$ISSUE`を書く。

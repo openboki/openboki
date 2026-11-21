@@ -2,7 +2,7 @@
 # 実体はpackage.jsonのscriptsとscripts/*.sh。引数は環境変数で渡す(例: make monkey MONKEY_UNTIL=22:00)。
 .DEFAULT_GOAL := help
 .PHONY: help install hooks setup env-local dev db-start db-stop db-reset services-up services-down services-status \
-        content lint typecheck test test-watch e2e check build start docker-build icons illustrations readme-demo \
+        content lint typecheck test test-watch e2e check full-check build start docker-build icons illustrations readme-demo \
         monkey monkey-stop monkey-scripted triage issue issue-loop issue-stop issue-status issue-verify quality-night labels
 
 ##@ セットアップ
@@ -61,8 +61,11 @@ test-watch: ## 単体テストを監視モードで回す
 e2e: ## E2E(Playwright。開発サーバーとローカルSupabaseを使う。コンテンツを変えたら必ず回す)
 	pnpm exec playwright test
 
-check: ## lint / 型 / テスト / ビルド / E2Eを一括(push前・統合前の関門。E2Eは3100番で本番ビルド。CHECK_E2E=0でE2Eを省く)
+check: ## lint / 型 / テスト / ビルド / E2Eを一括(push前・統合前の関門。E2Eは3100番で本番ビルド、範囲はmainとの差分で決まる。CHECK_E2E=fullで全件、CHECK_E2E=0で省く)
 	scripts/check.sh
+
+full-check: ## mainのHEADを専用のworktreeに出し、E2Eを全件つきで確認する(issue-loopの終了時にも走る。FULL_CHECK_ISSUE=1で失敗を起票)
+	scripts/full-check.sh
 
 ##@ ビルド・起動
 
