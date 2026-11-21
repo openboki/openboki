@@ -84,6 +84,19 @@ export function ConceptMap({ concepts, links, domains }: Props) {
   const groups = domains
     .map((d) => ({ ...d, items: concepts.filter((c) => c.domain === d.id && (!matchedIds || matchedIds.has(c.id))) }))
     .filter((g) => g.items.length > 0);
+  // 一覧は1つのTabの止まり先にし、項目間は矢印キーで移る(ロービングtabindex)。79個をTabで通らずに説明へ行ける
+  const visibleIds = groups.flatMap((g) => g.items.map((c) => c.id));
+  const tabStopId = visibleIds.includes(selectedId) ? selectedId : visibleIds[0];
+
+  const moveInList = (e: React.KeyboardEvent, id: string) => {
+    const i = visibleIds.indexOf(id);
+    const next = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: visibleIds.length - 1 }[e.key];
+    if (next === undefined) return;
+    e.preventDefault();
+    const nextId = visibleIds[Math.min(visibleIds.length - 1, Math.max(0, next))];
+    select(nextId);
+    sidebar.current?.querySelector<HTMLButtonElement>(`[data-concept-id="${nextId}"]`)?.focus();
+  };
 
   const resizeTo = (clientX: number) => {
     const rect = panes.current!.getBoundingClientRect();
@@ -117,7 +130,10 @@ export function ConceptMap({ concepts, links, domains }: Props) {
                   <button
                     type="button"
                     aria-current={c.id === selectedId}
+                    data-concept-id={c.id}
+                    tabIndex={c.id === tabStopId ? 0 : -1}
                     onClick={() => select(c.id)}
+                    onKeyDown={(e) => moveInList(e, c.id)}
                     className={cn("w-full rounded-sm px-2 py-1 text-left text-sm hover:bg-accent", c.id === selectedId && "bg-accent font-medium")}
                   >
                     {c.name}
