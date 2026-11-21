@@ -135,14 +135,12 @@ function BurstView({ burst, onDone }: { burst: Burst; onDone: () => void }) {
 }
 
 export function Celebration({ bursts, onDone }: { bursts: Burst[]; onDone: (id: string) => void }) {
+  // サーバーではreducedが常にfalseなので、外枠は常に描き、中身だけを止める(Issue #515)
   const reduced = useReducedMotion();
-  if (reduced) return null;
   return (
     <div className="pointer-events-none fixed inset-0 z-40 overflow-hidden" aria-hidden>
       <AnimatePresence>
-        {bursts.map((b) => (
-          <BurstView key={b.id} burst={b} onDone={() => onDone(b.id)} />
-        ))}
+        {!reduced && bursts.map((b) => <BurstView key={b.id} burst={b} onDone={() => onDone(b.id)} />)}
       </AnimatePresence>
     </div>
   );
