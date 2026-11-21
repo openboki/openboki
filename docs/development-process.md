@@ -31,4 +31,4 @@ Issueにしないもの: 設計の検討や試行錯誤(結論だけADRかdocs�
 
 ## 品質確認
 
-品質確認はローカルで完結させる(ADR 0005)。`make setup`が有効にするgit hookで、push前にlint・型・単体テストが走る。関門(`make check`)のE2Eはmainとの差分で決めた範囲だけを回し、全件はissue-loopの終了時(`scripts/full-check.sh`)と`production`を進める前(`make check CHECK_E2E=full`)に回す。GitHub Actionsはlint・型・単体テスト・ビルドの1ジョブ(約45秒)だけ。
+品質確認はローカルで完結させる(ADR 0005)。`make setup`が有効にするgit hookで、push前にlint・型・単体テストが走る。関門(`make check`)のE2Eはmainとの差分で決めた範囲だけを回し、全件はissue-loopの終了時(`scripts/full-check.sh`)と`production`を進める前(`make publish`が同じスクリプトを呼ぶ。docs/deployment.md)に回す。GitHub Actionsはlint・型・単体テスト・ビルドの1ジョブ(約45秒)だけ。
