@@ -385,6 +385,95 @@ const DRAWINGS: Record<IllustrationName, ReactNode> = {
       <rect className="fill-card" x="62" y="88.5" width="9.5" height="9.5" rx="2" />
     </>
   ),
+  "light-bulb": (
+    <>
+      <path d="M60 4v6M26 14l4.500 4.500M94 14l-4.500 4.500M12 44h6M102 44h6" />
+      <path className={TINT} d="M48 82V74Q48 71 43.5 67A28 28 0 1 1 76.5 67Q72 71 72 74V82Z" />
+      <path strokeWidth={THIN} d="M55 82V56M65 82V56" />
+      <circle className="fill-brand-accent" cx="60" cy="46" r="10" />
+      <rect className="fill-primary" x="46" y="82" width="28" height="18" rx="3" />
+      <path className="stroke-card" strokeWidth={THIN} d="M51 88H69M51 94H69" />
+      <rect className="fill-foreground" x="54" y="100" width="12" height="7" rx="2" />
+    </>
+  ),
+  van: (
+    <>
+      <path className="fill-primary" d="M16 34H86L106 58V84H12V38a4 4 0 0 1 4-4Z" />
+      <rect className={TINT} x="20" y="42" width="24" height="15" rx="2" />
+      <rect className={TINT} x="50" y="42" width="22" height="15" rx="2" />
+      <path className={TINT} d="M78 42H85L96.500 57H78Z" />
+      <path className="stroke-card" strokeWidth={THIN} d="M47 62V80M75 62V80" />
+      <circle className="fill-brand-accent" cx="102" cy="68" r="2.5" />
+      <circle className="fill-foreground" cx="32" cy="88" r="10" />
+      <circle className="fill-brand-accent" cx="32" cy="88" r="4" />
+      <circle className="fill-foreground" cx="86" cy="88" r="10" />
+      <circle className="fill-brand-accent" cx="86" cy="88" r="4" />
+    </>
+  ),
+  "price-tag": (
+    <>
+      <path className="fill-primary" d="M54 12L82 38V98a6 6 0 0 1-6 6H32a6 6 0 0 1-6-6V38Z" />
+      <circle className="fill-card" cx="54" cy="36" r="6" />
+      <path strokeWidth={THIN} d="M56 31q6-15 26-18" />
+      <rect className="fill-card" x="36" y="56" width="36" height="34" rx="2" />
+      <path strokeWidth={THIN} d="M42 65h24M42 73h14" />
+      <rect className="fill-brand-accent" x="52" y="78" width="14" height="7" rx="1.5" />
+      <circle className="fill-brand-accent" cx="96" cy="92" r="11" />
+      <circle strokeWidth={THIN} cx="96" cy="92" r="6.500" />
+    </>
+  ),
+  scooter: (
+    <>
+      <circle className="fill-foreground" cx="30" cy="90" r="11" />
+      <circle className="fill-foreground" cx="94" cy="90" r="11" />
+      <path strokeWidth={4} d="M84 40 82 28M74 27H90" />
+      <path className="fill-primary" d="M16 82Q16 58 32 58H58V74H70L79 40H89L85 82Z" />
+      <rect className="fill-brand-accent" x="24" y="49" width="36" height="9" rx="4" />
+      <path className="stroke-card" strokeWidth={THIN} d="M26 70H48" />
+      <circle className={TINT} cx="92" cy="48" r="5" />
+      <circle className="fill-brand-accent" cx="30" cy="90" r="4.500" />
+      <circle className="fill-brand-accent" cx="94" cy="90" r="4.500" />
+    </>
+  ),
+  "merchant-ship": (
+    <>
+      <path strokeWidth={4} d="M60 72V12" />
+      <path className="fill-brand-accent" d="M60 10H76l-4 4.500 4 4.500H60Z" />
+      <path className="fill-card" d="M30 26H90Q95 43 90 60H30Q25 43 30 26Z" />
+      <path strokeWidth={THIN} d="M46 26Q43 43 46 60M74 26Q77 43 74 60" />
+      <rect className="fill-card" x="16" y="58" width="18" height="14" rx="1.5" />
+      <rect className={TINT} x="21" y="62" width="8" height="6" rx="1" />
+      <path className="fill-primary" d="M14 76H106Q100 98 84 98H34Q20 98 14 76Z" />
+      <rect className="fill-brand-accent" x="10" y="70" width="100" height="7" rx="2" />
+      <circle className="fill-card" cx="44" cy="87" r="2.5" />
+      <circle className="fill-card" cx="60" cy="87" r="2.5" />
+      <circle className="fill-card" cx="76" cy="87" r="2.5" />
+      <path d="M12 108q6-5 12 0t12 0t12 0t12 0t12 0t12 0t12 0t12 0" />
+    </>
+  ),
+  "coin-pouch": (
+    <>
+      <path className="fill-primary" d="M36 52L29 34Q52 42 75 34L68 52Z" />
+      <path className="fill-primary" d="M34 52Q14 72 20 92Q24 106 52 106Q80 106 84 92Q90 72 70 52Z" />
+      <rect className="fill-card" x="33" y="47" width="38" height="8" rx="4" />
+      <path className="stroke-card" strokeWidth={THIN} d="M36 74Q32 84 36 94" />
+      <circle className="fill-brand-accent" cx="100" cy="62" r="9" />
+      <circle strokeWidth={THIN} cx="100" cy="62" r="5" />
+      <path className="fill-brand-accent" d="M80 102v-6a14 5 0 0 1 28 0v6a14 5 0 0 1-28 0z" />
+      <path className="fill-brand-accent" d="M80 96v-6a14 5 0 0 1 28 0v6a14 5 0 0 1-28 0z" />
+      <ellipse className="fill-brand-accent" cx="94" cy="90" rx="14" ry="5" />
+    </>
+  ),
+  quill: (
+    <>
+      <path className={TINT} d="M62 60Q64 28 104 12Q104 50 72 64Z" />
+      <path d="M50 72L104 12" />
+      <path strokeWidth={THIN} d="M78 41h10M70 50h9" />
+      <rect className="fill-card" x="36" y="66" width="28" height="10" rx="2" />
+      <path className="fill-primary" d="M30 76H70V98a6 6 0 0 1-6 6H36a6 6 0 0 1-6-6Z" />
+      <rect className="fill-brand-accent" x="40" y="84" width="20" height="9" rx="2" />
+    </>
+  ),
 };
 
 export function SpotIllustration({ name, className }: { name: IllustrationName; className?: string }) {
