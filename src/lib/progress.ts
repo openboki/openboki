@@ -171,10 +171,32 @@ export async function resetOutOfRangeStep(unitId: string, stepCount: number): Pr
 /** 同じタブで単元を離れて戻るための控え(Issue #83)を置くsessionStorageのキー */
 export const unitSessionKey = (unitId: string) => `ide-session:${unitId}`;
 
+// 送ったBroadcastChannel自身には届かないので、送受信を1つにまとめ、戻したタブ自身を古いタブと取り違えない
+let resetChannel: BroadcastChannel | null | undefined;
+function unitResetChannel() {
+  if (resetChannel === undefined) resetChannel = typeof BroadcastChannel === "undefined" ? null : new BroadcastChannel("unit-progress-reset");
+  return resetChannel;
+}
+
+/**
+ * 同じブラウザの別のタブで単元を未完了に戻したときに呼ぶ。開いたままのタブは完了時の到達位置を持っていて、
+ * 後退防止のトリガーはreset後のstartedから完了への更新を通すので、知らせないと書き戻してしまう(Issue #528)
+ */
+export function onUnitResetElsewhere(listener: (unitId: string) => void): () => void {
+  const channel = unitResetChannel();
+  if (!channel) return () => {};
+  const onMessage = (e: MessageEvent) => {
+    if (typeof e.data === "string") listener(e.data);
+  };
+  channel.addEventListener("message", onMessage);
+  return () => channel.removeEventListener("message", onMessage);
+}
+
 /** 完了した単元を未完了に戻す(Issue #492)。回答は消さず、fetchProgressが戻した時刻より前の回答を復元に使わなくなる */
 export async function resetUnitProgress(unitId: string): Promise<void> {
   const { error } = await supabase.rpc("reset_unit_progress", { p_unit_id: unitId });
   if (error) throw new Error(`未完了に戻せませんでした: ${error.message}`);
+  unitResetChannel()?.postMessage(unitId);
   // このタブの控えには完了時の位置と答えが残っている
   try {
     window.sessionStorage.removeItem(unitSessionKey(unitId));
