@@ -76,7 +76,7 @@ fgは文字、bgはチップと見出しの面、borderは枠、barは影響バ�
 
 ```
 src/themes/
-  index.ts          テーマの登録簿: { id, name, description, author, preview: [主色, 背景, 差し色] }
+  index.ts          テーマの登録簿: { id, name, author, preview: [主色, 背景, 差し色] }
   fonts.ts          フォント登録簿(next/font)
   town-shop.css     街の小さな会社(既定)
   ai-shu.css        藍と朱
@@ -108,7 +108,7 @@ src/themes/
 
 - `<html data-theme="town-shop" data-mode="light">`を起点にする。サーバーは常に既定テーマで描き、`<head>`の小さなインラインスクリプトが描画前にlocalStorageの値(`theme` / `mode`)で属性を置き換える(ちらつき防止)。
 - modeは`auto` / `light` / `dark`の3択。`auto`は`prefers-color-scheme`に追従し、変更も監視する。
-- ヘッダーに「テーマ」ボタンを置き、ポップオーバーでテーマ一覧(名前 + 3色のプレビュー)とmodeを選ぶ。
+- ヘッダーに「テーマ」ボタンを置き、ポップオーバーでテーマ一覧(3色のプレビュー)とmodeを選ぶ。テーマの名前は画面に出さず、ボタンの読み上げ名にだけ使う。
 - 保存先はlocalStorageのみ。DBには置かない(閲覧だけでユーザーを作らない方針と一致する)。本登録(M5)でアカウントの設定として同期することを検討する。開いている別タブには`storage`イベントで反映する。
 - E2Eは既定テーマで走る。テーマ切替のE2Eは「切り替えたら`data-theme`が変わり、再読み込みで保持される」の1本だけ。
 
