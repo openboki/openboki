@@ -18,6 +18,8 @@ describe("単元限定の科目の読み", () => {
     expect(accounts.find((a) => a.id === "owner_capital")!.glossary.reading).toEqual(["もとで"]);
   });
   it("読みを書いていない科目は空の配列になる", () => {
-    expect(accounts.find((a) => a.id === "giovanni")!.reading).toEqual([]);
+    // giovanniはIssue #544で読みが付いたので、読みの無い科目として別の単元のワイン(クレタ航海)を見る
+    const venture = unitAccountList(unitMap.get("birth-of-double-entry/venture-profit-and-double-entry")!.scenario.accounts);
+    expect(venture.find((a) => a.id === "wine_voyage")!.reading).toEqual([]);
   });
 });

@@ -25,8 +25,8 @@ scenario:
   currency: ドゥカート
   view: ledger
   accounts:
-    - { id: giovanni, name: ジョヴァンニ, element: asset, why: 彼がこちらに負う残高を置く人名勘定です。, concepts: [personal_account] }
-    - { id: niccolo, name: ニッコロ, element: liability, why: こちらが彼に負う残高を置く人名勘定です。, concepts: [personal_account] }
+    - { id: giovanni, name: ジョヴァンニ, reading: [じょばんに], element: asset, why: 彼がこちらに負う残高を置く人名勘定です。, concepts: [personal_account] }
+    - { id: niccolo, name: ニッコロ, reading: [にころ], element: liability, why: こちらが彼に負う残高を置く人名勘定です。, concepts: [personal_account] }
     - { id: cloth_venture, name: 絹(フランドル航海), reading: [きぬ], element: asset, mixed: true, why: 航海1口にかかった額と売った額を集める口別の勘定です。, concepts: [venture_accounting] }
     - { id: pepper_voyage, name: 胡椒(アレクサンドリア航海), reading: [こしょう], element: asset, mixed: true, why: 航海1口にかかった額と売った額を集める口別の勘定です。, concepts: [venture_accounting] }
     - { id: profit_and_loss, name: 利益と損失, reading: [りえきとそんしつ], element: equity, why: 口ごとのもうけと損を1つのページに集め、帳簿を閉じるときに元手へ移します。, concepts: [profit_and_loss_account] }
