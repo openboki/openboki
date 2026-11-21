@@ -762,6 +762,12 @@ misconceptions:
     correct: 残高は左の合計と右の合計の差。差が左に残れば相手がこちらに負い、右に残ればこちらが相手に負う
     concepts: [personal_account]
     remediation: birth-of-double-entry/memorandum-and-personal-accounts
+  - id: balance_adds_both_sides
+    name: 残高を左右の合計の和と思う
+    description: 人名勘定の残高を、左の合計と右の合計を足した額で答えている。右の行も負いを増やす行として読んでいる
+    correct: 右の行は左の負いを減らした分なので、残高は左の合計から右の合計を引いた差。足すと減った分まで残っていることになる
+    concepts: [personal_account]
+    remediation: birth-of-double-entry/memorandum-and-personal-accounts
   - id: venture_sales_as_profit
     name: 売った額がもうけ
     description: 商いの1口のもうけを、売った額の合計で答えている。買った代金や運賃・関税を引いていない
