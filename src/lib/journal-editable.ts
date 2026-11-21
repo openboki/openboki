@@ -37,10 +37,14 @@ export function parseAmount(text: string, signed = false, currency = "円"): Par
   let s = text
     .trim()
     .replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0))
-    .replace(/[,，]/g, "");
+    .replace(/，/g, ",")
+    // 3桁区切りの位置にあるカンマだけ外す。位置を見ずに消すと打ち間違いの「1,0,0」や小数のつもりの「30,0」まで整数に読める(Issue #543)
+    .replace(/(?<![\d,])\d{1,3}(?:,\d{3})+(?![\d,])/g, (n) => n.replace(/,/g, ""));
   if (s.endsWith(currency)) s = s.slice(0, -currency.length).trimEnd();
   s = s.replace(/^[−－ー△▲]/, "-");
   if (s === "") return { reason: "金額を入れてください" };
+  if (/^-?[\d,]+$/.test(s) && s.includes(","))
+    return { reason: `カンマは3桁ごとの区切りにだけ使えます(例: 30,000)。小数は使えないので、${currency}単位の整数で入力してください` };
   // 円の単元に慣れた学習者はドゥカートの単元でも「円」を付けやすいので、半角かどうかではなく単位の違いを伝える(Issue #309)
   const otherUnit = CURRENCY_UNITS.find((u) => u !== currency && s.endsWith(u) && /^-?\d+(\.\d+)?\s*$/.test(s.slice(0, -u.length)));
   if (otherUnit) return { reason: `この単元の金額は${currency}です。「${otherUnit}」を外して数字だけ入れてください` };
