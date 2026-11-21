@@ -349,6 +349,42 @@ const DRAWINGS: Record<IllustrationName, ReactNode> = {
       <rect className="fill-card" x="78" y="58" width="13" height="10" rx="2" />
     </>
   ),
+  "shuttered-shop": (
+    <>
+      <path d="M8 104H112" />
+      <rect className="fill-card" x="22" y="32" width="76" height="72" />
+      <rect className="fill-primary" x="16" y="16" width="88" height="18" rx="3" />
+      <circle className="fill-brand-accent" cx="60" cy="25" r="4.5" />
+      <rect className={TINT} x="32" y="50" width="56" height="54" />
+      <path strokeWidth={THIN} d="M32 60H88M32 70H88M32 80H88M32 90H88" />
+      <rect className="fill-card" x="28" y="43" width="64" height="8" rx="2" />
+      <rect className="fill-card" x="49" y="58" width="22" height="19" rx="1.5" />
+      <path strokeWidth={THIN} d="M54 65h12M54 71h7" />
+      <rect className="fill-brand-accent" x="30" y="97" width="60" height="7" rx="2" />
+    </>
+  ),
+  calculator: (
+    <>
+      <rect className="fill-primary" x="26" y="10" width="68" height="98" rx="7" />
+      <rect className="fill-card" x="35" y="20" width="50" height="19" rx="3" />
+      <path strokeWidth={THIN} d="M64 32h14" />
+      <rect className="fill-card" x="35" y="48" width="9.5" height="9.5" rx="2" />
+      <rect className="fill-card" x="48.5" y="48" width="9.5" height="9.5" rx="2" />
+      <rect className="fill-card" x="62" y="48" width="9.5" height="9.5" rx="2" />
+      <rect className="fill-brand-accent" x="75.5" y="48" width="9.5" height="9.5" rx="2" />
+      <rect className="fill-card" x="35" y="61.5" width="9.5" height="9.5" rx="2" />
+      <rect className="fill-card" x="48.5" y="61.5" width="9.5" height="9.5" rx="2" />
+      <rect className="fill-card" x="62" y="61.5" width="9.5" height="9.5" rx="2" />
+      <rect className="fill-brand-accent" x="75.5" y="61.5" width="9.5" height="9.5" rx="2" />
+      <rect className="fill-card" x="35" y="75" width="9.5" height="9.5" rx="2" />
+      <rect className="fill-card" x="48.5" y="75" width="9.5" height="9.5" rx="2" />
+      <rect className="fill-card" x="62" y="75" width="9.5" height="9.5" rx="2" />
+      <rect className="fill-brand-accent" x="75.5" y="75" width="9.5" height="23" rx="2" />
+      <rect className="fill-card" x="35" y="88.5" width="9.5" height="9.5" rx="2" />
+      <rect className="fill-card" x="48.5" y="88.5" width="9.5" height="9.5" rx="2" />
+      <rect className="fill-card" x="62" y="88.5" width="9.5" height="9.5" rx="2" />
+    </>
+  ),
 };
 
 export function SpotIllustration({ name, className }: { name: IllustrationName; className?: string }) {
