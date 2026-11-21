@@ -215,6 +215,18 @@ Monkeyの人格は「前回起票した領域を避ける」ような賢さは�
 | ④ 再検証 | `scripts/issue-verify.sh`(統合後の`main`で`issue-<n>`を名前に含むテストを実行 → `agent:verified`かreopen) | issue-agentの最後に自動。手でも可 |
 | ⑤ 継続 | `scripts/quality-night.sh`(seed付きMonkey → 人格型Monkey → トリアージ → 修正) | `QUALITY_UNTIL=06:00 scripts/quality-night.sh` |
 
+スクリプトはMakefileからも呼べる(`make help`)。引数は環境変数で渡す。
+
+```bash
+make services-up                                   # Supabase + pnpm dev
+make monkey MONKEY_UNTIL=23:00 MONKEY_PARALLEL=3   # 人格型Monkey(Claude Codeが学習者として操作し、再現したものを起票。3人格まで同時)
+make monkey-scripted                               # seed付きMonkey(所見が出たseedだけClaudeが再現・起票)
+make triage                                        # needs-triageを再現して振り分け(ISSUE=<n> で1件)
+make issue-loop ISSUE_UNTIL=06:00                  # ready-for-agentをworktreeで実装 → レビュー → mainへ統合 → push
+make quality-night QUALITY_UNTIL=06:00             # 上の3つを順に(夜間)
+make issue-status                                  # 処理中のIssueと残っているworktree
+```
+
 - ログは`logs/`(gitignore): `logs/monkey/<日時>-<人格>/`(history.md、step-NN.mjs、shots/、oracle.jsonl、trace)、`logs/monkey-scripted/<seed>.log`、`logs/triage/<n>/`、`logs/issue-agent/<n>/`。
 - 人格型Monkeyは`MONKEY_PARALLEL=3`で3人格まで同時に走らせられる(人格ごとに別ブラウザ。同じ人格は同時に走らない。起票直前の重複確認を人格側にも求めている)。
 - issue-loopは`ISSUE_PARALLEL=3`で3件まで同時に処理できる(2026-11-08)。ロックはIssueごと、関門のE2Eはワーカーごとのポート(3100 + 枠番号)、

@@ -2,7 +2,7 @@
 # 実体はpackage.jsonのscriptsとscripts/*.sh。引数は環境変数で渡す(例: make monkey MONKEY_UNTIL=22:00)。
 .DEFAULT_GOAL := help
 .PHONY: help install hooks setup env-local dev db-start db-stop db-reset services-up services-down services-status \
-        content lint typecheck test test-watch e2e check build start docker-build icons illustrations \
+        content lint typecheck test test-watch e2e check build start docker-build icons illustrations readme-demo \
         monkey monkey-stop monkey-scripted triage issue issue-loop issue-stop issue-status issue-verify quality-night labels
 
 ##@ セットアップ
@@ -13,9 +13,9 @@ install: ## 依存をインストールする(lockfile固定)
 hooks: ## push前にlint・型・テストを走らせるgit hookを有効にする(ADR 0005)
 	git config core.hooksPath .githooks
 
-setup: install hooks ## 初回セットアップ(install + hooks)。Supabaseのキーは`make db-start`の出力を .env.localに書く
+setup: install hooks ## 初回セットアップ(install + hooks)。続けて`make db-start`と`make env-local`
 
-env-local: ## 起動中のローカルSupabaseから .env.localを作る(worktree用。既にあれば何もしない)
+env-local: ## 起動中のローカルSupabaseから .env.localを作る(初回とworktree用。既にあれば何もしない)
 	scripts/env-local.sh
 
 ##@ 開発
@@ -23,7 +23,7 @@ env-local: ## 起動中のローカルSupabaseから .env.localを作る(worktre
 dev: ## Veliteの監視 + Next.js開発サーバー(http://localhost:3000)
 	pnpm dev
 
-db-start: ## Supabaseローカルスタックを起動する(Docker。キーを .env.localに書く)
+db-start: ## Supabaseローカルスタックを起動する(Docker。.env.localは`make env-local`で作る)
 	pnpm db:start
 
 db-stop: ## Supabaseローカルスタックを停止する
@@ -85,6 +85,9 @@ icons: ## src/app/icon.svgからfavicon.ico、apple-icon.png、OG画像を書き
 
 illustrations: ## イラスト一覧を全テーマのライト・ダークで撮ってlogs/illustrations/に置く(開発サーバーが要る。絵を足したら回す)
 	node scripts/illustration-sheet.mjs
+
+readme-demo: ## READMEの冒頭のGIFを撮り直してdocs/images/ide-demo.gifに置く(開発サーバーとffmpegが要る。会計IDEの見た目を変えたら回す)
+	node scripts/readme-demo.mjs
 
 ##@ 品質改善ループ(docs/quality-loop.md)
 

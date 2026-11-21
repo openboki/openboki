@@ -1,7 +1,7 @@
 # Open簿記
 
 会計を基礎から専門領域まで、原理・概念・構造の理解を軸に体系的に学べるWebサービス。学習体験はCodecademyのlearn-by-doingを踏襲する。
-ビジョンは`docs/vision.md`、ロードマップは`docs/roadmap.md`、要件は`docs/requirements.md`、学習体験(会計IDE)は`docs/ide-design.md`、デザインシステムとテーマは`docs/design-system.md`、コンテンツ構造は`docs/content-model.md`、構成は`docs/architecture.md`、設計判断の理由は`docs/decisions/`、開発プロセスと現在のフェーズは`README.md`を見る。
+ビジョンは`docs/vision.md`、ロードマップは`docs/roadmap.md`、要件は`docs/requirements.md`、学習体験(会計IDE)は`docs/ide-design.md`、デザインシステムとテーマは`docs/design-system.md`、コンテンツ構造は`docs/content-model.md`、構成は`docs/architecture.md`、設計判断の理由は`docs/decisions/`、開発の進め方は`docs/development-process.md`を見る。
 
 ## 現在のフェーズ
 ロードマップM1(学習ループの検証。docs/roadmap.md)。スタックはNext.js 16 + Supabase(ADR 0003)。ホスティングはVPS 1台 + Coolify(ADR 0006)で、公開は`production`ブランチから行う(mainへの統合だけでは公開されない)。アクセス解析はADR 0011。mainは直線の履歴で1コミット = 1 Issue、統合はPRのsquashだけ(ADR 0012)。Dockerで動くstandalone出力を維持し、特定ホストの固有機能に依存しない。
