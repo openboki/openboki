@@ -31,6 +31,10 @@ describe("help topics", () => {
     expect(ids).toEqual(["journal", "impact", "sandbox"]);
   });
 
+  it("説明だけのobserveでは、ガイドの読み方とステップの進め方が出る(Issue #449)", () => {
+    expect(currentTopics({ ...base, taskType: "observe" }).map((t) => t.id)).toEqual(["guide", "steps"]);
+  });
+
   it("「答えを見る」は、それが出る課題の説明にだけ書く(Issue #113)", () => {
     const hintBody = (taskType: "post" | "calc" | "classify" | "predict" | "tweak") => topicBody(helpTopic("hint"), { ...base, hasHint: true, taskType });
     for (const taskType of ["post", "calc", "classify"] as const) expect(hintBody(taskType)).toContain("答えを見る");
@@ -90,8 +94,8 @@ describe("first-time topics", () => {
 describe("scenario.viewごとの自由に試す", () => {
   const last = { ...base, taskType: "observe", isLast: true } as const;
 
-  it("view: noneでは記帳の場が無いので、自由に試すも初出の案内も出さない", () => {
-    expect(currentTopics({ ...last, view: "none" })).toEqual([]);
+  it("view: noneでは記帳の場が無いので、自由に試すも初出の案内も出さず、説明だけのステップと同じに扱う", () => {
+    expect(currentTopics({ ...last, view: "none" }).map((t) => t.id)).toEqual(["guide", "steps"]);
     expect(firstTimeTopic({ ...last, view: "none" })).toBeNull();
   });
 
