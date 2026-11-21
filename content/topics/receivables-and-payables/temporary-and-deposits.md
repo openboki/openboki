@@ -75,6 +75,9 @@ wrong_patterns:
   - match: { debit: [{ account: salaries_expense, amount: 100000 }], credit: [{ account: bank_deposit, amount: 100000 }] }
     misconception: withholding_ignored
     feedback: 振り込んだのは差し引いた後の97,000円です。差し引いた3,000円は店のお金ではなく、スタッフの代わりに納めるまで預かっている義務(負債)なので、預り金として右に書きます。
+  - match: { debit: [{ account: salaries_expense, amount: 100000 }], credit: [{ account: cash, amount: 100000 }] }
+    misconception: withholding_ignored
+    feedback: 手取りは普通預金から振り込みました。振り込んだのは差し引いた後の97,000円です。差し引いた3,000円は店のお金ではなく、スタッフの代わりに納めるまで預かっている義務(負債)なので、預り金として右に書きます。
   - match: { debit: [{ account: deposits_received }] }
     misconception: deposit_received_is_asset
     feedback: 預かった3,000円は店のものではなく、後で納める義務(負債)です。負債が増えるときは右に書きます。
@@ -221,6 +224,9 @@ wrong_patterns:
   - match: { debit: [{ account: travel_expense, amount: 20000 }] }
     misconception: settlement_full_amount_is_expense
     feedback: 費用になるのは実際に使った18,000円だけです。残りの2,000円は現金として戻ります。
+  - match: { swapped: true }
+    misconception: outflow_on_debit
+    feedback: 増えるのは旅費交通費(費用)と戻ってきた現金なので左、消す仮払金は右です。
   - match: { debit: [{ account: suspense_payment }] }
     feedback: 仮払金は精算で役目を終えます。右に書いて消します。
   - match: { unbalanced: true }
