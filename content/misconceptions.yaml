@@ -36,6 +36,12 @@ misconceptions:
     correct: 負債は「将来支払う義務」で貸借対照表に残る。費用は「純資産を減らす原因」で損益計算書に載り、その期で消える
     concepts: [expense, liability]
     remediation: bookkeeping-basics/five-elements
+  - id: expense_as_asset
+    name: 費用と資産の混同
+    description: お金を払って手に入れたものはどれも財産だと考えて、家賃のように使えば消える支払いまで備品と同じ資産として書いてしまう
+    correct: 資産は払ったあとも財産として残るもの。家賃や給料は払った時点で消えてしまうので、純資産を減らす原因である費用として書く。「あとに残るか」で見分ける
+    concepts: [expense, asset, five_elements]
+    remediation: bookkeeping-basics/five-elements
   - id: capital_loan_confused
     name: 元手と借入金の混同
     description: お店に入ったお金はどれも同じだと考えて、自分が出した元手を借入金と書いたり、銀行から借りたお金を資本金と書いたりしてしまう

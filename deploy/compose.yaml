@@ -1,0 +1,122 @@
+# 本番のSupabase(ADR 0006)とUmami(ADR 0011)。SupabaseはPostgres、GoTrue、PostgREST、Kongの4サービスだけを動かす。
+# 値は.env(雛形は.env.example)から読む。作り方と確かめ方はREADME.md。
+name: openboki-supabase
+
+services:
+  db:
+    # pg_cronを同梱したSupabaseのPostgres。ローカル(supabase start)と同じ版にそろえる
+    image: public.ecr.aws/supabase/postgres:17.11.0.011
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      # イメージが初回に作る暗号鍵。消えるとデータを残したまま起動できなくなる
+      - db-config:/etc/postgresql-custom
+      - ./roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:ro
+    ports:
+      # マイグレーション用。VPSの外からはSSHトンネルで入る
+      - 127.0.0.1:${POSTGRES_PORT:-5432}:5432
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  auth:
+    image: public.ecr.aws/supabase/gotrue:v2.197.0
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: 9999
+      API_EXTERNAL_URL: ${API_EXTERNAL_URL:?}
+      GOTRUE_SITE_URL: ${SITE_URL:?}
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD}@db:5432/postgres
+      GOTRUE_JWT_SECRET: ${JWT_SECRET:?}
+      GOTRUE_JWT_EXP: 3600
+      GOTRUE_JWT_AUD: authenticated
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+      GOTRUE_JWT_ADMIN_ROLES: service_role
+      GOTRUE_EXTERNAL_ANONYMOUS_USERS_ENABLED: "true"
+      # メールでの登録は開いていない(SMTPも置いていない)
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: "false"
+      # 匿名サインインは1時間にIPアドレスあたり1000回まで(1つのIPを共有する教室や社内で止めないため緩くしている)。IPアドレスはKongが付けるX-Real-IPで数える
+      GOTRUE_RATE_LIMIT_HEADER: X-Real-IP
+      GOTRUE_RATE_LIMIT_ANONYMOUS_USERS: 1000
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:9999/health"]
+      interval: 10s
+      timeout: 2s
+      retries: 5
+
+  rest:
+    image: public.ecr.aws/supabase/postgrest:v16.5
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD}@db:5432/postgres
+      PGRST_DB_SCHEMAS: public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_DB_MAX_ROWS: 1000
+      PGRST_JWT_SECRET: ${JWT_SECRET}
+
+  kong:
+    image: public.ecr.aws/supabase/kong:2.8.1
+    restart: unless-stopped
+    depends_on:
+      auth:
+        condition: service_healthy
+      rest:
+        condition: service_started
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /home/kong/kong.yml
+      KONG_PLUGINS: cors
+      KONG_DNS_ORDER: LAST,A,CNAME
+      KONG_NGINX_WORKER_PROCESSES: 1
+      # 手前のプロキシ(CoolifyのTraefik)が付けたX-Forwarded-Forから訪問者のIPアドレスを取り、X-Real-IPでGoTrueへ渡す。
+      # Kongは外へ直接出さないので、信頼する送信元はDockerの内部アドレスだけでよい
+      KONG_TRUSTED_IPS: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+      KONG_REAL_IP_HEADER: X-Forwarded-For
+      KONG_REAL_IP_RECURSIVE: "on"
+    volumes:
+      - ./kong.yml:/home/kong/kong.yml:ro
+    ports:
+      - 127.0.0.1:${KONG_PORT:-8100}:8000
+    healthcheck:
+      test: ["CMD", "kong", "health"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  umami:
+    # アクセス解析(ADR 0011)。データは同じPostgresのumamiデータベースに置く
+    image: ghcr.io/umami-software/umami:3.5.0
+    restart: unless-stopped
+    init: true
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://umami:${POSTGRES_PASSWORD}@db:5432/umami
+      APP_SECRET: ${UMAMI_APP_SECRET:?}
+      # 利用統計の送信と更新の確認で外へ通信させない
+      DISABLE_TELEMETRY: 1
+      DISABLE_UPDATES: 1
+    ports:
+      - 127.0.0.1:${UMAMI_PORT:-8200}:3000
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/heartbeat"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  db-data:
+  db-config:

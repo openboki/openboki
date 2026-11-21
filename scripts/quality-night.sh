@@ -6,6 +6,7 @@
 # 環境変数:
 #   QUALITY_UNTIL        全体の終了時刻(必須)
 #   QUALITY_MONKEY_SHARE Monkeyに使う時間の割合(既定0.4。残りをトリアージと修正に回す)
+#   QUALITY_PUBLISH=1    最後にproductionをmainまで進める(既定は無効。scripts/publish.sh)
 #   そのほかMONKEY_* / ISSUE_* / TRIAGE_* はそれぞれのスクリプトへ渡る
 set -u
 cd "$(dirname "$0")/.."
@@ -25,5 +26,9 @@ echo "== 2. トリアージ"
 scripts/triage-agent.sh loop
 echo "== 3. 修正"
 ISSUE_UNTIL=$(date -d "@$deadline" '+%Y-%m-%dT%H:%M') scripts/issue-loop.sh
+if [ "${QUALITY_PUBLISH:-0}" = 1 ]; then
+  echo "== 4. 公開"
+  scripts/publish.sh || echo "productionは進めませんでした"
+fi
 echo "== 終了。状況: scripts/issue-agent.sh status"
 scripts/issue-agent.sh status

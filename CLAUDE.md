@@ -14,6 +14,7 @@ Next.jsのAPIは学習データと異なる可能性があるので、書く前�
 - `make content`(コンテンツ検査。`.velite/`に型付きJSONを出す)/ `make typecheck` / `make lint` / `make test` / `make e2e`(E2E。コンテンツを変えたら必ずローカルで回す。CIでは回さない)
 - `make db-start` / `make db-stop` / `make db-reset`(Supabaseローカルスタック。Dockerが要る。キーは`.env.local`に)
 - `make env-local`(worktreeに`.env.local`が無いとき、起動中のローカルSupabaseの公開値から作る。メインの`.env.local`は読み取り禁止なのでコピーしない)
+- `make publish`(`production`をmainまで進めて公開を始める。E2E全件の関門を通ったときだけpushする。手順と巻き戻しはdocs/deployment.md)
 - `make check`(lint / 型 / テスト / ビルド / E2Eを一括。E2Eは3100番で本番ビルド、範囲はmainとの差分で決まる。`CHECK_E2E=full`で全件、`CHECK_E2E=0`でE2Eを省く。ADR 0005)
 - 品質改善ループ(docs/quality-loop.md): `make services-up` → `make monkey MONKEY_UNTIL=…`(人格型Monkey)/ `make monkey-scripted`(seed付きMonkey)→ `make triage` → `make issue-loop ISSUE_UNTIL=…`(worktreeで実装・レビュー・mainへ統合)。夜間は`make quality-night QUALITY_UNTIL=06:00`。状況は`make issue-status`
 - 開発中の実行時エラーはNext.jsのMCP(`.mcp.json`のnext-devtools)で読める
@@ -24,6 +25,7 @@ Next.jsのAPIは学習データと異なる可能性があるので、書く前�
 - `src/components/ide/`: 会計IDE(`ide-shell.tsx`が状態とステップ進行、各ペインは別ファイル。`tutorial-tour.tsx`が操作ツアー、`help-dialog.tsx`が「使い方」、`help-icon.tsx`が機能横の「?」。文言は`src/lib/help-topics.ts`が正本。docs/help-design.md)
 - 品質確認はローカルが正(ADR 0005)。`git config core.hooksPath .githooks`でpush前にlint・型・テストが走る。GitHub Actionsは最小の1ジョブだけ
 - `src/lib/progress.ts`: 匿名サインインと回答・進捗の保存。`supabase/migrations/`: スキーマとRLS
+- `deploy/`: 本番のSupabase(Postgres、GoTrue、PostgREST、Kong。ADR 0006)とUmami(ADR 0011)のcompose。秘密の値の作り方とローカルでの確かめ方は`deploy/README.md`
 - `scripts/`: 無人ループ(`monkey-loop.sh` / `triage-agent.sh` / `issue-agent.sh` / `issue-loop.sh` / `issue-verify.sh` / `full-check.sh` / `quality-night.sh`)、`scripts/monkey/session.mjs`(Monkeyのオラクル)、`scripts/issue-agent/`(プロンプトとスキーマ、PreToolUseのguard)。`.claude/skills/monkey-test/`: 人格と手順。`e2e/repro/`: Issueの回帰テスト(`issue-<n>.spec.ts`)。`logs/`はgitignore
 - `src/app/map/`: 概念マップ(`concept-map.tsx`が一覧・図・説明の3ペイン、`graph-canvas.tsx`がforce-graphで図を描く)。線の組み立ては`src/lib/concept-graph.ts`
 - `src/components/illustrations/`: 物語のスポットイラスト(自作のSVG。名前の一覧は`src/lib/illustrations.ts`、絵柄の決まりはdocs/visual-guidelines.md 6章)。絵を足すときは`.claude/skills/spot-illustration/`の手順に従い、`make illustrations`の見本(`/illustrations`を全テーマで撮る)で既存の絵と見比べる

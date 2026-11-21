@@ -201,6 +201,7 @@ wrong_patterns:
     misconception: expense_as_liability
     feedback: 借入金は銀行に返す義務です。家賃は使ってしまったお金なので、支払家賃という費用になります。
   - match: { debit: [{ account: equipment }] }
+    misconception: expense_as_asset
     feedback: 家賃は払ったら消えてしまい、マシンのように財産としては残りません。支払家賃を使います。
   - match: { debit: [{ account: capital_stock }] }
     misconception: payment_reduces_capital
