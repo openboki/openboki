@@ -5,7 +5,7 @@ import fs from "node:fs";
 test("損益計算書は常に見えているので、本文は「開いて」と言わない", async () => {
   const src = fs.readFileSync(process.cwd() + "/.velite/units.json", "utf8");
   expect(src).not.toContain("「損益計算書」を開いて");
-  expect(src).toContain("結果の「損益計算書」を見てみましょう");
+  expect(src).toContain("結果の損益計算書を読んでみましょう");
 });
 
 // 開閉のUIが付いたら、本文の言い方を見直す合図になる。当期純利益の用語ポップオーバー(button.term)は開閉ではないので数えない

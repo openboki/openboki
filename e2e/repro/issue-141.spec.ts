@@ -90,7 +90,7 @@ test("クリックで固定した用語から別の用語へマウスを移す�
 
   await page.getByRole("region", { name: "ガイド" }).locator("button.term", { hasText: /^仕訳$/ }).first().click();
   await expect(popover(page)).toHaveAttribute("aria-label", "仕訳");
-  await page.getByRole("region", { name: "結果" }).locator("button.term").first().hover();
+  await page.getByRole("region", { name: "結果" }).locator("button.term", { hasText: /^現金$/ }).first().hover();
   await expect(page.locator('[data-slot=popover-content][aria-label="現金"]')).toBeVisible();
   await page.waitForTimeout(800);
   await expect(page.locator('[data-slot=popover-content][aria-label="現金"]')).toBeVisible();
