@@ -112,6 +112,9 @@ wrong_patterns:
   - match: { credit: [{ account: gain_on_sale_of_fixed_assets }] }
     misconception: sale_gain_loss_confused
     feedback: 帳簿価額900,000の軽バンが850,000にしかなりませんでした。帳簿価額より安く売れたので、売却益ではなく固定資産売却損を左に書きます。
+  - match: { debit: [{ account: gain_on_sale_of_fixed_assets }] }
+    misconception: sale_gain_loss_confused
+    feedback: 差を左に書くところは合っています。帳簿価額900,000の軽バンが850,000にしかならなかったので、この差はもうけではなく損です。左に書く科目は固定資産売却益ではなく固定資産売却損にしましょう。
   - match: { credit: [{ account: accumulated_depreciation_vehicle }] }
     misconception: contra_always_credit
     feedback: 累計額を右に書くと、さらに積み増すことになります。売るときは積んできた300,000を消すので、反対側の左に書きます。
@@ -245,6 +248,9 @@ wrong_patterns:
   - match: { debit: [{ account: loss_on_sale_of_fixed_assets }] }
     misconception: sale_gain_loss_confused
     feedback: 帳簿価額450,000のマシンが480,000で売れました。帳簿価額より高く売れたので、売却損ではなく固定資産売却益を右に書きます。
+  - match: { credit: [{ account: loss_on_sale_of_fixed_assets }] }
+    misconception: sale_gain_loss_confused
+    feedback: 差を右に書くところは合っています。帳簿価額450,000のマシンが480,000で売れたので、この差は損ではなくもうけです。右に書く科目は固定資産売却損ではなく固定資産売却益にしましょう。
   - match: { debit: [{ account: accumulated_depreciation_vehicle }] }
     misconception: accumulated_depreciation_any_asset
     feedback: 車両運搬具減価償却累計額は、軽バンの価値の減りを積んでいた科目です。マシンを売るときに消すのは備品減価償却累計額です。
