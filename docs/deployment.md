@@ -1,6 +1,6 @@
 # 公開の手順
 
-mainに統合しただけでは公開されない。`production`ブランチを進めると、GitHub Actionsがイメージを作り、承認のあとVPSでデプロイが始まる(ADR 0006、ADR 0012)。VPSとCoolifyの初期設定は別に書く(Issue #355)。本番のSupabaseとUmamiは`deploy/README.md`。
+mainに統合しただけでは公開されない。`production`ブランチを進めると、GitHub Actionsがイメージを作り、承認のあとVPSでデプロイが始まる(ADR 0006、ADR 0012)。VPSとCoolifyの初期設定は`docs/vps-setup.md`。本番のSupabaseとUmamiは`deploy/README.md`。
 
 ## 公開する
 

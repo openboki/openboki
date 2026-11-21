@@ -1,0 +1,16 @@
+name: Uptime
+
+# VPSの外からの死活監視(docs/vps-setup.md 6章)。落ちていればこのワークフローが失敗し、GitHubから通知が来る。
+# 公開するまでは動かさない。リポジトリのVariableにUPTIME_CHECK=1を置くと有効になる
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+jobs:
+  check:
+    if: vars.UPTIME_CHECK == '1'
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -fsS --retry 2 --max-time 20 -o /dev/null https://openboki.org
+      - run: curl -fsS --retry 2 --max-time 20 -o /dev/null https://api.openboki.org/auth/v1/health
