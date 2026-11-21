@@ -744,6 +744,12 @@ misconceptions:
     correct: 人名勘定の左右は、相手がこちらに負うか(左)、こちらが相手に負うか(右)で決まる。相手から受け取ると相手の負いが減るので右、相手に払うとこちらの負いが減るので左。物を売って渡しても、相手が負うので左
     concepts: [personal_account, debit_credit]
     remediation: birth-of-double-entry/memorandum-and-personal-accounts
+  - id: personal_account_reduction_on_its_side
+    name: 減らす行を、減る負いの見出しの側に書く
+    description: 「受け取った」を見出しの字面に合わせて「彼がこちらに負う」の左に、「払った」を「こちらが彼に負う」の右に書いている。見出しを、その行で減る負いの名前として読んでいる
+    correct: 見出しは、その側の負いが増える行の名前。受け取ると彼の負いが減るので左ではなく反対の右に、払うとこちらの負いが減るので右ではなく反対の左に書く。減らす行を反対側に置くから、左右の合計の差が残高になる
+    concepts: [personal_account, debit_credit]
+    remediation: birth-of-double-entry/memorandum-and-personal-accounts
   - id: personal_account_wrong_party
     name: 人名勘定の相手を取り違える
     description: 取引の相手ではない人の人名勘定に書いている
