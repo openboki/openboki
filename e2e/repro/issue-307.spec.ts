@@ -31,12 +31,13 @@ test.describe("390px", () => {
   });
 });
 
-// フッターは2段(上段に外部への2本、下段にサイト内の2本)
+// フッターは2段(上段に外部への2本、下段にサイト内の3本)
 test("1280pxではフッターのリンクが段ごとに1行に並ぶ", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/");
   const boxes = await footerLinkBoxes(page);
-  expect(boxes.length).toBe(4);
+  expect(boxes.length).toBe(5);
   expect(Math.abs(boxes[1].cy - boxes[0].cy)).toBeLessThan(1);
   expect(Math.abs(boxes[3].cy - boxes[2].cy)).toBeLessThan(1);
+  expect(Math.abs(boxes[4].cy - boxes[2].cy)).toBeLessThan(1);
 });

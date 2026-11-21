@@ -6,18 +6,18 @@ import { pageMetadata } from "@/lib/site";
 export const metadata: Metadata = pageMetadata({
   path: "/illustrations",
   title: "イラスト一覧",
-  description: "単元の物語に添えるスポットイラストの一覧。絵柄をそろえるための見本です。",
+  description: "単元の物語に添えるスポットイラストの一覧。",
   noindex: true,
 });
 
 // 絵柄をそろえるための見本(docs/visual-guidelines.md 6章)。新しい絵は既存の絵とここで並べて確かめる。
-// 学習の導線からはリンクしない
+// 入口はフッターだけで、検索には出さない
 export default function IllustrationsPage() {
   return (
     <article className="mx-auto max-w-3xl px-4 py-8 space-y-6">
       <div className="space-y-2">
         <h1 className="text-2xl font-bold">イラスト一覧</h1>
-        <p className="text-muted-foreground">単元の物語に添えるスポットイラストです。左がガイドに出る大きさ(76px)、右が拡大です。</p>
+        <p className="text-muted-foreground">単元の物語に出てくる店や道具の絵です。どれもコードで描いていて、テーマを切り替えると色が変わります。左が単元の見出しに出る大きさ、右が拡大です。</p>
       </div>
       <ul className="grid gap-3 sm:grid-cols-2">
         {ILLUSTRATION_NAMES.map((name) => (
