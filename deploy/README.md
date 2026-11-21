@@ -41,10 +41,10 @@ pg_dump "postgresql://postgres:<POSTGRES_PASSWORD>@127.0.0.1:5432/postgres?sslmo
 pnpm supabase db push --db-url "postgresql://postgres:<POSTGRES_PASSWORD>@127.0.0.1:5432/postgres?sslmode=disable"
 ```
 
-テーブルや列を変えたあとは、PostgRESTにスキーマを読み直させる。
+テーブルや列を変えたあとは、PostgRESTにスキーマを読み直させる。`docker kill -s SIGUSR1`でも読み直すが、使わない。シグナルを送ったコンテナは、Dockerやサーバーの再起動のあと自動で起動しなくなる。
 
 ```sh
-docker compose -f deploy/compose.yaml --env-file deploy/.env kill -s SIGUSR1 rest
+psql "postgresql://postgres:<POSTGRES_PASSWORD>@127.0.0.1:5432/postgres?sslmode=disable" -c "notify pgrst, 'reload schema'"
 ```
 
 ## Umami

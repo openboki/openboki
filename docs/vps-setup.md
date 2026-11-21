@@ -2,22 +2,21 @@
 
 さくらのVPS 1台にCoolifyを入れ、Next.js、Supabase、Umamiを動かすまでの手順(ADR 0006)。日々の公開と巻き戻しは`docs/deployment.md`、composeの中身と秘密の値の作り方は`deploy/README.md`。
 
-この手順は実機で通していない。CoolifyのAPIは4.7.6の公式ドキュメントとOpenAPIの定義から書いた。初回の公開(Issue #75)で通し、違っていた箇所をここに直す。確かめる点は末尾にまとめた。
+手順のうちCoolifyに関わる部分は、手元の仮想マシン(Ubuntu 24.04、4GB、Coolify 4.7.6)で通して確かめた(2026-11-21)。さくらのVPSに固有の部分とTLSの発行は確かめていない。初回の公開(Issue #75)で確かめる点は末尾にまとめた。
 
 ## Web画面で行うこと
 
-コマンドにできなかった操作は次の4つ。
+コマンドにできなかった操作は次の3つ。Coolifyの設定はすべてコマンドで行い、管理画面は使わない。
 
 1. さくらのVPSの契約と、スタートアップスクリプトの登録
 2. さくらのパケットフィルターの設定
 3. DNSのレコード
-4. CoolifyのAPIの有効化とトークンの発行(Coolifyに、画面を使わずに行う方法が無い)
 
 ## 1. VPSを契約する
 
 OSはUbuntu 24.04にする(Coolifyのインストーラーが対応を明記している最新のLTS)。
 
-コントロールパネルの「スタートアップスクリプト」に`deploy/vps-startup.sh`を登録し、パラメーターに`ADMIN_SSH_PUBKEY`、`DEPLOY_SSH_PUBKEY`、`COOLIFY_EMAIL`の3つを登録する。OSのインストールでこのスクリプトを選び、値を入れる。
+コントロールパネルの「スタートアップスクリプト」に`deploy/vps-startup.sh`を登録し、パラメーターに`ADMIN_SSH_PUBKEY`、`DEPLOY_SSH_PUBKEY`、`COOLIFY_EMAIL`の3つを登録する。OSのインストールでこのスクリプトを選び、値を入れる。`COOLIFY_EMAIL`は実際にメールを受け取れるアドレスにする。Coolifyがドメインのメール用のDNSを確かめ、通らないと管理者を作らない。
 
 デプロイ用の鍵は、手元で先に作っておく。秘密鍵はGitHubのSecret `DEPLOY_SSH_KEY`に置く。
 
@@ -27,7 +26,7 @@ ssh-keygen -t ed25519 -N '' -C openboki-deploy -f ./deploy-key
 
 スクリプトは次を行う。ログは`/root/.sakuravps/startup.log`に出る。
 
-- unattended-upgradesを入れ、SSHを鍵だけにする。
+- unattended-upgradesを入れ、SSHを鍵だけにする。rootも鍵でなら入れるままにする(Coolifyがホストの操作に使う)。
 - Coolifyを入れる。本体の自動更新は止める。管理者のパスワードは`/root/coolify-admin.txt`に書く。
 - Coolifyの管理画面のポート(8000、6001、6002)を`127.0.0.1`だけで待ち受けるようにする。
 - `deploy`ユーザーを作り、デプロイ用の鍵で実行できるコマンドを`/usr/local/bin/openboki-deploy`の1つに固定する。
@@ -38,29 +37,39 @@ ssh-keygen -t ed25519 -N '' -C openboki-deploy -f ./deploy-key
 
 DNSは、`openboki.org`、`api.openboki.org`、`stats.openboki.org`のAレコードをVPSに向ける。
 
-## 3. Coolifyに入り、APIを開ける
+## 3. CoolifyのAPIを開ける
 
-管理画面は外に出していないので、SSHトンネルで入る。
+APIは既定で無効で、有効にする操作とトークンの発行は管理画面にしか無い。同じことをCoolifyのコンテナの中から行う。公式の手順ではないので、Coolifyを上げたあとに作り直すときは、通るかを先に確かめる。
 
 ```sh
-ssh -N -L 8000:127.0.0.1:8000 -L 6001:127.0.0.1:6001 -L 6002:127.0.0.1:6002 ubuntu@<VPS>
-ssh ubuntu@<VPS> sudo cat /root/coolify-admin.txt
+ssh ubuntu@<VPS>
+sudo docker exec coolify php artisan tinker --execute='
+\App\Models\InstanceSettings::find(0)->update(["is_api_enabled" => true]);
+$user = \App\Models\User::find(0);
+session(["currentTeam" => $user->teams()->first()]);
+foreach (["setup" => ["root"], "deploy" => ["write", "deploy"]] as $name => $abilities) {
+  $token = $user->createToken($name, $abilities);
+  \DB::table("personal_access_tokens")->where("id", $token->accessToken->id)->update(["team_id" => "0"]);
+  echo $name . ": " . $token->plainTextToken . PHP_EOL;
+}'
 ```
 
-`http://localhost:8000`を開き、`COOLIFY_EMAIL`とそのパスワードでログインする。
-
-1. パスワードを変え、`sudo rm /root/coolify-admin.txt`で消す。
-2. 「Settings > Advanced > API and MCP」でAPI accessをEnabledにする。
-3. 「Keys & Tokens > API Tokens」でトークンを2つ作る。設定用は`root`権限で期限7日。デプロイ用は`write`と`deploy`で期限なし。
+`setup`は以降の設定に使い、終わったら消す(8章)。`deploy`はデプロイ用のコマンドに渡す。
 
 以降はVPSの上で打つ。
 
 ```sh
 C=http://127.0.0.1:8000/api/v1
-T=<設定用のトークン>
+T='<setupのトークン>'
 api() { curl -fsS -H "Authorization: Bearer $T" -H 'Content-Type: application/json' "$@"; }
 SERVER=$(api "$C/servers" | jq -r '.[0].uuid')
 PROJECT=$(api -X POST "$C/projects" -d '{"name":"openboki"}' | jq -r .uuid)
+```
+
+管理画面を見たいときは、SSHトンネルで入る。パスワードは`/root/coolify-admin.txt`にある。控えたらファイルを消す。
+
+```sh
+ssh -N -L 8000:127.0.0.1:8000 -L 6001:127.0.0.1:6001 -L 6002:127.0.0.1:6002 ubuntu@<VPS>
 ```
 
 ## 4. SupabaseとUmamiを登録する
@@ -80,10 +89,11 @@ BACKEND=$(api -X POST "$C/applications/public" -d '{
 }' | jq -r .uuid)
 ```
 
-秘密の値を作って渡す(`deploy/README.md`)。値は控えておく。
+秘密の値を作って渡す(`deploy/README.md`)。値は控えておく。環境変数はCoolifyがcomposeから読み取って空で作るので、それを待ってから`PATCH`で埋める。
 
 ```sh
-env_set() { api -X POST "$C/applications/$BACKEND/envs" -d '{"key":"'$1'","value":"'$2'","is_literal":true}' > /dev/null; }
+until api "$C/applications/$BACKEND/envs" | jq -e 'any(.key == "JWT_SECRET")' > /dev/null; do sleep 2; done
+env_set() { api -X PATCH "$C/applications/$BACKEND/envs" -d '{"key":"'$1'","value":"'$2'","is_literal":true}' > /dev/null; }
 POSTGRES_PASSWORD=$(openssl rand -hex 24); JWT_SECRET=$(openssl rand -hex 32)
 env_set POSTGRES_PASSWORD "$POSTGRES_PASSWORD"
 env_set JWT_SECRET "$JWT_SECRET"
@@ -111,10 +121,10 @@ WEB=$(api -X POST "$C/applications/dockerimage" -d '{
 api -X POST "$C/deploy?uuid=$WEB"
 ```
 
-デプロイ用のコマンドに、トークンとアプリのUUIDを渡す。
+デプロイ用のコマンドに、トークンとアプリのUUIDを渡す。トークンは`|`を含むので、値を引用符で囲む。
 
 ```sh
-printf 'COOLIFY_TOKEN=%s\nWEB_APP_UUID=%s\n' '<デプロイ用のトークン>' "$WEB" | sudo tee /etc/openboki/deploy.env > /dev/null
+printf "COOLIFY_TOKEN='%s'\nWEB_APP_UUID='%s'\n" '<deployのトークン>' "$WEB" | sudo tee /etc/openboki/deploy.env > /dev/null
 ```
 
 GitHubの`production`のEnvironmentに、`DEPLOY_HOST`、`DEPLOY_USER`(`deploy`)、`DEPLOY_KNOWN_HOSTS`、`DEPLOY_SSH_KEY`を置く。ここまでで、Actionsの`deploy`を承認すると公開まで進む。
@@ -155,15 +165,36 @@ curl -fsSL https://cdn.coollabs.io/coolify/upgrade.sh | sudo bash -s <版>
 
 SupabaseとUmamiは、`deploy/compose.yaml`のイメージの版を上げてmainへ統合し、`make publish`で`production`を進めたあと、VPSで`api -X POST "$C/deploy?uuid=$BACKEND"`を打つ。Postgresを上げる前には`pg_dump`を取る。Umamiを上げるときは、識別子の作り方と保存する項目が変わっていないかを確かめる。
 
+設定が終わったら、`setup`のトークンを消す。
+
+```sh
+sudo docker exec coolify-db psql -U coolify -c "delete from personal_access_tokens where name = 'setup'"
+```
+
 OSの更新はunattended-upgradesが当てる。再起動が要る更新が溜まっていないかを`ls /var/run/reboot-required`で見る。
+
+## 仮想マシンで確かめたこと
+
+Ubuntu 24.04(4GB、2コア)の仮想マシンにこの手順を流した。ドメインは`sslip.io`のHTTPで代用し、Next.jsのイメージは手元のレジストリから引いた。
+
+- スタートアップスクリプトが最後まで通り、管理者、プロキシ、サーバーの登録までが自動で済む。続けて3〜5章のコマンドを順に流すと、3つのサイトがプロキシ越しに応答する。
+- 外から届くのは22、80、443だけ。8000、6001、6002は`127.0.0.1`でだけ待ち受ける。プロキシは8080も開けるが、接続しても応答しない。
+- composeの`./kong.yml`と`./roles.sql`がファイルとしてマウントされ、5サービスが起動する。データのボリュームの名前はアプリのUUIDから決まり、デプロイのたびに変わるコンテナ名には引きずられない。
+- SSHトンネル越しに`supabase db push`でマイグレーション7本が通る。
+- 偽の`X-Forwarded-For`を付けても、GoTrueには接続元のIPアドレスが届く。
+- Kongの手前の回数制限が効く(400回を一度に送ると、およそ300回が通り、残りが429)。
+- デプロイ用の鍵では、SHA以外のコマンドを実行できない。SHAを渡すと、そのタグのイメージに入れ替わる。入れ替えの間、0.5秒おきの180回の応答のうち失敗は1回だった。
+- Next.jsのコンテナは、イメージの`HEALTHCHECK`で`healthy`になる。
+- 通知の設定(`PATCH /notifications/discord`)が通る。
+- 常駐メモリは、Coolify本体(約400MB)を含めて全体で約1.4GB。4GBで足りる。
+- Dockerを再起動すると、全コンテナが自動で起動する(PostgRESTにシグナルを送っていた場合を除く。`deploy/README.md`)。
 
 ## 初回の公開で確かめる点
 
-- スタートアップスクリプトが最後まで通る(`startup.log`)。Coolifyのインストーラーが、スクリプトの中から対話なしで終わる。
-- ポートを`127.0.0.1`に寄せたあとも、プロキシ(80、443)が動く。外から8000、6001、6002、8080に届かない(IPv6でも)。
-- composeの`./kong.yml`と`./roles.sql`が、ディレクトリではなくファイルとしてマウントされる。だめなら、composeのvolumesを長い書式にして`is_directory: false`を付ける。
-- composeにあるホスト側のポート(`127.0.0.1:5432`など)がCoolifyで問題にならない。
-- Kongのラベルに書いた回数制限(IPアドレスあたり1分1200回)が効き、通常の利用を止めない。
-- `PATCH /applications/<uuid>`で`docker_registry_image_tag`を変えてからデプロイすると、そのコミットのイメージに入れ替わる。入れ替えの間、サイトが止まらない。
-- KongとUmamiに訪問者のIPアドレスが届く(GoTrueのログの`remote_addr`、Umamiの地域)。
-- プロジェクトを作ると`production`の環境が付いてくる。付かなければ先に環境を作る。
+- さくらのスタートアップスクリプトとして登録したとき、パラメーターが置き換わり、初回起動で最後まで走る(`/root/.sakuravps/startup.log`)。
+- パケットフィルターを入れた状態で、外から8000、6001、6002、8080に届かない(IPv6でも)。
+- `https://`のドメインで証明書が発行される。
+- VPSがGHCRのイメージを認証なしで引ける。
+- GitHub Actionsの`deploy`ジョブから、SSHでデプロイが起動する。
+- 通知が実際に届く。
+- Umamiに訪問者の地域が出る。
