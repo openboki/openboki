@@ -14,7 +14,7 @@ Next.jsのAPIは学習データと異なる可能性があるので、書く前�
 - `make content`(コンテンツ検査。`.velite/`に型付きJSONを出す)/ `make typecheck` / `make lint` / `make test` / `make e2e`(E2E。コンテンツを変えたら必ずローカルで回す。CIでは回さない)
 - `make db-start` / `make db-stop` / `make db-reset`(Supabaseローカルスタック。Dockerが要る。キーは`.env.local`に)
 - `make env-local`(worktreeに`.env.local`が無いとき、起動中のローカルSupabaseの公開値から作る。メインの`.env.local`は読み取り禁止なのでコピーしない)
-- `make publish`(`production`をmainまで進めて公開を始める。E2E全件の関門を通ったときだけpushする。手順と巻き戻しはdocs/deployment.md)
+- `make publish`(`production`をmainまで進めて公開を始める。E2E全件の関門を通ったときだけpushする。手順と巻き戻しはdocs/deployment.md、VPSを立てる手順はdocs/vps-setup.md)
 - `make check`(lint / 型 / テスト / ビルド / E2Eを一括。E2Eは3100番で本番ビルド、範囲はmainとの差分で決まる。`CHECK_E2E=full`で全件、`CHECK_E2E=0`でE2Eを省く。ADR 0005)
 - 品質改善ループ(docs/quality-loop.md): `make services-up` → `make monkey MONKEY_UNTIL=…`(人格型Monkey)/ `make monkey-scripted`(seed付きMonkey)→ `make triage` → `make issue-loop ISSUE_UNTIL=…`(worktreeで実装・レビュー・mainへ統合)。夜間は`make quality-night QUALITY_UNTIL=06:00`。状況は`make issue-status`
 - 開発中の実行時エラーはNext.jsのMCP(`.mcp.json`のnext-devtools)で読める

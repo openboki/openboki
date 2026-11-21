@@ -87,6 +87,13 @@ services:
       KONG_REAL_IP_RECURSIVE: "on"
     volumes:
       - ./kong.yml:/home/kong/kong.yml:ro
+    labels:
+      # 手前のプロキシ(CoolifyのTraefik)で、IPアドレスあたり1分1200回までに抑える。
+      # 匿名サインイン以外(回答の書き込みなど)にはGoTrueの制限が効かないため
+      - traefik.http.middlewares.openboki-api-limit.ratelimit.average=1200
+      - traefik.http.middlewares.openboki-api-limit.ratelimit.period=1m
+      - traefik.http.middlewares.openboki-api-limit.ratelimit.burst=300
+      - coolify.traefik.middlewares=openboki-api-limit
     ports:
       - 127.0.0.1:${KONG_PORT:-8100}:8000
     healthcheck:

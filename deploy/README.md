@@ -1,6 +1,6 @@
 # 本番のSupabaseとUmami
 
-`compose.yaml`が、SupabaseのPostgres、GoTrue、PostgREST、Kongの4サービス(ADR 0006)と、アクセス解析のUmami(ADR 0011)を定義する。Coolifyにはこのファイルを読ませる。VPSとCoolifyの設定は別の手順書に書く(Issue #355)。
+`compose.yaml`が、SupabaseのPostgres、GoTrue、PostgREST、Kongの4サービス(ADR 0006)と、アクセス解析のUmami(ADR 0011)を定義する。Coolifyにはこのファイルを読ませる。VPSとCoolifyの設定は`docs/vps-setup.md`。
 
 ブラウザはKongだけに届く。Kongは`/auth/v1`をGoTrueへ、`/rest/v1`をPostgRESTへ渡す。Postgresは`127.0.0.1`でだけ待ち受ける。
 
