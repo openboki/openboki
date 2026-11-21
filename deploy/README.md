@@ -1,0 +1,82 @@
+# 本番のSupabase
+
+`compose.yaml`がPostgres、GoTrue、PostgREST、Kongの4サービスを定義する(ADR 0006)。Coolifyにはこのファイルを読ませる。VPSとCoolifyの設定は別の手順書に書く(Issue #355)。
+
+ブラウザはKongだけに届く。Kongは`/auth/v1`をGoTrueへ、`/rest/v1`をPostgRESTへ渡す。Postgresは`127.0.0.1`でだけ待ち受ける。
+
+## 秘密の値を作る
+
+`.env.example`を`.env`に写し、2つの値を埋める。`.env`はコミットしない。
+
+```sh
+cp deploy/.env.example deploy/.env
+openssl rand -hex 24   # POSTGRES_PASSWORD
+openssl rand -hex 32   # JWT_SECRET
+```
+
+anonキーは`JWT_SECRET`で署名したJWTで、Next.jsのビルドに`NEXT_PUBLIC_SUPABASE_ANON_KEY`として渡す。ブラウザに配られる値なので秘密ではない。`JWT_SECRET`を変えたら作り直してビルドし直す。
+
+```sh
+JWT_SECRET=... node deploy/anon-key.mjs
+```
+
+service_roleキーは作らない。匿名ユーザーの定期削除はpg_cronがDBの中で行うので、RLSを越えるキーを使う場面が無い。
+
+## 起動する
+
+```sh
+docker compose -f deploy/compose.yaml --env-file deploy/.env up -d
+```
+
+Postgresのロールにパスワードを付ける`roles.sql`は、データのボリュームが空の初回にだけ走る。あとから`POSTGRES_PASSWORD`を変えても反映されないので、変えるときは`alter user`を手で打つ。
+
+## マイグレーションを当てる
+
+自動デプロイには含めない(ADR 0006)。VPSの外からはSSHトンネルでPostgresのポートを手元に引き、`pg_dump`を取ってから当てる。TLSを置いていないので`sslmode=disable`が要る。
+
+```sh
+ssh -N -L 5432:127.0.0.1:5432 <VPS>
+pg_dump "postgresql://postgres:<POSTGRES_PASSWORD>@127.0.0.1:5432/postgres?sslmode=disable" > backup.sql
+pnpm supabase db push --db-url "postgresql://postgres:<POSTGRES_PASSWORD>@127.0.0.1:5432/postgres?sslmode=disable"
+```
+
+テーブルや列を変えたあとは、PostgRESTにスキーマを読み直させる。
+
+```sh
+docker compose -f deploy/compose.yaml --env-file deploy/.env kill -s SIGUSR1 rest
+```
+
+## 訪問者のIPアドレス
+
+匿名サインインは、1時間にIPアドレスあたり1000回までに制限している。学校や会社のように1つのIPアドレスを共有する場所で止めないよう、開発用(30回)より緩くした。GoTrueはKongが付ける`X-Real-IP`で数える。Kongは、Dockerの内部アドレスから来たリクエストに限って`X-Forwarded-For`を信じる。手前のプロキシ(CoolifyのTraefik)が、外から来た`X-Forwarded-For`を捨てて自分で付け直すことが前提になる。Kongのポートを外へ直接開けると、ヘッダーを偽って制限を抜けられる。
+
+## ローカルで確かめる
+
+開発用のSupabase(`make db-start`、54321〜)とぶつからないポートにする。`.env`を次のように変えて起動する。
+
+```
+API_EXTERNAL_URL=http://127.0.0.1:55321/auth/v1
+SITE_URL=http://127.0.0.1:3200
+POSTGRES_PORT=55322
+KONG_PORT=55321
+```
+
+```sh
+# マイグレーションと定期削除のジョブ
+pnpm supabase db push --db-url "postgresql://postgres:<POSTGRES_PASSWORD>@127.0.0.1:55322/postgres?sslmode=disable"
+docker compose -f deploy/compose.yaml --env-file deploy/.env exec db psql -U postgres -c "select jobname, schedule from cron.job"
+
+# Next.jsのイメージをこのSupabaseに向けて作り、3200番で動かす
+NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:55321 NEXT_PUBLIC_SUPABASE_ANON_KEY=<anonキー> \
+  make docker-build DOCKER_IMAGE=openboki:local SITE_URL=http://127.0.0.1:3200
+docker run --rm -d --name openboki-local -p 3200:3000 openboki:local
+E2E_PORT=3200 pnpm exec playwright test e2e/learning-loop.spec.ts
+
+# 片付け(-vでデータも消す)
+docker rm -f openboki-local
+docker compose -f deploy/compose.yaml --env-file deploy/.env down -v
+```
+
+## イメージの版
+
+4つのイメージは、Supabase CLI(`supabase start`)がローカルで使う版にそろえている。CLIを上げたら`docker ps`で版を見て、`compose.yaml`を同じ版に直す。
