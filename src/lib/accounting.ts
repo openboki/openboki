@@ -141,18 +141,17 @@ export function matchesAccountQuery(account: AccountInfo, query: string): boolea
 
 /**
  * 科目の候補を5要素ごとにまとめる。入力が名前・別名・読みの先頭に一致する科目を先に出す。
- * 「借」で当座借越が借入金より先に指され、Enterで入っていた(Issue #425)。一致の無いグループどうしは要素順のまま
+ * 「借」で当座借越が借入金より先に指され、Enterで入っていた(Issue #425)。
+ * 前方一致の要素グループを要素順に並べ、そのあとに部分一致の要素グループを並べるので、同じ要素が2度出ることがある。
+ * グループ単位で前に出すと、資産の部分一致(貸倒引当金など)がほかの要素の前方一致(仕入)より先に来た(Issue #549)
  */
 export function groupAccountCandidates(accounts: AccountInfo[], query: string): { element: Element; items: AccountInfo[] }[] {
   const q = normalizeSearchText(query);
   const prefix = (a: AccountInfo) => [a.name, ...a.aliases, ...(a.reading ?? [])].some((t) => normalizeSearchText(t).startsWith(q));
   const matched = accounts.filter((a) => matchesAccountQuery(a, query));
-  return ELEMENTS.map((element) => {
-    const items = matched.filter((a) => a.element === element);
-    return { element, items: [...items.filter(prefix), ...items.filter((a) => !prefix(a))] };
-  })
-    .filter((g) => g.items.length > 0)
-    .sort((a, b) => Number(prefix(b.items[0])) - Number(prefix(a.items[0])));
+  const byElement = (items: AccountInfo[]) =>
+    ELEMENTS.map((element) => ({ element, items: items.filter((a) => a.element === element) })).filter((g) => g.items.length > 0);
+  return [...byElement(matched.filter(prefix)), ...byElement(matched.filter((a) => !prefix(a)))];
 }
 
 /** 読みと完全に一致する科目がちょうど1つならそれを返す。「げんきん」は小口現金・現金過不足にも部分一致するので、候補の数では決まらない(Issue #292) */

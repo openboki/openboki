@@ -10,11 +10,11 @@ requires: [receivables-and-payables/loans, merchandise/credit-transactions]
 scenario:
   company: カフェ「マメノキ」
   opening:
-    - { account: cash, amount: 327000 }
+    - { account: cash, amount: 277000 }
     - { account: bank_deposit, amount: 199000 }
     - { account: checking_account, amount: 72500 }
     - { account: petty_cash, amount: 30000 }
-    - { account: equipment, amount: 600000 }
+    - { account: equipment, amount: 650000 }
     - { account: loans_payable, amount: 200000 }
     - { account: capital_stock, amount: 1000000 }
     - { account: retained_earnings, amount: 40000 }
@@ -31,6 +31,8 @@ scenario:
 
 ## 商品以外の売り買い
 夏の模様替え。古いショーケースを近所の雑貨店に売り、新しい椅子を家具店から買うことにしました。どちらも代金は来月です。
+
+このショーケースは、開店のあとに中古を50,000円で買い足し、現金で払ったものです。結果の表の備品650,000は、開店のときに買ったコーヒーマシン600,000とこのショーケース50,000の合計で、現金は先月の終わりより50,000円少なくなっています。
 
 商品の後払いなら[[accounts_receivable|売掛金]]と[[accounts_payable|買掛金]]でした。でもショーケースや椅子は売り物ではありません。商品以外の後払いには、別の科目を使います。[[non_trade_receivable_payable|未収入金・未払金]]です。
 
@@ -59,7 +61,7 @@ right:
 ```illustration
 showcase
 ```
-帳簿に50,000円で載っている古いショーケース(備品)を、雑貨店に50,000円で売りました。代金は来月振り込まれます。
+開店のあとに買い足した古いショーケース(備品)は、帳簿に50,000円で載っています。これを雑貨店に50,000円で売りました。代金は来月振り込まれます。
 
 備品が減り、「後で受け取る権利」が増えます。売り物ではないので売掛金ではなく[[accounts_receivable_other|未収入金]]。売上でもありません。左に未収入金、右に備品です。
 
@@ -85,7 +87,7 @@ wrong_patterns:
   - match: { unbalanced: true }
     feedback: 左の合計と右の合計がそろっていません。どちらも50,000にしましょう。
 hint: 左に未収入金50,000、右に備品50,000です。
-success: 備品が550,000に減り、未収入金50,000が現れました。資産の中で形が変わっただけです。
+success: 備品がコーヒーマシンだけの600,000に減り、未収入金50,000が現れました。資産の中で形が変わっただけです。
 ```
 
 ## 新しい椅子を買う
@@ -116,7 +118,7 @@ wrong_patterns:
     no_misconception: 資産と負債のつながりの見落としで、未払金の考え方の誤りではない
     feedback: 資産と負債が同じだけ増えるので、差し引きの純資産は変わりません。
 hint: 備品(資産)と未払金(負債)が同じだけ増えます。
-success: 椅子は長く使うので備品という資産です。備品が630,000に増え、未払金80,000が負債に並びました。費用は動いていません。
+success: 椅子は長く使うので備品という資産です。備品が680,000に増え、未払金80,000が負債に並びました。費用は動いていません。
 ```
 
 ## 手付金を払う
