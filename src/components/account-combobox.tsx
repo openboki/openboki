@@ -138,11 +138,12 @@ export function AccountCombobox({ accounts, value, onChange, onCompositionChange
         }}
       >
         <div role="listbox" id={listId} aria-label="科目の候補">
-          {groups.map(({ element, items }) => {
+          {/* 前方一致と部分一致で同じ要素の見出しが2度出るので、keyとidは並び順で付ける */}
+          {groups.map(({ element, items }, index) => {
             const s = ELEMENT_STYLE[element];
-            const groupId = `${id}-group-${element}`;
+            const groupId = `${id}-group-${index}`;
             return (
-              <div key={element} role="group" aria-labelledby={groupId}>
+              <div key={index} role="group" aria-labelledby={groupId}>
                 <div id={groupId} className={`sticky top-0 z-10 flex items-center gap-1 rounded-sm border px-2 py-1 text-[11px] font-semibold ${s.bg} ${s.text} ${s.border}`}>
                   <span aria-hidden>{s.symbol}</span>
                   {s.label}
