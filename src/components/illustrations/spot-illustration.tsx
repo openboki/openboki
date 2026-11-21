@@ -474,6 +474,61 @@ const DRAWINGS: Record<IllustrationName, ReactNode> = {
       <rect className="fill-brand-accent" x="40" y="84" width="20" height="9" rx="2" />
     </>
   ),
+  "pepper-sack": (
+    <>
+      <path className="fill-foreground" d="M30 40Q54 14 78 40Z" />
+      <path className={TINT} d="M26 44H82L86 98a6 6 0 0 1-6 6H28a6 6 0 0 1-6-6Z" />
+      <rect className="fill-card" x="20" y="38" width="68" height="10" rx="5" />
+      <rect className="fill-primary" x="40" y="62" width="28" height="22" rx="2" />
+      <path className="stroke-card" strokeWidth={THIN} d="M46 69h16M46 76h10" />
+      <circle className="fill-foreground" cx="98" cy="88" r="3.5" />
+      <circle className="fill-foreground" cx="106" cy="99" r="3.5" />
+      <circle className="fill-foreground" cx="95" cy="101" r="3.5" />
+    </>
+  ),
+  "wine-barrel": (
+    <>
+      <path className="fill-primary" d="M34 14H86Q98 60 86 106H34Q22 60 34 14Z" />
+      <path className="stroke-card" strokeWidth={THIN} d="M48 38V82M72 38V82" />
+      <rect className="fill-brand-accent" x="28.500" y="28" width="63" height="8" rx="2" />
+      <rect className="fill-brand-accent" x="28.500" y="84" width="63" height="8" rx="2" />
+      <circle className="fill-card" cx="60" cy="60" r="5" />
+      <circle className="fill-foreground" cx="60" cy="60" r="1.5" />
+    </>
+  ),
+  book: (
+    <>
+      <rect className="fill-card" x="32" y="20" width="62" height="88" rx="3" />
+      <path strokeWidth={THIN} d="M88 100H94M88 94H94" />
+      <rect className="fill-primary" x="24" y="12" width="64" height="90" rx="4" />
+      <path className="stroke-card" strokeWidth={THIN} d="M36 12V102" />
+      <rect className="fill-card" x="44" y="28" width="34" height="20" rx="2" />
+      <path strokeWidth={THIN} d="M50 35h22M50 41h14" />
+      <path className="fill-brand-accent" d="M61 60 71 72 61 84 51 72Z" />
+      <rect className="fill-brand-accent" x="82" y="34" width="14" height="7" rx="2" />
+      <rect className="fill-brand-accent" x="82" y="74" width="14" height="7" rx="2" />
+    </>
+  ),
+  "cloth-bolt": (
+    <>
+      <path className="fill-primary" d="M24 48H84V96Q69 86 54 96T24 96Z" />
+      <rect className="fill-brand-accent" x="24" y="62" width="60" height="7" />
+      <path className="stroke-card" strokeWidth={THIN} d="M42 76V88M66 76V88" />
+      <rect className="fill-primary" x="14" y="22" width="84" height="28" rx="4" />
+      <rect className="fill-brand-accent" x="30" y="22" width="7" height="28" />
+      <ellipse className="fill-card" cx="98" cy="36" rx="8" ry="14" />
+      <ellipse strokeWidth={THIN} cx="98" cy="36" rx="3" ry="6" />
+    </>
+  ),
+  letter: (
+    <>
+      <rect className="fill-card" x="12" y="28" width="96" height="66" rx="4" />
+      <path className="fill-primary" d="M14 30H106L60 64Z" />
+      <path strokeWidth={THIN} d="M14 92 44 62M106 92 76 62" />
+      <circle className="fill-brand-accent" cx="60" cy="64" r="11" />
+      <circle strokeWidth={THIN} cx="60" cy="64" r="6" />
+    </>
+  ),
 };
 
 export function SpotIllustration({ name, className }: { name: IllustrationName; className?: string }) {
