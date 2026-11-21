@@ -60,6 +60,9 @@ export function SiteFooter() {
           <Link href="/privacy" className={minorLink}>
             プライバシーポリシー
           </Link>
+          <Link href="/illustrations" className={minorLink}>
+            イラスト一覧
+          </Link>
           {/* 条件の説明は/aboutに任せ、ここは種類だけを示す */}
           <p className="basis-full py-1 sm:ml-auto sm:basis-auto">教材はCC BY-SA 4.0、コードはApache 2.0で公開しています。</p>
         </div>
