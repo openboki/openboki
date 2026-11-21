@@ -3,17 +3,17 @@
 
 export interface ThemeInfo {
   id: string;
+  // 画面には出さず、切り替えボタンの読み上げ名に使う
   name: string;
-  description: string;
   // 切り替えUIのプレビュー: 主色・背景・差し色(ライトの値)
   preview: [string, string, string];
 }
 
 export const THEMES: readonly ThemeInfo[] = [
-  { id: "town-shop", name: "街の小さな会社", description: "カフェの物語を主役にした、暖かい紙と豆の木の緑", preview: ["#1e6b62", "#fbf7f1", "#e0a23a"] },
-  { id: "ai-shu", name: "藍と朱", description: "藍の帳簿と墨の文字、朱で入れる訂正", preview: ["#2a4a7f", "#f3f2ee", "#d2462f"] },
-  { id: "ledger-paper", name: "帳簿用紙", description: "緑がかった帳簿用紙に青い罫線、赤い欄線", preview: ["#2e5c9e", "#eef3ec", "#c5392c"] },
-  { id: "workbench", name: "ワークベンチ", description: "開発ツールの作法。冷たいグレーと青緑の単一アクセント", preview: ["#0f766e", "#f4f6f9", "#0f766e"] },
+  { id: "town-shop", name: "街の小さな会社", preview: ["#1e6b62", "#fbf7f1", "#e0a23a"] },
+  { id: "ai-shu", name: "藍と朱", preview: ["#2a4a7f", "#f3f2ee", "#d2462f"] },
+  { id: "ledger-paper", name: "帳簿用紙", preview: ["#2e5c9e", "#eef3ec", "#c5392c"] },
+  { id: "workbench", name: "ワークベンチ", preview: ["#0f766e", "#f4f6f9", "#0f766e"] },
 ];
 
 export const DEFAULT_THEME = "town-shop";
