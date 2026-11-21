@@ -16,12 +16,12 @@ export interface Flight {
 }
 
 export function FlyingAmounts({ flights, onDone }: { flights: Flight[]; onDone: (id: string) => void }) {
+  // サーバーではreducedが常にfalseなので、外枠は常に描き、中身だけを止める(Issue #515)
   const reduced = useReducedMotion();
-  if (reduced) return null;
   return (
     <div className="pointer-events-none fixed inset-0 z-40" aria-hidden>
       <AnimatePresence>
-        {flights.map((f) => {
+        {!reduced && flights.map((f) => {
           const s = ELEMENT_STYLE[f.element];
           return (
             <motion.div
