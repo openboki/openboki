@@ -10,12 +10,12 @@ requires: [receivables-and-payables/other-receivables-and-payables]
 scenario:
   company: カフェ「マメノキ」
   opening:
-    - { account: cash, amount: 322000 }
+    - { account: cash, amount: 272000 }
     - { account: bank_deposit, amount: 199000 }
     - { account: checking_account, amount: 72500 }
     - { account: petty_cash, amount: 30000 }
     - { account: accounts_receivable_other, amount: 50000 }
-    - { account: equipment, amount: 630000 }
+    - { account: equipment, amount: 680000 }
     - { account: accounts_payable, amount: 30000 }
     - { account: accounts_payable_other, amount: 80000 }
     - { account: advance_received, amount: 5000 }

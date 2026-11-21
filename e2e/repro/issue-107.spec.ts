@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-// 備品は600,000 → 550,000 → 630,000と動き、630,000だった時点は無いので「戻り」とは書けない
+// 備品は650,000 → 600,000 → 680,000と動き、680,000だった時点は無いので「戻り」とは書けない
 test("商品以外の後払いと手付金 ステップ3: 成功文が備品の増加を「戻り」と言わない", async ({ page }) => {
   const work = page.getByRole("region", { name: "ワークスペース" });
   const next = page.getByRole("button", { name: "次へ →" });
