@@ -18,3 +18,6 @@
 - `scenario.opening`に評価勘定(減価償却累計額など)の期首残高を持てない(docs/content-model.mdに記載の既知の制限)。
 - 期を締める(決算)はまだ無い(M2)。
 - Playwrightのscreenshot中に1回だけ出るhydration警告(キャレット非表示によるもの)。操作無しのreloadで再発しなければ無視する。
+- 完了した単元を未完了に戻しても、前の周の回答(`attempts`)は消えない。`unit_progress`が`started`・step 0に戻り、`reset_at`より前の回答は再開に使われない。
+- 概念マップ(`/map`)へのリンクは、sm未満のヘッダーには出ない(用語集の冒頭から開ける)。lg以上の概念マップにはフッターが無い。
+- スポットイラストは装飾で、`aria-hidden`が付き代替テキストを持たない。
