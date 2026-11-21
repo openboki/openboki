@@ -308,6 +308,9 @@ wrong_patterns:
   - match: { debit: [{ account: accounts_receivable }] }
     misconception: nontrade_as_trade
     feedback: 売掛金は商品を売ったときの科目です。スクーターのような商品以外の物を売った代金は未収入金を使います。
+  - match: { debit: [{ account: accounts_payable_other }] }
+    misconception: nontrade_receivable_payable_confused
+    feedback: 未払金は「後で払う義務」(負債)です。スクーターを売って代金を来月受け取るので、増えるのは「後で受け取る権利」である未収入金です。
   - match: { debit: [{ account: cash }] }
     no_misconception: 代金を受け取る日の読み落としで、考え方の誤解ではない
     feedback: 代金を受け取るのは来月です。きょうはまだ現金は増えていないので、後で受け取る権利である未収入金を左に書きます。

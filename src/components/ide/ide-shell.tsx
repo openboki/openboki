@@ -14,7 +14,7 @@ import { type EditableEntry, emptyEntry, fromJournalEntry, isIncompleteLine, par
 import { type ClassifyResult, type DebugAnswer, type EffectAnswer, type GradeResult, type PredictResult, type Task, canRevealAnswer, classifyBoard, gradeCalc, gradeClassify, gradeDebug, gradePost, gradePredict, gradeTweak, predictElements, tweakRestoreValues } from "@/lib/grading";
 import { evaluateFormula } from "@/lib/formulas";
 import { type OpeningLine, computeBalances, diffBalances } from "@/lib/ledger";
-import { CookieBlockedError, fetchProgress, recordAttempt, resetOutOfRangeStep, setUnitProgress, unitSessionKey } from "@/lib/progress";
+import { CookieBlockedError, fetchProgress, onUnitResetElsewhere, recordAttempt, resetOutOfRangeStep, setUnitProgress, unitSessionKey } from "@/lib/progress";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { JournalEditor } from "@/components/journal-editor";
@@ -266,6 +266,8 @@ export function IdeShell({ unit, accounts, netIncomeTerm, balanceSheetTerm, inco
   // 再開するステップが未正解なら、その最後の誤答。着いた時点でgradedAnswerに入れ、同じ誤答を2回目に数えない(Issue #367)
   const resumeGraded = useRef<{ step: number; key: string } | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+  // 別のタブでこの単元を未完了に戻されたタブ。進捗も控えも書かず、読み込み直せばDBの進捗(ステップ1)から始まる(Issue #528)
+  const staleTab = useRef(false);
   // 保存の成功で消えるsaveErrorとは分ける。読み込み直すまで「続きから」が出ないことを知らせ続ける
   const [loadError, setLoadError] = useState(false);
   const [tweakDone, setTweakDone] = useState(false);
@@ -476,7 +478,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, balanceSheetTerm, inco
           ? "このブラウザはCookieを保存できないため、進捗を残せません。Cookieを許可すると保存されるようになります。"
           : "保存できませんでした。このまま続けると、次の操作で保存し直します。",
       );
-    } else if (!failedAttempt.current && !failedProgress.current) setSaveError(null);
+    } else if (!failedAttempt.current && !failedProgress.current && !staleTab.current) setSaveError(null);
   };
   const celebrate = (index = stepIndex) => {
     if (celebratedSteps.current.has(index)) return;
@@ -488,13 +490,15 @@ export function IdeShell({ unit, accounts, netIncomeTerm, balanceSheetTerm, inco
     setPulseNext(!big);
   };
 
-  const saveProgress = (top: number) =>
-    save(async () => {
+  const saveProgress = (top: number) => {
+    if (staleTab.current) return;
+    return save(async () => {
       const last = top === unit.steps.length - 1;
       const userId = await setUnitProgress(unit.id, last ? "completed" : "started", top);
       unsavedProgress.current = !userId;
       if (userId) progressUser.current = userId;
     });
+  };
   // 回答前の進捗は保存されない(Issue #214)ので、最初の回答でサインインしたら、いまの位置もそのユーザーで残す
   // 回答した時点で記録のある学習者になる。別タブのlocalStorage.clearでtutorialがpendingに戻っても初回バナーを出さない(Issue #246)
   const record = (r: GradeResult, answer: unknown) => {
@@ -730,6 +734,22 @@ export function IdeShell({ unit, accounts, netIncomeTerm, balanceSheetTerm, inco
   };
   const [resetOpen, setResetOpen] = useState(false);
 
+  useEffect(
+    () =>
+      onUnitResetElsewhere((id) => {
+        if (id !== unit.id) return;
+        staleTab.current = true;
+        failedProgress.current = null;
+        try {
+          window.sessionStorage.removeItem(unitSessionKey(unit.id));
+        } catch {
+          // sessionStorageを使えないブラウザには控えも無い
+        }
+        setSaveError("別のタブでこの単元を未完了に戻したため、このタブの進捗は保存しません。ページを再読み込みすると、ステップ1から始まります。");
+      }),
+    [unit.id],
+  );
+
   // DBの進捗が届いた時点で案内の「続きから」と同じことをする。同じタブではsessionStorageの復元が先に効き、resumeStepは立たない
   useEffect(() => {
     if (!autoResume || resumeStep === null || tourActive || stepIndex !== 0) return;
@@ -794,7 +814,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, balanceSheetTerm, inco
   /* eslint-enable react-hooks/set-state-in-effect */
   // 読む前に書くと、StrictModeの2回目のマウントや復元前の描画が空の状態で上書きしてしまう
   useEffect(() => {
-    if (!sessionLoaded || isTutorialUnit) return;
+    if (!sessionLoaded || isTutorialUnit || staleTab.current) return;
     const snapshot: SessionSnapshot = {
       stepIndex,
       reached,
