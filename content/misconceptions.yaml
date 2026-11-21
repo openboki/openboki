@@ -780,6 +780,12 @@ misconceptions:
     correct: 口別計算では航海ごとにページを分ける。売った額はその商品の口の右に書き、もうけもその口に残る。別の航海の口には書かない
     concepts: [venture_accounting]
     remediation: birth-of-double-entry/venture-profit-and-double-entry
+  - id: venture_closed_before_end
+    name: 終わっていない口を閉じる
+    description: 商品が売れ残っていて航海が終わっていない口のページを、終わった口と一緒に閉じ、途中の残高をもうけや損として元手へ移している
+    correct: 口のページを閉じるのは、その航海が終わって商品を売り切ってから。売れ残りがあるうちの残高は売れ残った分を含む途中の数字で、もうけでも損でもない。終わった口だけを閉じ、終わっていない口は開いたままにする
+    concepts: [venture_accounting]
+    remediation: birth-of-double-entry/venture-profit-and-double-entry
   - id: closing_side_confused
     name: 残高を移す側を取り違える
     description: 口や利益と損失のページの残りを元手などへ移すとき、残っている側と同じ側に書いて、残高を消すどころか倍にしてしまう

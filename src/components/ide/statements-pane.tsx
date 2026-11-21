@@ -15,12 +15,14 @@ import { HelpIcon } from "./help-icon";
 interface Props {
   accounts: ReadonlyMap<string, GlossaryAccount>;
   netIncomeTerm: GlossaryEntry;
+  balanceSheetTerm: GlossaryEntry;
+  incomeStatementTerm: GlossaryEntry;
   balances: Balances;
   diff: Map<string, number>;
   company: string;
 }
 
-export function StatementsPane({ accounts, netIncomeTerm, balances, diff, company }: Props) {
+export function StatementsPane({ accounts, netIncomeTerm, balanceSheetTerm, incomeStatementTerm, balances, diff, company }: Props) {
   const st = buildStatements(balances, accounts, diff);
   const balanced = st.totalAssets === st.totalLiabilities + st.totalEquity;
   const changedElements = new Map<Element, number>();
@@ -39,7 +41,7 @@ export function StatementsPane({ accounts, netIncomeTerm, balances, diff, compan
   const root = useRef<HTMLDivElement>(null);
   const active = useRef<string | null>(null);
 
-  // 科目名と当期純利益はroving tabindexでTab停止を1つにまとめ、矢印キーで移る。科目の数だけTabで通ると「次へ →」が遠い(Issue #265)
+  // 表の見出しと科目名、当期純利益はroving tabindexでTab停止を1つにまとめ、矢印キーで移る。科目の数だけTabで通ると「次へ →」が遠い(Issue #265)
   const terms = () => [...(root.current?.querySelectorAll<HTMLButtonElement>("button.term") ?? [])];
   useEffect(() => {
     const list = terms();
@@ -71,7 +73,7 @@ export function StatementsPane({ accounts, netIncomeTerm, balances, diff, compan
 
       <section aria-label="貸借対照表">
         <h3 className="font-semibold mb-1">
-          貸借対照表 <span className="text-xs font-normal text-muted-foreground">{company}</span>
+          <Term entry={balanceSheetTerm}>貸借対照表</Term> <span className="text-xs font-normal text-muted-foreground">{company}</span>
         </h3>
         <div className="grid grid-cols-2 rounded-md border divide-x">
           <div className="flex flex-col p-2">
@@ -97,7 +99,7 @@ export function StatementsPane({ accounts, netIncomeTerm, balances, diff, compan
       </section>
 
       <section aria-label="損益計算書">
-        <h3 className="font-semibold mb-1">損益計算書</h3>
+        <h3 className="font-semibold mb-1"><Term entry={incomeStatementTerm}>損益計算書</Term></h3>
         <div className="rounded-md border p-2">
           <Group element="revenue" lines={st.revenues} diff={diff} accounts={accounts} />
           <Group element="expense" lines={st.expenses} diff={diff} accounts={accounts} />
