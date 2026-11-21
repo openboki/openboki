@@ -155,7 +155,7 @@ create table attempts (
 
 ## 7. ホスティング
 決定: さくらのVPS 4GB 1台(リージョンは国内で契約時に最も安いところ)にCoolifyを置き、Next.js(GHCRのイメージをpull)と、Postgres / GoTrue / PostgREST / Kongに削ったSupabaseを同居させる(ADR 0006)。アクセス解析のUmamiも同じVPSに置き、データは既存のPostgresに別のデータベースとして持つ(ADR 0011)。
-公開は`production`ブランチで行う。mainは品質改善ループと手作業の統合先のままにし、`make check`が通ったコミットまで`production`をfast-forwardで進める。mainは直線の履歴で、`production`は常にその祖先になる。デプロイはGitHub Environmentsで人が承認してから始まる(ADR 0012)。`production`へのpushでGitHub ActionsがDockerイメージをビルドしてGHCRにpushし、SSH経由でVPSの中からCoolifyのデプロイを起動する。Coolifyの管理画面とAPIは外に公開しない。
+公開は`production`ブランチで行う。mainは品質改善ループと手作業の統合先のままにし、`make check CHECK_E2E=full`(E2Eを全件)が通ったコミットまで`production`をfast-forwardで進める。mainは直線の履歴で、`production`は常にその祖先になる。デプロイはGitHub Environmentsで人が承認してから始まる(ADR 0012)。`production`へのpushでGitHub ActionsがDockerイメージをビルドしてGHCRにpushし、SSH経由でVPSの中からCoolifyのデプロイを起動する。Coolifyの管理画面とAPIは外に公開しない。
 ビルド時に渡す値: `CONTENT_VERSION`(Actionsの`github.sha`。回答ログの`content_version`になる)、`SITE_URL`(canonical、sitemap、robotsの基準URL)、`NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`(クライアントに焼き込まれる)。いずれもbuild-argで渡す。Dockerのビルドには`.git`が入らないため、`CONTENT_VERSION`を渡し忘れると回答ログの版が`uncommitted`になる。手元でイメージを作る`make docker-build`はgitのコミットを`CONTENT_VERSION`に渡し、Supabaseの値は環境変数から取る。
 守ること: `output: 'standalone'`、ISRや特定ホストのAPIに依存しない。
 外部バックアップは置かない(β 中のDBは匿名ユーザーの進捗と回答ログだけ)。本登録(フェーズ7)の前に再検討する。

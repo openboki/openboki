@@ -211,7 +211,7 @@ Monkeyの人格は「前回起票した領域を避ける」ような賢さは�
 | ① 探索A(人格型) | `.claude/skills/monkey-test/`(SKILL、人格9本、`issue-template.md`、`known.md`)、`scripts/monkey/session.mjs`(オラクル・スクリーンショット・DB参照・仕訳入力)、`scripts/monkey-loop.sh` | `MONKEY_UNTIL=23:00 scripts/monkey-loop.sh`。対話なら`/monkey-test <人格> [step]` |
 | ① 探索B(seed付き) | `e2e/monkey.spec.ts`(状態に応じた22 action、seedで再現)、`scripts/monkey-scripted.sh`(複数seed → 所見があればClaudeが`/monkey-test scripted <seed>`で再現・起票) | `scripts/monkey-scripted.sh` / `MONKEY=1 MONKEY_SEED=7 pnpm exec playwright test e2e/monkey.spec.ts` |
 | ② トリアージ | `scripts/triage-agent.sh` + `scripts/issue-agent/triage.md`(読み取り専用。`main`で再現 → Agent Brief → `ready-for-agent` / `ready-for-human` / `needs-info` / `duplicate` / `wontfix`) | `scripts/triage-agent.sh <n>` / `loop` |
-| ③ 修正 | `scripts/issue-agent.sh`、`scripts/issue-loop.sh`、`scripts/issue-agent/{work,gate,review,recheck,fix}.md` + スキーマ、`scripts/issue-agent/guard.sh`(PreToolUseでBashの文字列を検査)、`scripts/check.sh`(関門。E2Eは3100番で本番ビルド) | `scripts/issue-agent.sh <n>` / `ISSUE_UNTIL=06:00 scripts/issue-loop.sh` |
+| ③ 修正 | `scripts/issue-agent.sh`、`scripts/issue-loop.sh`、`scripts/issue-agent/{work,gate,review,recheck,fix}.md` + スキーマ、`scripts/issue-agent/guard.sh`(PreToolUseでBashの文字列を検査)、`scripts/check.sh`(関門。E2Eは3100番で本番ビルド、範囲は`scripts/e2e-scope.sh`が差分から決める)、`scripts/full-check.sh`(ループの終了時にmainを全件で確認) | `scripts/issue-agent.sh <n>` / `ISSUE_UNTIL=06:00 scripts/issue-loop.sh` |
 | ④ 再検証 | `scripts/issue-verify.sh`(統合後の`main`で`issue-<n>`を名前に含むテストを実行 → `agent:verified`かreopen) | issue-agentの最後に自動。手でも可 |
 | ⑤ 継続 | `scripts/quality-night.sh`(seed付きMonkey → 人格型Monkey → トリアージ → 修正) | `QUALITY_UNTIL=06:00 scripts/quality-night.sh` |
 
@@ -231,6 +231,7 @@ make issue-status                                  # 処理中のIssueと残っ�
 - 人格型Monkeyは`MONKEY_PARALLEL=3`で3人格まで同時に走らせられる(人格ごとに別ブラウザ。同じ人格は同時に走らない。起票直前の重複確認を人格側にも求めている)。
 - issue-loopは`ISSUE_PARALLEL=3`で3件まで同時に処理できる(2026-11-08)。ロックはIssueごと、関門のE2Eはワーカーごとのポート(3100 + 枠番号)、
   mainへの統合(取り込み → 関門 → PRをsquashでマージ → 再検証)だけ`logs/issue-agent/lock`で1件ずつ。同じファイルを触るIssueを同時に進めると統合時にコンフリクトしてneeds-humanに落ちるので、areaが異なる組み合わせが向く。
+- 関門のE2Eは差分の範囲に絞っている(2026-11-21、ADR 0005)。issue-loopは1件でも統合すると、終了時に`scripts/full-check.sh`で統合後のmainを全件で確かめ、失敗すれば`needs-triage`で起票する(`ISSUE_FULL_CHECK=0`で省く。ログは`logs/full-check/`)。
 - 人格の見直し(2026-11-21): 381セッション・424件の起票を人格ごとに数えると、content-auditor(117件)とerror-prone-learner(72件)で45%を占め、
   impatient-learner(30件)とtab-and-data-fiddler(33件)は直近41セッションで新規が1件と0件だった。そこで既定の抽選に重みを付けた(コンテンツを見る2本が3、path-learnerが2、残りが1。`MONKEY_PERSONAS`に同じ名前を複数回書くと重みになる)。
   人格の後に足した画面(概念マップ、未完了に戻す、スポットイラスト、当事者の図、`/about`)を担当の人格の癖に割り振り、単元の選び方をSKILL.mdに共通化し、error-prone-learnerには単元ごとの誤解の台帳を持たせた。
