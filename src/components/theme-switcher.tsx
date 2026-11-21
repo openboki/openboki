@@ -88,23 +88,20 @@ export function ThemeSwitcher() {
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-72 gap-3">
-        <div role="group" aria-label="テーマ" className="space-y-1">
+        <div role="group" aria-label="テーマ" className="grid grid-cols-4 gap-1.5">
           {THEMES.map((t) => (
             <button
               key={t.id}
               type="button"
+              aria-label={t.name}
               aria-pressed={theme === t.id}
               onClick={() => applyTheme(t.id)}
-              className={`flex w-full items-center gap-2.5 rounded-md border px-2 py-1.5 text-left text-sm ${theme === t.id ? "border-primary bg-primary/5 forced-colors:border-2 forced-colors:border-[Highlight]" : "border-transparent hover:bg-muted"}`}
+              className={`rounded-md border-2 p-1 ${theme === t.id ? "border-primary bg-primary/5 forced-colors:border-[Highlight]" : "border-transparent hover:bg-muted"}`}
             >
-              <span className="flex shrink-0 gap-0.5" aria-hidden>
-                {t.preview.map((c, i) => (
-                  <span key={i} className="h-4 w-2.5 rounded-sm border border-foreground/10 forced-color-adjust-none" style={{ backgroundColor: c }} />
-                ))}
-              </span>
-              <span className="min-w-0">
-                <span className="block font-medium">{t.name}</span>
-                <span className="block truncate text-xs text-muted-foreground">{t.description}</span>
+              {/* 縦3等分に塗ると国旗に見えるので、背景の上に主色の帯と差し色の点を置く */}
+              <span className="flex h-9 items-center gap-1 rounded-sm border border-foreground/10 px-1.5 forced-color-adjust-none" style={{ backgroundColor: t.preview[1] }} aria-hidden>
+                <span className="h-2.5 flex-1 rounded-full" style={{ backgroundColor: t.preview[0] }} />
+                <span className="size-2.5 rounded-full" style={{ backgroundColor: t.preview[2] }} />
               </span>
             </button>
           ))}
