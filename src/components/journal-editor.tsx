@@ -63,7 +63,9 @@ export function JournalEditor({ accounts, value, onChange, readOnly = false, sho
     <div className="flex-1 min-w-0" data-tour={side === "debit" ? "journal-debit" : "journal-credit"}>
       <div className="mb-1 flex items-baseline gap-2">
         <span className="text-sm font-semibold">{label}</span>
-        <span className="text-[10px] text-muted-foreground">{side === "debit" ? "左 · 資産と費用が増える側" : "右 · 負債・純資産・収益が増える側"}</span>
+        <span className="text-[10px] text-muted-foreground">{side === "debit" ? "左" : "右"}
+          {/* 歴史の単元では借方・貸方を相手との貸し借りの側として教えるので、5要素の増える側を添えない(Issue #525) */}
+          {showElements && (side === "debit" ? " · 資産と費用が増える側" : " · 負債・純資産・収益が増える側")}</span>
       </div>
       <div className="space-y-1.5">
         {value[side].map((line, i) => {
