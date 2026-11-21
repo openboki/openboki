@@ -65,6 +65,9 @@ wrong_patterns:
   - match: { debit: [{ account: communication_expense }] }
     misconception: shortage_is_loss
     feedback: 原因がまだ分からないので通信費にはできません。まず現金過不足に預けて、原因を探します。
+  - match: { credit: [{ account: bank_deposit }] }
+    misconception: deposit_is_cash
+    feedback: 数えて足りなかったのは金庫の現金です。普通預金の残高は変わっていないので、右で減らすのは現金のほうです。
   - match: { unbalanced: true }
     feedback: 左の合計と右の合計がそろっていません。どちらも3,000にしましょう。
 hint: 左に現金過不足3,000、右に現金3,000です。
@@ -133,7 +136,8 @@ wrong_patterns:
     misconception: outflow_on_debit
     feedback: 現金過不足を消すので右、雑損(費用)が増えるので左です。
   - match: { credit: [{ account: cash }] }
-    feedback: 現金はもう実際の金額に直してあります。消すのは現金過不足のほうです。
+    misconception: shortage_transfer_moves_money
+    feedback: 現金は差額が分かったときにもう減らしてあります。この振り替えは帳簿の中で現金過不足を雑損へ移すだけで、お金は動きません。消すのは現金過不足のほうなので、右に書きます。
   - match: { debit: [{ account: miscellaneous_gain }] }
     misconception: shortage_is_gain
     feedback: 足りなかったので損です。雑益は多かったときに使います。

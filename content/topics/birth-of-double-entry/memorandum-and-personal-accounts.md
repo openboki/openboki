@@ -123,9 +123,11 @@ items:
   - { id: mar20_pepper, label: 3月20日 胡椒10袋を売った。30ドゥカートは後で受け取る, answer: left }
   - { id: mar22_payment, label: 3月22日 布の代金10ドゥカートを払った, answer: left }
 misconceptions:
+  mar9_wine: { right: personal_account_by_cash_direction }
   mar14_receipt: { left: personal_account_reduction_on_its_side }
-  mar22_payment: { right: personal_account_reduction_on_its_side }
   mar18_cloth: { left: credit_purchase_as_claim }
+  mar20_pepper: { right: personal_account_by_cash_direction }
+  mar22_payment: { right: personal_account_reduction_on_its_side }
 hint: 受け取った・払ったは負いを減らす行なので、減った負いの見出しの反対側に置きます。彼に売った・彼に払ったは左、彼から受け取った・彼から買ったは右です。
 success: 全部写せました。3月22日に払った10ドゥカートが左にあるのは、こちらが彼に負っていた布の代金を返して、負いが消えたからです。
 ```
@@ -154,6 +156,9 @@ wrong_patterns:
   - match: 55
     misconception: balance_reads_one_side
     feedback: 右の合計だけを答えています。残高は左の合計と右の合計の差です。
+  - match: 180
+    misconception: balance_adds_both_sides
+    feedback: 左の合計125と右の合計55を足しています。右は彼の負いを減らした分なので、足すのではなく左から引きます。
 hint: 左の合計から右の合計を引きます。差が左に残れば、その分を彼がこちらに負っています。
 success: 125から55を引いて70ドゥカート。最初に数えた答えと同じです。「拾って数える」が「ページを読む」に変わりました。相手が30人いても、30ページをめくるだけです。
 ```
