@@ -202,6 +202,12 @@ export function GraphCanvas({ nodes, links, selectedId, anchorId, matchedIds, on
           redraw.current();
         })
         .graphData({ nodes: nodes.map((n) => ({ ...n })), links: links.map((l) => ({ ...l })) });
+      // 指で操作する端末では図が画面の幅いっぱいを占めるので、1本指の縦スワイプはページのスクロールに渡す。
+      // 図の移動と拡大は2本指で行い、点のドラッグは止める(1本指の操作を図が取るとページを読み進められない)
+      if (matchMedia("(pointer: coarse)").matches) {
+        graph.enableNodeDrag(false).enablePanInteraction((ev: Event) => !("touches" in ev) || (ev as TouchEvent).touches.length > 1);
+        el.querySelector("canvas")!.style.touchAction = "pan-y";
+      }
       // 既定のままだと同じ分野の点が固まり、選んだときの名前が重なる
       graph.d3Force("charge")?.strength(-220);
       graph.d3Force("link")?.distance(42);
