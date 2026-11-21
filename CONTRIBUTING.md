@@ -50,12 +50,13 @@ Discussionsに届いたもののうち対応が要るものは、運営がIssue�
 
 ```bash
 make setup       # pnpm install + git hook
-make db-start    # Supabaseローカルスタック(Docker)。出力されたキーを .env.localに書く
+make db-start    # Supabaseローカルスタック(Docker)
+make env-local   # Supabaseの接続先を.env.localに書く
 make dev         # http://localhost:3000
 make check       # lint / 型 / テスト / ビルド / E2E(Pull Requestを出す前に)
 ```
 
-詳しくは`README.md`。Next.jsのAPIは`node_modules/next/dist/docs/`を正とします(`AGENTS.md`)。
+前提(Node.js 24、pnpm、Docker)は`README.md`、Issueの切り方と統合までの流れは`docs/development-process.md`。Next.jsのAPIは`node_modules/next/dist/docs/`を正とします(`AGENTS.md`)。
 コードの方針は`CLAUDE.md`(過剰設計を避ける、コメントは「なぜ」だけ、日本語コメント、英語の識別子)。
 
 ## Pull Requestの流れ

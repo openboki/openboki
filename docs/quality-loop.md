@@ -86,7 +86,7 @@ scripts/issue-verify.sh <n>               ④ 再検証: 閉じたIssueの再現
 
 - 起動: `claude -p`で`monkey-test`スキルを1人格ぶん。`--allowedTools "Bash,Read,Write,Edit,Skill,mcp__playwright"`、`--permission-mode acceptEdits`。
 - 操作: 原則 **Playwrightスクリプトを書いて実行**(`node scripts/monkey/run.mjs`のような薄いランナーに、人格の判断で書いた操作を渡す)。スクリーンショットとtraceを`logs/monkey/<session>/`に残す。MCPの`browser_snapshot`は「いま何が見えているか」を読むために使う。
-- 人格(初期7本。学習者として自然で、かつ壊し方が異なるもの):
+- 人格(初期7本。学習者として自然で、かつ壊し方が異なるもの。いまの9本は8章):
 
 | 人格 | 狙い |
 | --- | --- |
@@ -208,17 +208,33 @@ Monkeyの人格は「前回起票した領域を避ける」ような賢さは�
 | 段 | 実装 | 起動 |
 | --- | --- | --- |
 | 環境 | `scripts/services.sh`(Supabase + `pnpm dev`)、`scripts/labels.sh`(ラベル作成、初回のみ) | `scripts/services.sh up` |
-| ① 探索A(人格型) | `.claude/skills/monkey-test/`(SKILL、人格8本、`issue-template.md`、`known.md`)、`scripts/monkey/session.mjs`(オラクル・スクリーンショット・DB参照・仕訳入力)、`scripts/monkey-loop.sh` | `MONKEY_UNTIL=23:00 scripts/monkey-loop.sh`。対話なら`/monkey-test <人格> [step]` |
+| ① 探索A(人格型) | `.claude/skills/monkey-test/`(SKILL、人格9本、`issue-template.md`、`known.md`)、`scripts/monkey/session.mjs`(オラクル・スクリーンショット・DB参照・仕訳入力)、`scripts/monkey-loop.sh` | `MONKEY_UNTIL=23:00 scripts/monkey-loop.sh`。対話なら`/monkey-test <人格> [step]` |
 | ① 探索B(seed付き) | `e2e/monkey.spec.ts`(状態に応じた22 action、seedで再現)、`scripts/monkey-scripted.sh`(複数seed → 所見があればClaudeが`/monkey-test scripted <seed>`で再現・起票) | `scripts/monkey-scripted.sh` / `MONKEY=1 MONKEY_SEED=7 pnpm exec playwright test e2e/monkey.spec.ts` |
 | ② トリアージ | `scripts/triage-agent.sh` + `scripts/issue-agent/triage.md`(読み取り専用。`main`で再現 → Agent Brief → `ready-for-agent` / `ready-for-human` / `needs-info` / `duplicate` / `wontfix`) | `scripts/triage-agent.sh <n>` / `loop` |
 | ③ 修正 | `scripts/issue-agent.sh`、`scripts/issue-loop.sh`、`scripts/issue-agent/{work,gate,review,recheck,fix}.md` + スキーマ、`scripts/issue-agent/guard.sh`(PreToolUseでBashの文字列を検査)、`scripts/check.sh`(関門。E2Eは3100番で本番ビルド) | `scripts/issue-agent.sh <n>` / `ISSUE_UNTIL=06:00 scripts/issue-loop.sh` |
 | ④ 再検証 | `scripts/issue-verify.sh`(統合後の`main`で`issue-<n>`を名前に含むテストを実行 → `agent:verified`かreopen) | issue-agentの最後に自動。手でも可 |
 | ⑤ 継続 | `scripts/quality-night.sh`(seed付きMonkey → 人格型Monkey → トリアージ → 修正) | `QUALITY_UNTIL=06:00 scripts/quality-night.sh` |
 
+スクリプトはMakefileからも呼べる(`make help`)。引数は環境変数で渡す。
+
+```bash
+make services-up                                   # Supabase + pnpm dev
+make monkey MONKEY_UNTIL=23:00 MONKEY_PARALLEL=3   # 人格型Monkey(Claude Codeが学習者として操作し、再現したものを起票。3人格まで同時)
+make monkey-scripted                               # seed付きMonkey(所見が出たseedだけClaudeが再現・起票)
+make triage                                        # needs-triageを再現して振り分け(ISSUE=<n> で1件)
+make issue-loop ISSUE_UNTIL=06:00                  # ready-for-agentをworktreeで実装 → レビュー → mainへ統合 → push
+make quality-night QUALITY_UNTIL=06:00             # 上の3つを順に(夜間)
+make issue-status                                  # 処理中のIssueと残っているworktree
+```
+
 - ログは`logs/`(gitignore): `logs/monkey/<日時>-<人格>/`(history.md、step-NN.mjs、shots/、oracle.jsonl、trace)、`logs/monkey-scripted/<seed>.log`、`logs/triage/<n>/`、`logs/issue-agent/<n>/`。
 - 人格型Monkeyは`MONKEY_PARALLEL=3`で3人格まで同時に走らせられる(人格ごとに別ブラウザ。同じ人格は同時に走らない。起票直前の重複確認を人格側にも求めている)。
 - issue-loopは`ISSUE_PARALLEL=3`で3件まで同時に処理できる(2026-11-08)。ロックはIssueごと、関門のE2Eはワーカーごとのポート(3100 + 枠番号)、
   mainへの統合(取り込み → 関門 → PRをsquashでマージ → 再検証)だけ`logs/issue-agent/lock`で1件ずつ。同じファイルを触るIssueを同時に進めると統合時にコンフリクトしてneeds-humanに落ちるので、areaが異なる組み合わせが向く。
+- 人格の見直し(2026-11-21): 381セッション・424件の起票を人格ごとに数えると、content-auditor(117件)とerror-prone-learner(72件)で45%を占め、
+  impatient-learner(30件)とtab-and-data-fiddler(33件)は直近41セッションで新規が1件と0件だった。そこで既定の抽選に重みを付けた(コンテンツを見る2本が3、path-learnerが2、残りが1。`MONKEY_PERSONAS`に同じ名前を複数回書くと重みになる)。
+  人格の後に足した画面(概念マップ、未完了に戻す、スポットイラスト、当事者の図、`/about`)を担当の人格の癖に割り振り、単元の選び方をSKILL.mdに共通化し、error-prone-learnerには単元ごとの誤解の台帳を持たせた。
+  単元をまたいで学べるかを見る`path-learner`(通しで学ぶ学習者)を試験導入した。数セッションの起票を見て、残すか、支援技術を使う人格を足すかを決める。
 - 状況の確認は`scripts/issue-agent.sh status`。止めるのは`scripts/monkey-loop.sh stop` / `scripts/issue-loop.sh stop`。
 - 学習者からの質問・報告・提案はGitHub Discussionsに届く。対応が要るものは「Create issue from discussion」で起票して`needs-triage`を付け、トリアージ以降の流れに乗せる。質問への回答だけで済むものはDiscussionsで閉じる。
 - 人が見るもの: 新しいDiscussions、`ready-for-human`と`agent:needs-human`のIssue(`gh issue list --label ready-for-human,agent:needs-human`)、

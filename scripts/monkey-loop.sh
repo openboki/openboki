@@ -8,7 +8,8 @@
 #
 # 環境変数:
 #   MONKEY_UNTIL        終了時刻(必須)。"22:00" または "2026-11-08T06:00"。時刻だけで過去なら翌日とみなす
-#   MONKEY_PERSONAS     選択候補の人格(空白区切り)。反復ごとにランダムに1つ選ぶ(直前と同じものは選ばない)。既定は全8本
+#   MONKEY_PERSONAS     選択候補の人格(空白区切り)。反復ごとにランダムに1つ選ぶ(直前と同じものは選ばない)。
+#                       同じ名前を複数回書くと、その回数ぶん選ばれやすくなる。既定は全9本で、重みは下のDEFAULT_PERSONAS
 #   MONKEY_STEPS        1セッションのstep数(既定20)
 #   MONKEY_ITER_TIMEOUT 1反復の上限秒(既定3600)
 #   MONKEY_MIN_ITER     残り時間がこれを切ったら新しい反復を始めない(既定1500。短いと環境確認だけで終わる)
@@ -33,7 +34,10 @@ if [ "${1:-}" = "stop" ]; then
 fi
 
 UNTIL="${MONKEY_UNTIL:?MONKEY_UNTILを指定してください(例: MONKEY_UNTIL=22:00)}"
-PERSONAS="${MONKEY_PERSONAS:-first-timer impatient-learner error-prone-learner phone-learner term-tapper tab-and-data-fiddler theme-switcher content-auditor}"
+# 重みは起票の実績で決めた(docs/quality-loop.md 8章)。コンテンツを見る2本を3、試験導入のpath-learnerを2、残りを1
+DEFAULT_PERSONAS="content-auditor content-auditor content-auditor error-prone-learner error-prone-learner error-prone-learner \
+path-learner path-learner first-timer impatient-learner phone-learner term-tapper tab-and-data-fiddler theme-switcher"
+PERSONAS="${MONKEY_PERSONAS:-$DEFAULT_PERSONAS}"
 STEPS="${MONKEY_STEPS:-20}"
 ITER_TIMEOUT="${MONKEY_ITER_TIMEOUT:-3600}"
 MIN_ITER="${MONKEY_MIN_ITER:-1500}"
@@ -45,7 +49,7 @@ mkdir -p "$LOG_DIR"; rm -f "$STOP_FILE"
 
 deadline=$(date -d "$UNTIL" +%s) || exit 1
 if [ "$deadline" -le "$(date +%s)" ] && [[ "$UNTIL" != *-* ]]; then deadline=$(date -d "tomorrow $UNTIL" +%s); fi
-echo "終了予定: $(date -d "@$deadline" '+%Y-%m-%d %H:%M') / 人格: $PERSONAS / step: $STEPS / 並列: $PARALLEL / モデル: ${MODEL:-既定} / ログ: $LOG_DIR"
+echo "終了予定: $(date -d "@$deadline" '+%Y-%m-%d %H:%M') / 人格: $(tr ' ' '\n' <<<"$PERSONAS" | sort | uniq -c | awk '{printf "%s×%s ", $2, $1}')/ step: $STEPS / 並列: $PARALLEL / モデル: ${MODEL:-既定} / ログ: $LOG_DIR"
 
 for cmd in claude gh node docker; do command -v "$cmd" >/dev/null || { echo "${cmd}が見つかりません"; exit 1; }; done
 scripts/services.sh up || exit 1

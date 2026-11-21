@@ -11,10 +11,10 @@
 
 1. 同じ単元を2タブで開き、片方でステップを2つ進め、もう片方でreload。進捗が追いつくか(同じタブの途中経過が優先か、「続きから」が出るか)、片方の記帳がもう片方に二重に出ないか。
 2. 2タブで同時に「記帳する」。`attempts`と`unit_progress`の行数・stepを確認する。
-3. 記帳後に`localStorage.clear()`してreload。チュートリアル状態(pendingに戻る)と進捗(DBに残る)の整合。バナーが再び出るのは仕様かどうかを記録する。`tutorial-state`に壊れた値(`"{"`、`'{"status":1,"seen":"x"}'`、`"null"`)を入れてreloadしても落ちないか。
+3. 記帳後に`localStorage.clear()`してreload。チュートリアル状態(pendingに戻る)と進捗(DBに残る)の整合。バナーが再び出るのは仕様かどうかを記録する。
 4. 記帳後にCookieを全部消してreload(匿名セッション喪失)。進捗がゲストから見えなくなるのは仕様。保存エラーが出ずに新しいゲストとして続けられるか。トップのボタンが「チュートリアルを始める」に戻るか。
-5. 存在しない単元`/units/nope/nope`、`/topics/nope`、`/paths/nope`、`/units/tutorial/first-entry`(隠しテーマ)、`/glossary#nope`を直接開く。404か案内か、例外が出ないか。
-6. `?tour=1`を通常の単元に付ける。`?tour=1&from=nope/nope`と`from=tutorial/first-entry`をチュートリアルに付ける。何も起きないか壊れるか、「「〜」へ戻る」が存在しない単元を指さないか。
+5. 存在しない単元`/units/nope/nope`、`/topics/nope`、`/paths/nope`、`/units/tutorial/first-entry`(隠しテーマ)、`/glossary#nope`、`/map#nope`を直接開く。404か案内か、例外が出ないか。`?tour=1`を通常の単元に、`?tour=1&from=nope/nope`をチュートリアルに付け、「「〜」へ戻る」が存在しない単元を指さないか。
+6. 完了した単元を2タブで開き、片方で「未完了に戻してやり直す」。もう片方(完了の表示のまま)で「最後のステップを見る」や記帳をするとどうなるか、reloadで未完了に追いつくか。戻した後の`unit_progress`(`started`、step 0、`reset_at`)と`attempts`(前の周の行は残るのが仕様)を確かめ、「続きから」が前の周の回答を帳簿に積み直さないか。Cookieを消した新しいゲストで同じ単元の一覧に「未完了に戻す」が出ないか。
 7. 単元を完了してから`unit_progress`の`step`をSQLで99にして開き直す(`db("update unit_progress set step=99 where unit_id='...'")`)。範囲外の再開(「最後のステップを見る」)で落ちないか。元に戻す。
 8. DBの`attempts.answer`を壊れたJSON相当(`'{}'`)にして開き直し、「続きから」を押す(`replayEntries`が落ちないか)。元に戻す。
 9. 3ステップ進めた単元で`sessionStorage.clear()`してreloadし、「続きから」で同じステップと帳簿に戻るか。単元Aを途中まで進め、単元Bを完了してからトップを開く。ボタンが「続きから: A」になるか(学習中が完了より優先)。
