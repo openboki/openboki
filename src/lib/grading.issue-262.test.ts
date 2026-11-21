@@ -74,9 +74,10 @@ describe("単元1ステップ4「残りの行を写す」", () => {
     expect(gradeClassify(t, answer, accountMap).correct).toBe(true);
   });
 
-  it("受け取りを左に入れると、現金の向きで決める誤解が返る", () => {
+  // 受け取りを左に入れる誤りは、見出しの字面に従った誤解として返す(Issue #404)
+  it("受け取りを左に入れると、減らす行を見出しの側に書く誤解が返る", () => {
     const answer = Object.fromEntries(t.items!.map((i) => [i.id, i.answer]));
     const r = gradeClassify(t, { ...answer, mar14_receipt: "left" }, accountMap);
-    expect(r.misconceptions).toEqual(["personal_account_by_cash_direction"]);
+    expect(r.misconceptions).toEqual(["personal_account_reduction_on_its_side"]);
   });
 });
