@@ -27,7 +27,7 @@ description: Open簿記の単元に添えるスポットイラスト(自作のSV
 
 ## 3. 描く
 
-`spot-illustration.tsx`の`DRAWINGS`に足し、`src/lib/illustrations.ts`の`ILLUSTRATION_NAMES`に名前を足す。
+`spot-illustration.tsx`の`DRAWINGS`に足し、`src/lib/illustrations.ts`の`ILLUSTRATION_NAMES`に名前を、`ILLUSTRATION_LABELS`に一覧へ出す日本語の名前を足す。
 
 形の作り方(既存の6点に共通するやり方)。
 
@@ -63,7 +63,7 @@ description: Open簿記の単元に添えるスポットイラスト(自作のSV
 
 見るところ。1つでも当てはまれば描き直す。
 
-- 76pxの絵で、名前を見ずに何の絵か分かるか。
+- 名前を見ずに何の絵か分かるか。見本は160pxなので、76pxで分かるかは組み込んだあと単元の画面で見る。
 - 既存の絵と並べて、線の密度、塗りの量、大きさ(枠に占める割合)がそろっているか。新しい絵だけ細かい、または大きい、ということがないか。
 - 線が塗りからはみ出したり、重なりの順番が逆になったりしていないか。
 - 主色の面が3つ以上になっていないか。差し色が大きな面を占めていないか。

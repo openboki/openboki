@@ -173,7 +173,7 @@ coffee-machine
 - 手順: `.claude/skills/spot-illustration/SKILL.md`。読む物、形の作り方、確かめ方、描き直しの基準を書いてある。Claude Codeでは`/spot-illustration <単元ID>`で呼ぶ。人が描くときも同じ手順に従う。
 - 手本: `spot-illustration.tsx`にある既存の絵。新しい絵は座標の取り方と塗りの配分をここから写す。
 - 検査: `spot-illustration.test.tsx`が、要素、色のクラス、線の太さ、要素の数を全部の絵について確かめる(`make test`)。
-- 見本: `/illustrations`に全部の絵が、画面に出る4つの幅(48 / 64 / 76 / 96px)と拡大で並ぶ。絵ごとの使用箇所(テーマ、単元のステップ、図)もコンテンツから集計して出すので、直したあとはそこから見に行く。`make illustrations`が4テーマ × ライト・ダークの8枚を`logs/illustrations/`に撮る。新しい絵は既存の絵と並べて目で確かめる。
+- 見本: `/illustrations`に全部の絵が160pxで並ぶ。添える日本語の名前は`src/lib/illustrations.ts`の`ILLUSTRATION_LABELS`に書く。`make illustrations`が4テーマ × ライト・ダークの8枚を`logs/illustrations/`に撮る。新しい絵は既存の絵と並べて目で確かめる。48pxや76pxで潰れないかは、使う単元の画面で見る。
 
 置き方。
 
