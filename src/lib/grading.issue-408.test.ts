@@ -20,6 +20,7 @@ describe("現金過不足 ステップ5の雑損3,000", () => {
   });
   it("右に現金を書いた誤答は現金の案内のまま", () => {
     const r = gradePost(task, { debit: [{ account: "miscellaneous_loss", amount: 3000 }], credit: [{ account: "cash", amount: 3000 }] });
-    expect(r.feedback).toContain("現金はもう実際の金額に直してあります");
+    expect(r.feedback).toContain("消すのは現金過不足のほう");
+    expect(r.misconception).toBe("shortage_transfer_moves_money");
   });
 });
