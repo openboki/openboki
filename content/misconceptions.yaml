@@ -780,6 +780,12 @@ misconceptions:
     correct: もうけは、売った額からその口にかかった額(代金、運賃、関税)を引いた残り
     concepts: [venture_accounting]
     remediation: birth-of-double-entry/venture-profit-and-double-entry
+  - id: venture_cost_as_profit
+    name: かかった額がもうけ
+    description: 商いの1口のもうけを、その口にかかった額(ページの左の合計)で答えている。売った額との差を取っていない
+    correct: もうけは、売った額(右の合計)からかかった額(左の合計)を引いた残り。左の合計はその口に入れたお金で、もうけではない
+    concepts: [venture_accounting]
+    remediation: birth-of-double-entry/venture-profit-and-double-entry
   - id: venture_costs_only_price
     name: 運賃と関税を引かない
     description: 商いの1口のもうけを出すとき、売った額から買った代金だけを引き、運賃や関税を引いていない
@@ -810,3 +816,15 @@ misconceptions:
     correct: 残高を消すには、残っている側の反対側に同じ額を書く。右に残っていれば左に書いて消し、移す先のページの右に同じ額を書く
     concepts: [double_entry, venture_accounting]
     remediation: birth-of-double-entry/venture-profit-and-double-entry
+  - id: profit_skips_profit_and_loss
+    name: 口のもうけを直接元手へ移す
+    description: 口が閉じたときのもうけや損を、利益と損失のページを通さず、そのまま元手へ移している。今年どの口でいくらもうけ、いくら損したかが1ページで読めない
+    correct: 『スンマ』の手順では、口のもうけは利益と損失の右へ、損は左へ集め、帳簿を閉じるときに残りをまとめて元手へ移す。元手へ直接移すのは利益と損失のページが無かった先祖のやり方
+    concepts: [profit_and_loss_account]
+    remediation: birth-of-double-entry/venetian-method-and-pacioli
+  - id: year_profit_ignores_loss
+    name: 損を引かずに今年のもうけ
+    description: 今年のもうけを、もうけた口の分だけで数え、損をした口の分を引いていない。利益と損失のページの右だけを読んでいる
+    correct: 利益と損失のページには、もうけが右、損が左に集まる。今年のもうけは右の合計から左の合計を引いた残りで、損も今年のもうけに入る
+    concepts: [profit_and_loss_account]
+    remediation: birth-of-double-entry/venetian-method-and-pacioli
