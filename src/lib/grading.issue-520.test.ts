@@ -37,7 +37,8 @@ describe("預かったお金、仮のお金の誤解判定", () => {
       ],
     });
     expect(result.correct).toBe(false);
-    expect(result.misconception).toBeUndefined();
+    // Issue #599で現金と普通預金の取り違えの誤解を付けた
+    expect(result.misconception).toBe("deposit_is_cash");
     expect(result.feedback).toContain("普通預金から振り込みました");
   });
 
@@ -53,7 +54,7 @@ describe("預かったお金、仮のお金の誤解判定", () => {
     expect(result.misconception).toBe("outflow_on_debit");
   });
 
-  it("ステップ6で仮払金を左に書くだけの誤りは、従来どおり誤解IDなしの説明", () => {
+  it("ステップ6で仮払金を左に書くだけの誤りは、仮勘定を消さない誤解の説明", () => {
     const result = gradePost(settlement, {
       debit: [
         { account: "travel_expense", amount: 18000 },
@@ -62,7 +63,8 @@ describe("預かったお金、仮のお金の誤解判定", () => {
       credit: [{ account: "suspense_payment", amount: 20000 }],
     });
     expect(result.correct).toBe(false);
-    expect(result.misconception).toBeUndefined();
+    // Issue #599で仮勘定を消さない誤解を付けた
+    expect(result.misconception).toBe("temporary_account_not_cleared");
     expect(result.feedback).toContain("右に書いて消します");
   });
 });
