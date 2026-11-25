@@ -88,6 +88,7 @@ wrong_patterns:
     misconception: credit_purchase_as_claim
     feedback: 買ったので、絹の口にかかった額が左です。ニッコロはこちらが彼に負う側なので右です。
   - match: { credit: [{ account: cash }] }
+    misconception: credit_purchase_paid_in_cash
     feedback: 代金はまだ払っていません。いま増えたのは、こちらがニッコロに負う分です。
   - match: { credit: [{ account: giovanni }] }
     misconception: personal_account_wrong_party
@@ -128,6 +129,7 @@ wrong_patterns:
     misconception: venture_sales_as_profit
     feedback: 130は売れた額です。絹にかかった100を引いたものが、この口のもうけです。
   - match: 100
+    misconception: venture_cost_as_profit
     feedback: 100はかかった額です。売れた130から引きましょう。
 hint: 絹のページの右の合計から左の合計を引きます。
 success: 30ドゥカートです。先祖の時代と同じ口別計算です。
@@ -154,6 +156,7 @@ wrong_patterns:
     misconception: closing_side_confused
     feedback: 絹のページは右に30残っています。消すには反対の左に30を書き、利益と損失の右へ移します。
   - match: { credit: [{ account: owner_capital }] }
+    misconception: profit_skips_profit_and_loss
     feedback: 先祖のやり方ならそれで合っています。『スンマ』の手順では、いったん利益と損失のページに集めてから元手へ移します。
   - match: { credit: [{ account: cash }] }
     misconception: profit_is_cash
@@ -199,6 +202,7 @@ wrong_patterns:
     misconception: closing_side_confused
     feedback: 利益と損失のページは右に20残っています。消すには反対の左に20を書き、元手の右へ移します。
   - match: { debit: [{ amount: 30 }] }
+    misconception: year_profit_ignores_loss
     feedback: 30は絹のもうけだけです。胡椒の損10を引いた20が、今年のもうけです。
   - match: { credit: [{ account: cash }] }
     misconception: profit_is_cash
