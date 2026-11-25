@@ -69,7 +69,8 @@ wrong_patterns:
     misconception: debit_means_increase
     feedback: 給料は費用なので左、普通預金と預り金は右です。
   - match: { credit: [{ account: cash, amount: 97000 }] }
-    feedback: 手取りは普通預金から振り込みました。
+    misconception: deposit_is_cash
+    feedback: 手取りは普通預金から振り込みました。金庫の現金は動いていないので、右で減らすのは普通預金です。
   - match: { unbalanced: true }
     feedback: 左の合計と右の合計がそろっていません。どちらも100,000にしましょう。
   - match: { debit: [{ account: salaries_expense, amount: 100000 }], credit: [{ account: bank_deposit, amount: 100000 }] }
@@ -82,10 +83,13 @@ wrong_patterns:
     misconception: deposit_received_is_asset
     feedback: 預かった3,000円は店のものではなく、後で納める義務(負債)です。負債が増えるときは右に書きます。
   - match: { credit: [{ account: advances_paid }] }
+    misconception: advances_deposits_side_confused
     feedback: 立替金は、店が代わりに払って後で返してもらう権利(資産)です。今回は逆に、スタッフのお金を店が預かっているので預り金です。
   - match: { credit: [{ account: accounts_payable_other }] }
+    misconception: deposit_received_accounts_confused
     feedback: 未払金は、商品以外のものを買った代金を後で払う義務です。今回の3,000円は買い物の代金ではなく、スタッフから預かった税金なので預り金です。
   - match: { credit: [{ account: suspense_receipt }] }
+    misconception: deposit_received_accounts_confused
     feedback: 仮受金は、正体の分からない入金を置く科目です。今回の3,000円は所得税だと分かっていて、スタッフの代わりに預かっているので預り金です。
   - match: { credit: [{ account: miscellaneous_gain }] }
     misconception: deposit_is_revenue
@@ -120,9 +124,11 @@ wrong_patterns:
     misconception: deposit_payment_increases_liability
     feedback: 納めると「代わりに納める義務」は果たされて消えます。預り金(負債)は増えるのではなく減ります。
   - match: { liability: none }
+    no_misconception: 預り金が減ることの見落としで、納付をどう考えたかはこの回答だけでは決められない(費用と見た回答は費用の予想で捕まえる)
     feedback: 納めたことで「代わりに納める義務」が無くなります。預り金(負債)が減ります。
-  - match: { equity: decrease }
-    feedback: 現金と預り金が同じだけ減るので、純資産は変わりません。
+  - match: { equity: decrease, expense: none }
+    misconception: payment_reduces_capital
+    feedback: 現金と預り金が同じだけ減るので、純資産は変わりません。お金が出ていっても、費用でなければ純資産は減りません。
 hint: 預り金(負債)と現金(資産)が同じだけ減ります。費用にはなりません。
 success: 預り金という義務が消え、現金が同じだけ減りました。預かっていたお金を本人の代わりに渡しただけなので、店の費用にはなりません。給料の費用は、払った月の100,000円だけです。
 ```
@@ -158,7 +164,8 @@ wrong_patterns:
     misconception: advance_for_others_is_expense
     feedback: 働いてもらった対価として渡したお金ではありません。スタッフの私物の送料を代わりに払い、本人から返してもらうお金なので、給料ではなく立替金という資産です。
   - match: { debit: [{ account: deposits_received }] }
-    feedback: 預り金は、預かったお金を後で納める義務です。今回は逆に、店が先に払ってあげました。
+    misconception: advances_deposits_side_confused
+    feedback: 預り金は、預かったお金を後で納める義務です。今回は逆に、店が先に払ってあげたので立替金です。
   - match: { debit: [{ account: advance_payment }] }
     misconception: prepaid_asset_accounts_confused
     feedback: 前払金は、商品を受け取る前に払う手付金です。今回は商品の仕入ではなく、スタッフの代わりに払って本人から返してもらうお金なので立替金です。
@@ -228,7 +235,8 @@ wrong_patterns:
     misconception: outflow_on_debit
     feedback: 増えるのは旅費交通費(費用)と戻ってきた現金なので左、消す仮払金は右です。
   - match: { debit: [{ account: suspense_payment }] }
-    feedback: 仮払金は精算で役目を終えます。右に書いて消します。
+    misconception: temporary_account_not_cleared
+    feedback: 仮払金は出張の前に渡したときに左に書いてあります。精算で役目を終えるので、右に書いて消します。
   - match: { unbalanced: true }
     feedback: 左の合計と右の合計がそろっていません。どちらも20,000にしましょう。
   - match: { credit: [{ account: suspense_payment, amount: 18000 }] }
@@ -238,6 +246,7 @@ wrong_patterns:
     misconception: settlement_credits_cash
     feedback: 現金は、出張の前に渡したときにもう減らしてあります。精算で消すのは、そのとき置いた仮払金です。
   - match: { credit: [{ account: suspense_receipt }] }
+    misconception: advances_deposits_side_confused
     feedback: 仮受金は、正体の分からない入金を置く負債です。出張の前に店主へ渡したお金は仮払金に置いたので、精算で右に書いて消すのも仮払金です。
 hint: 左に旅費交通費18,000と現金2,000の2行。右に仮払金20,000です。「行を追加」で行を増やせます。
 success: 仮払金が消え、旅費交通費18,000が費用に、現金2,000が戻りました。
@@ -264,9 +273,11 @@ wrong_patterns:
   - match: { revenue: increase }
     misconception: suspense_receipt_is_revenue
     feedback: 何のお金か分からないうちは売上にできません。仮受金という負債に置いて、理由を調べます。
-  - match: { liability: none }
+  - match: { liability: none, revenue: none }
+    no_misconception: 仮受金が増えることの見落としで、入金をどう考えたかはこの回答だけでは決められない(売上と見た回答は収益の予想で捕まえる)
     feedback: 返すことになるかもしれないお金なので、仮受金という負債に置きます。
   - match: { asset: none }
+    no_misconception: 普通預金が増えることの見落としで、考え方の誤解ではない
     feedback: 普通預金は実際に増えています。資産は増えます。
 hint: 普通預金(資産)と仮受金(負債)が同じだけ増えます。
 success: 普通預金が増え、同じだけ仮受金50,000が負債に並びました。売上にはしていません。正体が分かったら、本来の科目へ移します。
@@ -297,7 +308,8 @@ wrong_patterns:
     misconception: receivable_collection_is_sale
     feedback: お金を貸して受け取った利息ではありません。ショーケースの代金は未収入金として記録済みで、今回はその権利が預金に変わっただけなので、収益にはなりません。右に未収入金を書いて権利を減らします。
   - match: { debit: [{ account: bank_deposit }] }
-    feedback: 普通預金は入金のときに増やしてあります。今回は仮受金と未収入金を相殺するだけです。
+    misconception: temporary_account_not_cleared
+    feedback: 普通預金は入金のときに増やしてあります。今回は左に仮受金を書いて消し、右の未収入金と相殺するだけです。
   - match: { credit: [{ account: accounts_receivable }] }
     misconception: nontrade_as_trade
     feedback: 売掛金は商品を売った代金の権利です。ショーケースは店の商品ではないので、売掛金ではなく未収入金を減らします。

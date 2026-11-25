@@ -720,6 +720,24 @@ misconceptions:
     correct: 預り金は他人のお金で、後で納める義務。会社のもうけではないので負債
     concepts: [advances_and_deposits, liability]
     remediation: receivables-and-payables/temporary-and-deposits
+  - id: advances_deposits_side_confused
+    name: 立替金と預り金、仮払金と仮受金の取り違え
+    description: 対になる科目で、店が払った側(立替金・仮払金)と受け取った側(預り金・仮受金)を取り違える。預かったお金を立替金に、立て替えたお金を預り金に、仮払いしたお金を仮受金に書いてしまう
+    correct: 立替金と仮払金は店が先に払って後で戻ってくる権利なので資産、預り金と仮受金は店が受け取って後で納めたり返したりする義務なので負債。お金が出た側か入った側かで決まる
+    concepts: [advances_and_deposits, suspense_accounts]
+    remediation: receivables-and-payables/temporary-and-deposits
+  - id: deposit_received_accounts_confused
+    name: 預かったお金の科目を取り違える
+    description: 他人の代わりに納めるために預かったお金を、同じ負債の未払金や仮受金に書いてしまう。店自身の買い物の後払いや、正体の分からない入金と区別していない
+    correct: 預り金は、誰のどんなお金か分かっていて、本人の代わりに納めるまで預かる義務。未払金は店が物を買った代金の後払い、仮受金は正体の分からない入金に使う
+    concepts: [advances_and_deposits, liability]
+    remediation: receivables-and-payables/temporary-and-deposits
+  - id: temporary_account_not_cleared
+    name: 分かった日に仮勘定を消さない
+    description: 仮払金や仮受金の中身が分かったときに、置いてあった仮勘定を消さず、仮払いや入金をもう一度書いてしまう
+    correct: 現金や預金は仮払い・入金のときに動かしてある。中身が分かった日にするのは、仮勘定を反対側に書いて消し、本来の科目へ移すことだけ
+    concepts: [suspense_accounts, temporary_account]
+    remediation: receivables-and-payables/temporary-and-deposits
   - id: claim_ignores_receipts
     name: 受け取った分を引かない
     description: 相手への貸しを、売った額の合計のままにしている。受け取った分を引いていない
