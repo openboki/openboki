@@ -16,8 +16,11 @@ async function postInTour(page: Page) {
   await work.getByLabel("借方の金額1").fill("100000");
   await work.getByLabel("貸方の科目1").fill("資本金");
   await work.getByLabel("貸方の金額1").fill("100000");
+  // 「できました」は保存より先に出るので、保存を待たずに移動すると移動先にセッションも記録も無い(Issue #597)
+  const saved = page.waitForResponse((r) => r.request().method() === "POST" && r.url().includes("/rest/v1/attempts"));
   await work.getByRole("button", { name: "記帳する" }).click();
   await expect(page.getByText("できました").first()).toBeVisible();
+  expect((await saved).ok()).toBe(true);
   return tour;
 }
 
@@ -52,8 +55,10 @@ test("ほかの単元で答えた学習者が「使い方」でチェックを�
   await work.getByLabel("借方の金額1").fill("1000000");
   await work.getByLabel("貸方の科目1").fill("資本金");
   await work.getByLabel("貸方の金額1").fill("1000000");
+  const saved = page.waitForResponse((r) => r.request().method() === "POST" && r.url().includes("/rest/v1/attempts"));
   await work.getByRole("button", { name: "記帳する", exact: true }).click();
   await expect(page.getByText("できました", { exact: true })).toBeVisible();
+  expect((await saved).ok()).toBe(true);
 
   // チェックを付け直す前は、記録のある学習者に案内を出さない(Issue #69)
   const loaded = page.waitForResponse((r) => r.url().includes("/rest/v1/unit_progress") && r.request().method() === "GET");
