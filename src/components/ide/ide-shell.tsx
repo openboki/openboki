@@ -1150,6 +1150,8 @@ export function IdeShell({ unit, accounts, netIncomeTerm, balanceSheetTerm, inco
   // min-w-0: スマホ幅(1列のgrid)で、ペインの中身のmin-content幅が列を押し広げないようにする(Issue #28)
   // relative: 中のsr-only(absolute)の基準をペインにする。無いと文書基準で置かれ、ペインの下にはみ出して文書が縦にスクロールできてしまう(Issue #280)
   const paneClass = (p: Pane) => `${pane === p ? "block" : "hidden"} lg:block relative min-h-0 min-w-0 lg:overflow-y-auto p-4`;
+  // 狭い画面ではタブ列が列の名前を出すので、PCの3列でだけ見せる。名前はsectionのaria-labelで読まれるので読み上げから外す(Issue #573)
+  const paneHeading = (p: Pane) => <p aria-hidden="true" className="mb-2 hidden text-xs font-medium text-muted-foreground lg:block">{PANE_LABELS[p]}</p>;
 
   return (
     <HelpControlsContext value={{ openTopic: openHelpTopic, hidden: tourActive, ctx: helpCtx }}>
@@ -1216,6 +1218,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, balanceSheetTerm, inco
 
       <div className="grid flex-1 min-h-0 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)_minmax(0,1fr)]">
         <section id="pane-guide" role="region" aria-label="ガイド" className={`${paneClass("guide")} @container bg-surface-guide lg:border-r`} data-tour="guide">
+          {paneHeading("guide")}
           {unit.era && <p className="mb-2 text-xs text-muted-foreground">{unit.era}</p>}
           {stepIndex === 0 && unit.requires.length > 0 && (
             <p className="mb-2 text-xs text-muted-foreground">
@@ -1315,6 +1318,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, balanceSheetTerm, inco
         </section>
 
         <section ref={workPane} id="pane-work" role="region" aria-label="ワークスペース" tabIndex={-1} onFocus={revealFocused} className={`${paneClass("work")} bg-surface-work lg:border-r space-y-4 ${FOCUS_TARGET_CLASS}`}>
+          {paneHeading("work")}
           {showFirstTime && <FirstTimeNote topic={firstTime} ctx={helpCtx} onMore={(button) => openHelpTopic(firstTime.id, button)} onDismiss={() => {
             // 入力欄へ移すとスマートフォンでキーボードが開くので、ペイン自体へ移す
             workPane.current?.focus();
@@ -1564,6 +1568,7 @@ export function IdeShell({ unit, accounts, netIncomeTerm, balanceSheetTerm, inco
         </section>
 
         <section id="pane-result" role="region" aria-label="結果" className={`${paneClass("result")} bg-surface-result`} data-tour="statements">
+          {paneHeading("result")}
           {unit.era && <h2 className="mb-3 text-sm font-semibold">{unit.era}</h2>}
           {/* 覚え書きのような単式の帳簿はある時代なので、無いものを仕訳帳と結果の表に限って言う */}
           {unit.view === "none" && <p className="text-sm text-muted-foreground">この時代にはまだ仕訳帳も結果の表もありません。</p>}
