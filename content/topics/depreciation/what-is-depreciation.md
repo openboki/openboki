@@ -139,10 +139,10 @@ wrong_patterns:
     feedback: 減価償却費は費用なので左で増えます。左右を入れ替えてみましょう。
   - match: { credit: [{ account: accumulated_depreciation_building }] }
     misconception: accumulated_depreciation_any_asset
-    feedback: 建物減価償却累計額は、建物の価値の減りを積む科目です。累計額は資産ごとに分けて積み、その資産の取得原価から引いて帳簿価額を出します。マシンの減りは備品減価償却累計額に積みましょう。
+    feedback: 建物減価償却累計額は、建物の価値の減りを積む科目です。累計額は資産ごとに分けて積み、その資産の取得原価から引いて、残っている価値を出します。マシンの減りは備品減価償却累計額に積みましょう。
   - match: { credit: [{ account: accumulated_depreciation_vehicle }] }
     misconception: accumulated_depreciation_any_asset
-    feedback: 車両運搬具減価償却累計額は、車の価値の減りを積む科目です。累計額は資産ごとに分けて積み、その資産の取得原価から引いて帳簿価額を出します。マシンの減りは備品減価償却累計額に積みましょう。
+    feedback: 車両運搬具減価償却累計額は、車の価値の減りを積む科目です。累計額は資産ごとに分けて積み、その資産の取得原価から引いて、残っている価値を出します。マシンの減りは備品減価償却累計額に積みましょう。
   - match: { credit: [{ account: equipment }] }
     misconception: direct_writeoff_vs_contra
     feedback: 備品の600,000はそのまま残します。減った分は備品減価償却累計額という別の科目に積んでみましょう。
