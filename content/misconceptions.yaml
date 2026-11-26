@@ -372,6 +372,18 @@ misconceptions:
     correct: 振替は帳簿の中で金額を別の科目へ移すだけで、外との取引はない。現金も売上も動かない
     concepts: [ending_inventory, three_account_method]
     remediation: merchandise/cost-of-goods-sold
+  - id: inventory_add_subtract_confused
+    name: 期首の商品と売れ残りの足し引きを取り違える
+    description: 売上原価を求めるとき、期首の商品を仕入から引いたり、期末の売れ残りを足したりする。どちらも「棚にあった商品」とひとまとめに見て、売れたのか残ったのかを分けていない
+    correct: 期首の商品はこの期に売れる可能性があった商品なので仕入に足し、期末の売れ残りは売れていないので引く。売上原価は期首の商品 + 当期の仕入 − 期末の売れ残り
+    concepts: [cost_of_goods_sold, ending_inventory]
+    remediation: merchandise/cost-of-goods-sold
+  - id: prior_profit_in_net_income
+    name: 前の期のもうけを当期純利益に入れる
+    description: 繰越利益剰余金(前の期までのもうけ)を、この期の当期純利益に足したり、そのまま当期純利益として答えたりする
+    correct: 当期純利益は、この期の収益からこの期の費用を引いた残り。前の期までのもうけは繰越利益剰余金として純資産に載っていて、この期の当期純利益とは別に数える
+    concepts: [net_income]
+    remediation: merchandise/cost-of-goods-sold
   - id: credit_purchase_paid_in_cash
     name: 掛けで買っても現金が減る
     description: 商品を掛けで仕入れたり返品したりしたときに、代金をまだ払っていないのに現金の減少や戻りとして記録してしまう
