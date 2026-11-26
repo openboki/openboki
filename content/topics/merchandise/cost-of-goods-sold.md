@@ -66,11 +66,17 @@ wrong_patterns:
     misconception: purchases_equal_cogs
     feedback: 期首の商品と仕入を足したところで止まっています。棚に残っている22,000円分は売れていないので引きます。
   - match: 95000
+    misconception: inventory_add_subtract_confused
     feedback: 期首の商品15,000は引くのではなく足します。1年目から持ち越して、この期に売った商品です。
   - match: 169000
+    misconception: inventory_add_subtract_confused
     feedback: 売れ残りは引きます。足してはいけません。
   - match: 22000
+    no_misconception: 売れ残りの金額を答えた問いの読み違いで、考え方の誤りではない
     feedback: それは売れ残りの金額です。売れた分は、期首の商品とこの期の仕入の合計から売れ残りを引いた金額です。
+  - match: 15000
+    no_misconception: 期首の商品の金額を答えた問いの読み違いで、考え方の誤りではない
+    feedback: それは期首の商品の金額です。この期の仕入132,000を足し、売れ残り22,000を引きましょう。
 hint: 15,000 + 132,000 − 22,000。
 success: 売上原価は125,000円。期首の商品と仕入のうち、売れた分だけが、この期の費用です。
 ```
@@ -94,6 +100,7 @@ wrong_patterns:
     misconception: beginning_inventory_forgotten
     feedback: 22,000は期末の売れ残りです。仕入へ移すのは、1年目から持ち越した期首の商品15,000です。
   - match: { credit: [{ account: sales }] }
+    misconception: inventory_transfer_as_transaction
     feedback: 売ったわけではありません。期首の商品を仕入の列に入れるだけです。
   - match: { unbalanced: true }
     feedback: 左の合計と右の合計がそろっていません。どちらも15,000にしましょう。
@@ -141,10 +148,13 @@ wrong_patterns:
     misconception: purchases_equal_cogs
     feedback: 売れ残りの分は、まだ費用ではありません。仕入(費用)がその分減ります。
   - match: { asset: none }
+    no_misconception: 資産が増えることの見落としで、売れ残りを費用のままと見た回答は費用の予想で捕まえる
     feedback: 売れ残った商品は財産です。繰越商品という資産が増えます。
   - match: { equity: none }
+    no_misconception: 費用と純資産のつながりの見落としで、売上原価の考え方の誤りではない
     feedback: 費用が減ると当期純利益が増え、そのぶん純資産も増えます。
   - match: { revenue: increase }
+    misconception: inventory_transfer_as_transaction
     feedback: 売ったわけではないので、売上は動きません。費用が減るだけです。
   - match: { expense: increase }
     misconception: purchases_equal_cogs
@@ -153,6 +163,7 @@ wrong_patterns:
     misconception: purchases_equal_cogs
     feedback: 売れ残った商品は、これから売れる財産です。費用から資産へ移すので、資産は減らずに増えます。
   - match: { equity: decrease }
+    no_misconception: 費用と純資産のつながりの向きの取り違えで、売上原価の考え方の誤りではない
     feedback: 費用が減ると当期純利益が増えるので、純資産は減らずに増えます。
 hint: 資産(繰越商品)が増え、費用(仕入)が減ります。費用が減れば利益も純資産も増えます。
 success: 左に繰越商品22,000、右に仕入22,000。1本目の「仕入 / 繰越商品」と左右が入れ替わった形で、決算の日にこの2本を続けて書くので、科目の頭の音を並べて「しーくり、くりしー」と呼ばれています。仕入が125,000に減り、繰越商品が22,000になりました。損益計算書の仕入が、ちょうど売上原価になっています。
@@ -180,11 +191,20 @@ wrong_patterns:
     misconception: purchases_equal_cogs
     feedback: 売れ残り22,000まで費用にしています。売れ残りは繰越商品(資産)に移したので、費用ではありません。
   - match: 110000
+    misconception: prior_profit_in_net_income
     feedback: 1年目のもうけ40,000を足しています。繰越利益剰余金は前の期のもうけなので、この期の当期純利益には入れません。
   - match: 675000
+    no_misconception: 発送費と支払家賃の引き忘れで、売上原価の考え方の誤りではない
     feedback: 売上原価だけでなく、発送費5,000と支払家賃600,000も費用です。
   - match: 620000
+    no_misconception: 家賃を1か月分で計算した問題文の読み違いで、考え方の誤りではない
     feedback: 支払家賃を1か月分しか引いていません。家賃は毎月末に払ってきたので、12か月分600,000が費用です。
+  - match: 40000
+    misconception: prior_profit_in_net_income
+    feedback: それは1年目のもうけ(繰越利益剰余金)です。この期の当期純利益は、この期の売上800,000から費用を引いて求めます。
+  - match: 125000
+    no_misconception: 売上原価の金額を答えた問いの読み違いで、考え方の誤りではない
+    feedback: それは売上原価です。当期純利益は、売上800,000から売上原価125,000、発送費5,000、支払家賃600,000を引いた残りです。
 hint: 800,000 − 125,000 − 5,000 − 600,000 = 70,000。
 success: 当期純利益は70,000円。売れた分の仕入値だけが費用になり、売れ残りの22,000円は費用ではなく、資産として次の期に持ち越されます。1年目のもうけ40,000円(繰越利益剰余金)とは別に、この期のもうけとして載ります。
 ```
