@@ -6,10 +6,11 @@ const closing = (id: string) => unitMap.get(id)!.steps.at(-1)!.narrative;
 
 // Issue #146: ふりかえりの予告は、1行下の「次の単元」リンクと同じ行き先を指す
 describe("ふりかえりの予告", () => {
-  it("5つの要素と仕訳は、実際の次の単元へ橋渡しし、減価償却を次の話として予告しない", () => {
+  it("5つの要素と仕訳は、減価償却を次の話として予告しない", () => {
     const text = closing("bookkeeping-basics/five-elements");
     expect(text).not.toContain("次の単元では、1年の終わりに");
-    expect(text).toContain(`次の単元「${nextUnit(unitMap.get("bookkeeping-basics/five-elements")!)!.title}」`);
+    // 3級パスと歴史パスに共通の単元なので、特定の単元を「次」と名指ししない(Issue #623)
+    expect(text).not.toMatch(/次の単元「/);
     // コーヒーマシンの予告そのものを外した。費用ではなく資産と言い切った直後に、少しずつ費用にする話を出さない
     expect(text).not.toContain("固定資産のテーマ");
   });

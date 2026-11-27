@@ -1,8 +1,9 @@
 import { Fragment } from "react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { units } from "#content";
-import { dependsOnUnit, glossaryMap, ideAccountList, misconceptionMap, nextUnit, sortedTopics, unitMap } from "@/lib/content";
+import { dependsOnUnit, glossaryMap, ideAccountList, misconceptionMap, nextUnit, pathsOfUnit, sortedTopics, unitMap } from "@/lib/content";
 import { Markdown } from "@/components/markdown";
 import { pageMetadata } from "@/lib/site";
 import { IdeShell, type MisconceptionInfo } from "@/components/ide/ide-shell";
@@ -25,6 +26,7 @@ export default async function UnitPage({ params }: { params: Promise<{ topic: st
   const unit = unitMap.get(`${topicId}/${unitSlug}`);
   if (!unit) notFound();
   const next = nextUnit(unit);
+  const learningPaths = pathsOfUnit(unit.id);
   // 非表示テーマ(チュートリアル)にだけ、バナーから来た単元へ戻るリンクの宛先を渡す。
   // ?from=の値をこの一覧で検証し、任意のURLへ飛ばさない(Issue #224)
   const shownTopics = new Set(sortedTopics.map((t) => t.id));
@@ -60,6 +62,21 @@ export default async function UnitPage({ params }: { params: Promise<{ topic: st
       narratives={unit.steps.map((s, i) => (
         <Fragment key={i}>
           <Markdown body={s.narrative} />
+          {/* 「次の単元」ボタンはテーマ順なので、別のパスから来た学習者にはパスの続きへ戻る道をここで出す(Issue #623) */}
+          {i === unit.steps.length - 1 && learningPaths.length > 0 && (
+            <section className="not-prose mt-6 space-y-2 border-t pt-4 text-sm">
+              <h3 className="font-medium">この単元を含む学習パス</h3>
+              <ul className="space-y-1">
+                {learningPaths.map((p) => (
+                  <li key={p.id}>
+                    <Link href={`/paths/${p.id}`} className="underline">
+                      {p.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
           {/* 出典はふりかえりの下に並べる(ADR 0009) */}
           {i === unit.steps.length - 1 && unit.sources.length > 0 && (
             <section className="not-prose mt-6 space-y-2 border-t pt-4 text-sm">
