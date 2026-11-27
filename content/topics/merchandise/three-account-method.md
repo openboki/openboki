@@ -62,6 +62,7 @@ wrong_patterns:
     misconception: purchase_is_asset
     feedback: 豆は売るための商品で、マシンのように長く使う備品ではありません。仕入を使います。
   - match: { debit: [{ account: supplies_expense }] }
+    misconception: merchandise_as_supplies
     feedback: 消耗品費はお店で使い切る物の代金です。売り物の豆は仕入です。
   - match: { credit: [{ account: bank_deposit }] }
     misconception: deposit_is_cash
@@ -98,6 +99,7 @@ wrong_patterns:
     misconception: purchase_is_asset
     feedback: 三分法では、買った商品を資産にしません。増える資産はなく、払った現金の分だけ資産は減ります。
   - match: { equity: none }
+    no_misconception: 費用と純資産のつながりの見落としで、三分法の考え方の誤りではない
     feedback: 費用が増えると当期純利益が減り、そのぶん純資産も減ります。
 hint: 現金(資産)が減り、仕入(費用)が増えます。費用が増えれば純資産も減ります。
 success: マシンのときとは違い、資産は減って費用が増えました。売り物を買うことと、使う物を買うことの違いが仕訳に表れています。
@@ -122,6 +124,7 @@ wrong_patterns:
     misconception: debit_means_increase
     feedback: 増えた現金は左、売上は右です。左右を入れ替えてみましょう。
   - match: { credit: [{ account: purchases }] }
+    misconception: purchase_is_asset
     feedback: 売ったときに仕入を減らす必要はありません。三分法では、売上を右に書くだけです。
   - match: { credit: [{ account: merchandise_inventory }] }
     misconception: purchase_is_asset
@@ -161,12 +164,16 @@ wrong_patterns:
     misconception: purchase_is_asset
     feedback: 仕入は費用です。売上90,000から仕入の合計を引きましょう。
   - match: 60000
+    no_misconception: 焼き菓子の仕入20,000を引き忘れた計算漏れで、考え方の誤解ではない
     feedback: 焼き菓子の20,000も仕入です。30,000 + 20,000を引きましょう。
   - match: 70000
+    no_misconception: 結果の表の当期純利益をそのまま答えた問いの読み違いで、三分法の考え方の誤りではない
     feedback: それは先月分も含めた当期純利益です。今月の商品だけなら、90,000 − 50,000です。
   - match: 120000
+    no_misconception: 先月のコーヒーを含む結果の表の売上170,000をそのまま使った問いの読み違いで、考え方の誤解ではない
     feedback: 結果の表の売上170,000には、先月のコーヒーの80,000が入っています。今月の商品だけなら、売上は90,000です。
   - match: 50000
+    no_misconception: 引く側の仕入の合計をそのまま答えた問いの読み違いで、考え方の誤解ではない
     feedback: それは仕入の合計です。売上90,000から、この50,000を引いた金額を答えましょう。
 hint: 90,000 − (30,000 + 20,000)。
 success: 売上と仕入の差は40,000円。売れ残りが無ければ、この差が商品のもうけです。売上と仕入を向かい合わせに置くと、こうして読み取れます。
