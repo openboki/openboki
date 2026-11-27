@@ -88,7 +88,7 @@ wrong_patterns:
     misconception: credit_purchase_as_claim
     feedback: 買ったので、絹の口にかかった額が左です。ニッコロはこちらが彼に負う側なので右です。
   - match: { credit: [{ account: cash }] }
-    misconception: credit_purchase_paid_in_cash
+    misconception: credit_purchase_as_cash_payment
     feedback: 代金はまだ払っていません。いま増えたのは、こちらがニッコロに負う分です。
   - match: { credit: [{ account: giovanni }] }
     misconception: personal_account_wrong_party
@@ -96,6 +96,9 @@ wrong_patterns:
   - match: { debit: [{ account: giovanni }] }
     misconception: personal_account_wrong_party
     feedback: 絹を買った相手はニッコロです。ジョヴァンニのページは彼との貸し借りだけを書く場所です。この取引では左が絹、右がニッコロです。
+  - match: { debit: [{ account: pepper_voyage }] }
+    misconception: venture_account_mixed
+    feedback: 買ったのは絹で、フランドルへ送る口です。かかった額はその商品の口の左に書くので、左は胡椒ではなく絹(フランドル航海)のページです。胡椒のページには、アレクサンドリア航海の分だけを書きます。
   - match: { unbalanced: true }
     feedback: 借方と貸方には同じ額を書きます。どちらも100にしましょう。
 hint: 「Per 絹 // A ニッコロ、100」。Perが左、Aが右です。
@@ -161,9 +164,15 @@ wrong_patterns:
   - match: { credit: [{ account: cash }] }
     misconception: profit_is_cash
     feedback: もうけは現金のページには書きません。利益と損失のページに集めます。
+  - match: { debit: [{ account: pepper_voyage }] }
+    misconception: venture_account_mixed
+    feedback: 移すのは絹の口のもうけです。右に30が残っているのは絹(フランドル航海)のページなので、左に30を書くのは胡椒ではなく絹のページです。胡椒の口は次に、損として別に移します。
   - match: { debit: [{ amount: 130 }] }
     misconception: venture_sales_as_profit
     feedback: 130は売れた額です。絹にかかった100を引いた30が、この口のもうけです。
+  - match: { debit: [{ amount: 100 }] }
+    misconception: venture_cost_as_profit
+    feedback: 100は絹にかかった額です。売れた130から引いた30が、この口のもうけです。
   - match: { unbalanced: true }
     feedback: 借方と貸方には同じ額を書きます。どちらも30にしましょう。
 hint: 口のもうけは利益と損失の右へ。損なら左へ。

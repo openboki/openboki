@@ -209,6 +209,12 @@ wrong_patterns:
   - match: { credit: [{ account: loans_payable }] }
     misconception: expense_as_liability
     feedback: 家賃は現金で払い終えたので、銀行に返す義務は増えていません。減ったのは現金です。右は現金にしてみましょう。
+  - match: { credit: [{ account: accounts_payable_other }] }
+    misconception: expense_as_liability
+    feedback: 未払金は、後で払う約束のお金を表す科目です。家賃はその場で現金で払い終えたので、後で払う義務は残っていません。減ったのは現金です。右は現金にしてみましょう。
+  - match: { credit: [{ account: accounts_payable }] }
+    misconception: expense_as_liability
+    feedback: 買掛金は、商品を仕入れて代金を後で払う義務を表す科目です。家賃は商品の代金ではなく、現金で払い終えています。減ったのは現金です。右は現金にしてみましょう。
   - match: { unbalanced: true }
     feedback: 左の合計と右の合計がそろっていません。どちらも50,000にしましょう。
 hint: 左に支払家賃50,000、右に現金50,000です。
@@ -228,8 +234,14 @@ accounts: [cash, equipment, loans_payable, capital_stock, sales, rent_expense]
 misconceptions:
   loans_payable:
     revenue: revenue_equals_cash_in
+    equity: capital_loan_confused
+  capital_stock:
+    liability: capital_loan_confused
+  sales:
+    liability: sale_proceeds_as_capital_or_loan
   rent_expense:
     liability: expense_as_liability
+    asset: expense_as_asset
   equipment:
     expense: expense_at_payment
 hint: 現金と備品は財産、借入金は返す義務、資本金は元手、売上はもうけの元、支払家賃は使って残らないお金です。

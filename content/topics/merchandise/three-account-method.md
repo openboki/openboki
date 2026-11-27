@@ -183,6 +183,7 @@ accounts: [purchases, sales, equipment, cash]
 misconceptions:
   purchases:
     asset: purchase_is_asset
+    liability: expense_as_liability
   equipment:
     expense: expense_at_payment
 hint: 仕入は費用、売上は収益、備品と現金は資産です。

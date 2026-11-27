@@ -231,6 +231,7 @@ misconceptions:
     expense: purchases_equal_cogs
   purchases:
     asset: purchase_is_asset
+    liability: expense_as_liability
   accounts_receivable:
     revenue: receivable_is_cash
 hint: 繰越商品と売掛金は資産、仕入は費用、売上は収益です。
