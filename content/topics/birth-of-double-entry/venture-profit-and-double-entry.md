@@ -69,6 +69,7 @@ wrong_patterns:
     misconception: venture_costs_only_price
     feedback: 胡椒の代金120だけを引いています。運賃20と関税10も、この航海の胡椒を売るためにかかった額なので、左に入れて引きます。
   - match: 150
+    misconception: venture_cost_as_profit
     feedback: 150はかかった額の合計です。売った額180から引きましょう。
 hint: 右の合計(売った額)から左の合計(かかった額)を引きます。運賃と関税も左です。
 success: 30ドゥカートです。航海1口が終わるたびに、その口のもうけが1つの数字で出ます。
@@ -117,6 +118,7 @@ wrong_patterns:
     misconception: personal_account_by_cash_direction
     feedback: 胡椒がジョヴァンニの手に渡ったからといって、彼のページが右にはなりません。売ったので彼がこちらに負い、彼のページは左、胡椒のページは売った側の右です。
   - match: { debit: [{ account: cash }] }
+    misconception: credit_sale_as_cash_receipt
     feedback: 代金はまだ受け取っていません。いま増えたのは、ジョヴァンニがこちらに負う分です。
   - match: { unbalanced: true }
     feedback: 2つのページには同じ額を書きます。どちらも60にしましょう。
@@ -160,13 +162,16 @@ answer:
     credit: [{ account: wine_voyage, amount: 50 }]
 wrong_patterns:
   - match: { index: 4 }
+    no_misconception: 両側そろった行を選んだ行の選び間違いで、考え方の誤解ではない
     feedback: この行は現金の左とマッテオの右に同じ30があり、両側そろっています。
   - match: { index: 0 }
+    no_misconception: 両側そろった行を選んだ行の選び間違いで、考え方の誤解ではない
     feedback: この行はワインの左と現金の右に同じ80があり、両側そろっています。
   - match: { credit: [{ account: pepper_voyage }] }
     misconception: venture_account_mixed
     feedback: 売ったのはワインです。売った額はその商品の口の右に書くので、右は胡椒ではなくワイン(クレタ航海)のページです。
   - match: { credit: [{ account: cash }] }
+    misconception: credit_sale_as_cash_receipt
     feedback: 代金はまだ受け取っていません。ジョヴァンニの左の50は、彼がこちらに負う分です。右に書くのは、売ったワインのページです。
 hint: 左右の差はいくつでしょう。その額が片側にしか無い行を探します。
 success: 見つけました。ジョヴァンニの左に50を書いたのに、ワインのページの右が空でした。右に50を足すと、試算の左右がそろいます。
@@ -197,6 +202,7 @@ wrong_patterns:
     misconception: venture_sales_as_profit
     feedback: 180は売った額です。もうけは、かかった150を引いた30です。
   - match: { debit: [{ amount: 150 }] }
+    misconception: venture_cost_as_profit
     feedback: 150はかかった額の合計です。元手へ移すのはもうけで、売った180から150を引いた30です。
   - match: { debit: [{ amount: 60 }] }
     misconception: venture_costs_only_price

@@ -93,6 +93,7 @@ accounts:
     name: 前払金
     aliases: [前渡金, 前払い金]
     reading: [まえばらいきん, まえわたしきん]
+    keywords: [手付金, てつけきん]
     short: 商品を受け取る前に払った手付金
     element: asset
     why: 商品を受け取る権利を先に買ってある状態で、将来商品に変わる財産だからです。まだ仕入ではありません。
@@ -201,6 +202,7 @@ accounts:
     name: 前受金
     aliases: [前受け金]
     reading: [まえうけきん]
+    keywords: [手付金, てつけきん]
     short: 商品を渡す前に受け取った手付金
     element: liability
     why: 商品を渡す義務(渡せなければ返す義務)を負っている状態だからです。まだ売上ではありません。
