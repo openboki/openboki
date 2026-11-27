@@ -786,6 +786,12 @@ misconceptions:
     correct: 後払いで買ったとき、現金はまだ動かない。増えるのは、こちらが相手に負う分。相手の人名勘定のページの右に書き、現金のページは実際に払った日に減らす
     concepts: [personal_account, double_entry]
     remediation: birth-of-double-entry/memorandum-and-personal-accounts
+  - id: credit_sale_as_cash_receipt
+    name: 後払いで売っても現金が増える
+    description: 相手に後払いで売った分を、代金をまだ受け取っていないのに現金のページの左に書いている
+    correct: 後払いで売ったとき、現金はまだ動かない。増えるのは、相手がこちらに負う分。相手の人名勘定のページの左に書き、現金のページは実際に受け取った日に増やす
+    concepts: [personal_account, double_entry]
+    remediation: birth-of-double-entry/memorandum-and-personal-accounts
   - id: personal_account_by_cash_direction
     name: 人名勘定の左右をお金や物の向きで決める
     description: 「お金や物を受け取ったら左、渡したら右」と考えて人名勘定に写している
