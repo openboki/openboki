@@ -265,7 +265,8 @@ wrong_patterns:
     misconception: expense_at_payment
     feedback: コーヒーマシンの600,000は費用ではなく資産です。費用は家賃の50,000だけです。
   - match: 80000
-    feedback: 家賃の50,000を引き忘れています。収益から費用を引きましょう。
+    misconception: revenue_is_profit
+    feedback: それは売上の金額で、まだ家賃の50,000を引き忘れています。売上はもうけそのものではなく、収益から費用を引いた残りが当期純利益です。
   - match: 130000
     misconception: expense_added_to_profit
     feedback: 売上80,000と家賃50,000を足しています。費用は足すのではなく引きます。収益は純資産を増やし、費用は純資産を減らすので、当期純利益 = 収益 − 費用です。
@@ -291,6 +292,7 @@ wrong_patterns:
     misconception: cash_is_only_asset
     feedback: 現金だけが資産ではありません。コーヒーマシン(備品)600,000も資産です。
   - match: 1030000
+    misconception: equity_as_total_assets
     feedback: それは資産から負債を引いた、純資産の金額です。資産の合計は負債を引く前の金額です。
 hint: 現金730,000 + 備品600,000。
 success: 資産1,330,000 = 負債300,000 + 純資産1,030,000。左右がぴったり合いましたね。
