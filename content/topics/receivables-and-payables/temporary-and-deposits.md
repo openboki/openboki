@@ -331,6 +331,8 @@ success: 仮受金と未収入金が両方消えました。仮の置き場は�
 type: classify
 accounts: [advances_paid, deposits_received, suspense_payment, suspense_receipt]
 misconceptions:
+  advances_paid:
+    expense: advance_for_others_is_expense
   deposits_received:
     revenue: deposit_is_revenue
   suspense_payment:
