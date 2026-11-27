@@ -81,7 +81,7 @@ misconceptions:
   - id: no_cost_allocation
     name: 購入時に全額費用
     description: 長く使う資産の購入額を、買った期の費用に全額計上してしまう
-    correct: 使う期間にわたって費用を配分する(費用配分の原則)。購入した期は資産として記録し、各期の減価償却費として少しずつ費用にする
+    correct: 長く使う物は、買った日にまとめて費用にせず、まず資産として記録する。使う年数にわたって、1年ごとに使った分だけを少しずつ費用にしていく
     concepts: [cost_allocation, depreciation]
     remediation: depreciation/what-is-depreciation
   - id: contra_as_liability
