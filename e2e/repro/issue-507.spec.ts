@@ -10,7 +10,7 @@ for (const unit of ["merchandise/credit-transactions", "merchandise/returns-and-
   });
 }
 
-// 返品と運賃は3級パスで初めて損失から始まる単元なので、ステップ1で当期純損失の語を用語リンク付きで定義する
+// 返品と運賃は損失から始まる単元なので、ステップ1で当期純損失の語を用語リンク付きでおさらいする(定義は「掛けで売る、掛けで買う」ステップ2。#625)
 test("merchandise/returns-and-costs の最初のステップが、損失で始まる理由と当期純損失を説明する", async ({ page }) => {
   await page.goto("/units/merchandise/returns-and-costs");
   await expect(page.getByRole("region", { name: "損益計算書" }).getByText("当期純損失")).toBeVisible();
