@@ -18,6 +18,12 @@ misconceptions:
     correct: 資産とは会社が持つ財産や権利の全体。現金が形を変えて建物や備品になっても、資産の合計は変わらない
     concepts: [asset, five_elements]
     remediation: bookkeeping-basics/five-elements
+  - id: equity_as_total_assets
+    name: 資産の合計と純資産の取り違え
+    description: 資産の合計を聞かれて、資産から負債を引いた残りの純資産の金額を答えている。貸借対照表の左の合計と、右の下側の純資産を同じものだと思っている
+    correct: 資産の合計は、現金や備品など会社が持っている財産を全部足した、負債を引く前の金額。そこから負債を引いた残りが純資産で、貸借対照表では左の資産 = 右の負債 + 純資産になる
+    concepts: [asset, equity, balance_sheet]
+    remediation: bookkeeping-basics/five-elements
   - id: revenue_equals_cash_in
     name: お金が入れば収益
     description: 現金が入ってくれば収益、出ていけば費用だと思っている。借入による入金を収益と考えてしまう
@@ -29,6 +35,12 @@ misconceptions:
     description: 収益も費用も「動いたお金」として足し合わせ、その合計を当期純利益だと思っている。費用が純資産を減らす側だと捉えていない
     correct: 当期純利益は収益から費用を引いた残り。収益は純資産を増やし、費用は純資産を減らすので、向きが反対の2つを足し合わせてはいけない
     concepts: [net_income, expense, revenue]
+    remediation: bookkeeping-basics/five-elements
+  - id: revenue_is_profit
+    name: 売上がそのままもうけ
+    description: 売上(収益)の合計をそのまま当期純利益だと思っている。家賃のように、もうけを出すためにかかった費用を引いていない
+    correct: 売上は収益で、費用を引く前の金額。当期純利益は収益から費用を引いた残りで、収益だけでは純資産がどれだけ増えたかは分からない
+    concepts: [net_income, revenue, expense]
     remediation: bookkeeping-basics/five-elements
   - id: expense_as_liability
     name: 費用と負債の混同
