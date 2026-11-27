@@ -60,20 +60,27 @@ export function ConceptMap({ concepts, links, domains }: Props) {
   const panes = useRef<HTMLDivElement>(null);
   const sidebar = useRef<HTMLElement>(null);
 
-  // ?c=<id> で概念を指定して開ける。静的生成のHTMLは起点のままなので、読み込み後に合わせる
+  // ?c=<id> で概念を指定して開ける。静的生成のHTMLは起点のままなので、読み込み後に合わせる。戻る・進むでもURLに合わせる
   useEffect(() => {
-    const requested = new URLSearchParams(window.location.search).get("c");
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- 外部(URL)との同期。サーバーではURLの問い合わせ部分を読めない
-    if (requested && byId.has(requested)) setSelectedId(requested);
-  }, [byId]);
+    const syncFromUrl = () => {
+      const requested = new URLSearchParams(window.location.search).get("c");
+      setSelectedId(requested && byId.has(requested) ? requested : anchorId);
+    };
+    syncFromUrl();
+    window.addEventListener("popstate", syncFromUrl);
+    return () => window.removeEventListener("popstate", syncFromUrl);
+  }, [byId, anchorId]);
 
   useEffect(() => {
     sidebar.current?.querySelector('[aria-current="true"]')?.scrollIntoView({ block: "nearest" });
   }, [selectedId]);
 
-  const select = (id: string) => {
+  // 押して選んだ概念は履歴に積み、「戻る」でたどった道を戻れるようにする(Issue #608)。
+  // 一覧の矢印キーは1キーごとに積むと戻れなくなるので置き換える
+  const select = (id: string, history: "push" | "replace" = "push") => {
+    if (id === selectedId) return;
     setSelectedId(id);
-    window.history.replaceState(null, "", `?c=${id}`);
+    window.history[history === "push" ? "pushState" : "replaceState"](null, "", `?c=${id}`);
   };
 
   const q = normalizeSearchText(query);
@@ -94,7 +101,7 @@ export function ConceptMap({ concepts, links, domains }: Props) {
     if (next === undefined) return;
     e.preventDefault();
     const nextId = visibleIds[Math.min(visibleIds.length - 1, Math.max(0, next))];
-    select(nextId);
+    select(nextId, "replace");
     sidebar.current?.querySelector<HTMLButtonElement>(`[data-concept-id="${nextId}"]`)?.focus();
   };
 
