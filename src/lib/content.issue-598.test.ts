@@ -12,13 +12,14 @@ function task<T extends "post" | "calc">(step: number, type: T) {
 }
 
 describe("ステップ3: 仕訳帳に書く", () => {
-  it("まだ払っていないのに右を現金にすると、掛けで買っても現金が減る誤解が付く", () => {
+  it("まだ払っていないのに右を現金にすると、後払いで買っても現金が減る誤解が付く", () => {
     const r = gradePost(task(2, "post"), {
       debit: [{ account: "cloth_venture", amount: 100 }],
       credit: [{ account: "cash", amount: 100 }],
     }, undefined, "history");
     expect(r.correct).toBe(false);
-    expect(r.misconception).toBe("credit_purchase_paid_in_cash");
+    // 歴史の単元なので、三分法向けのcredit_purchase_paid_in_cashではなく人名勘定の言葉で書かれた誤解(Issue #614)
+    expect(r.misconception).toBe("credit_purchase_as_cash_payment");
     expect(r.feedback).toContain("まだ払っていません");
   });
 });
