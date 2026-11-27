@@ -1138,7 +1138,8 @@ export function IdeShell({ unit, accounts, netIncomeTerm, balanceSheetTerm, inco
   };
   // 初出の案内。チュートリアル単元とツアー中は出さず、再開などで結果が出ているステップでも出さない
   const firstTime = firstTimeTopic(helpCtx);
-  const firstTimeDone = gradedResult !== null || tweakDone;
+  // 誤答の直後こそ使い方が要るので、済ませたのは正解したとき(予想はどの答えでも進める)に限る(Issue #612)
+  const firstTimeDone = (task.type === "predict" ? gradedResult !== null : (gradedResult?.correct ?? false)) || tweakDone;
   const showFirstTime = firstTime !== null && !isTutorialUnit && !tourActive && !firstTimeDone && !tutorial.seen.includes(firstTime.id);
   // 課題を済ませたら、案内を閉じていなくても見た扱いにする
   useEffect(() => {
