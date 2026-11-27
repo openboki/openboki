@@ -206,7 +206,15 @@ right:
 ```task
 type: classify
 accounts: [cash, bank_deposit, communication_expense, miscellaneous_loss]
-misconceptions: {}
+misconceptions:
+  communication_expense:
+    liability: expense_as_liability
+    asset: expense_as_asset
+    equity: payment_reduces_capital
+  miscellaneous_loss:
+    liability: expense_as_liability
+    asset: expense_as_asset
+    equity: payment_reduces_capital
 hint: 現金と普通預金は資産、通信費と雑損は費用です。
 success: 現金・普通預金は資産、通信費・雑損は費用。雑損は「理由が分からないまま減ったお金」の費用です。
 ```
