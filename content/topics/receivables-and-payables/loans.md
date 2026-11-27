@@ -75,6 +75,9 @@ wrong_patterns:
   - match: { credit: [{ account: cash }] }
     misconception: deposit_is_cash
     feedback: 取引文は普通預金からの振り込みです。現金は動いていないので、右は普通預金です。
+  - match: { credit: [{ account: checking_account }] }
+    misconception: deposit_kinds_confused
+    feedback: 振り込んだのは普通預金の口座からです。当座預金は別の種類の口座で科目も別なので、右は普通預金です。
   - match: { unbalanced: true }
     feedback: 左の合計と右の合計がそろっていません。どちらも100,000にしましょう。
 hint: 左に貸付金100,000、右に普通預金100,000です。
@@ -105,8 +108,8 @@ wrong_patterns:
   - match: { asset: increase, revenue: none }
     misconception: interest_income_as_cash
     feedback: 普通預金が増えるのは合っています。その原因は貸したことで得たもうけなので、受取利息という収益も同時に増えます。
-  - match: { asset: none }
-    no_misconception: 預金が増えることの見落としで、貸付金が減ると見たかはこの回答だけでは決められない
+  - match: { asset: none, revenue: increase }
+    no_misconception: 収益は見えていて預金が増えることだけの見落としで、貸付金が減ると見たかはこの回答だけでは決められない(収益も見ていない回答は貸付金の返済と見た予想で捕まえる)
     feedback: 利息が預金に振り込まれたので、資産は増えます。貸付金は減りませんが、普通預金が増えます。
   - match: { equity: none }
     no_misconception: 収益と純資産のつながりの見落としで、利息の考え方の誤りではない
@@ -142,6 +145,9 @@ wrong_patterns:
   - match: { credit: [{ account: cash }] }
     misconception: deposit_is_cash
     feedback: 取引文は普通預金からの支払いです。現金は動いていないので、右は普通預金です。
+  - match: { credit: [{ account: checking_account }] }
+    misconception: deposit_kinds_confused
+    feedback: 払ったのは普通預金の口座からです。当座預金は別の種類の口座で科目も別なので、右は普通預金です。
   - match: { unbalanced: true }
     feedback: 左の合計と右の合計がそろっていません。どちらも3,000にしましょう。
 hint: 左に支払利息3,000、右に普通預金3,000です。
@@ -167,8 +173,8 @@ wrong_patterns:
     misconception: interest_full_year_for_months
     feedback: 6,000円は1年分です。半年分なので6/12を掛けます。
   - match: 300
-    no_misconception: 2%を0.002とした桁の計算違いで、利息の考え方の誤りではない
-    feedback: 年利率は2%です。300,000 × 0.02 = 6,000が1年分、その半分です。
+    misconception: percent_off_by_ten
+    feedback: 300円は年利率2%を0.002として掛けた金額です。2%は0.02なので、0.002で掛けると10分の1になります。300,000 × 0.02 × 6/12で計算し直しましょう。
   - match: 1500
     no_misconception: 半年分の3,000をさらに半分にした計算の誤りで、考え方の誤解ではない
     feedback: 半年は6/12 = 1/2です。1年分の6,000に1/2を掛け直しましょう。
@@ -221,6 +227,9 @@ wrong_patterns:
   - match: { debit: [{ account: cash }] }
     misconception: deposit_is_cash
     feedback: 取引文は普通預金への振り込みです。現金は動いていないので、左は普通預金です。
+  - match: { debit: [{ account: checking_account }] }
+    misconception: deposit_kinds_confused
+    feedback: 振り込まれた先は普通預金の口座です。当座預金は別の種類の口座で科目も別なので、左は普通預金です。
   - match: { unbalanced: true }
     feedback: 左の合計と右の合計がそろっていません。どちらも100,000にしましょう。
 hint: 左に普通預金100,000、右に貸付金100,000です。
