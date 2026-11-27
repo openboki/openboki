@@ -23,9 +23,9 @@ describe.each([
   { step: 4, debit: "checking_account", credit: "accounts_receivable", amount: 60000, contains: "普通預金", misconception: "deposit_kinds_confused" },
   { step: 5, debit: "accounts_payable", credit: "bank_deposit", amount: 40000, contains: "現金", misconception: "deposit_is_cash" },
   { step: 5, debit: "accounts_payable", credit: "accounts_receivable", amount: 40000, contains: "現金", misconception: undefined },
-  { step: 5, debit: "accounts_payable", credit: "purchases", amount: 40000, contains: "現金", misconception: undefined },
+  { step: 5, debit: "accounts_payable", credit: "purchases", amount: 40000, contains: "現金", misconception: "payable_payment_is_purchase" },
   { step: 5, debit: "accounts_payable_other", credit: "cash", amount: 40000, contains: "買掛金", misconception: "trade_as_nontrade" },
-  { step: 5, debit: "loans_payable", credit: "cash", amount: 40000, contains: "買掛金", misconception: undefined },
+  { step: 5, debit: "loans_payable", credit: "cash", amount: 40000, contains: "買掛金", misconception: "payable_as_loan" },
 ])("仕訳 ステップ$step: 左$debit / 右$credit", ({ step, debit, credit, amount, contains, misconception }) => {
   it("なぜ違うかの説明を返す", () => {
     const result = gradePost(task(step, "post"), entry(debit, credit, amount));
