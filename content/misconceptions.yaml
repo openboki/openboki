@@ -204,6 +204,12 @@ misconceptions:
     correct: 三分法では、商品を買ったときは「仕入」という費用で記録する。売れ残った分だけを決算で繰越商品(資産)に移す
     concepts: [three_account_method, purchase, expense]
     remediation: merchandise/three-account-method
+  - id: merchandise_as_supplies
+    name: 売り物も消耗品費
+    description: 売るために買った商品を、店で使い切る文房具などと同じ「買って使う物」と見て、消耗品費で記録してしまう
+    correct: 売るために買った物は商品で、三分法では仕入で記録する。消耗品費は自分の店で使ってなくなる物の代金。買った物の形ではなく、売るためか自分で使うためかで科目を分ける
+    concepts: [merchandise, purchase, account_title]
+    remediation: merchandise/three-account-method
   - id: revenue_only_when_cash
     name: お金を受け取るまで売上ではない
     description: 商品を渡しても、代金を受け取るまでは売上にならないと思っている
