@@ -110,6 +110,15 @@ wrong_patterns:
   - match: { debit: [{ account: cash }] }
     misconception: inventory_transfer_as_transaction
     feedback: 帳簿の中で別の科目へ移すだけなので、お金は入ってきていません。左に現金は書きません。
+  - match: { credit: [{ account: bank_deposit }] }
+    misconception: inventory_transfer_as_transaction
+    feedback: 1年目から持ち越した商品を、帳簿の中で別の科目へ移すだけです。預金から払ったわけではないので、右に普通預金は書きません。
+  - match: { debit: [{ account: bank_deposit }] }
+    misconception: inventory_transfer_as_transaction
+    feedback: 帳簿の中で別の科目へ移すだけなので、預金は入ってきていません。左に普通預金は書きません。
+  - match: { credit: [{ account: accounts_payable }] }
+    misconception: inventory_transfer_as_transaction
+    feedback: 新しく掛けで仕入れたわけではありません。1年目から持ち越した商品を繰越商品から仕入へ移すだけなので、買掛金は増えません。
   - match: { debit: [{ account: sales }] }
     misconception: inventory_transfer_as_transaction
     feedback: 売った分を取り消すわけではありません。売上は動かさず、期首の商品の金額を帳簿の中で移します。
