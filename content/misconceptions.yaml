@@ -384,6 +384,12 @@ misconceptions:
     correct: 当期純利益は、この期の収益からこの期の費用を引いた残り。前の期までのもうけは繰越利益剰余金として純資産に載っていて、この期の当期純利益とは別に数える
     concepts: [net_income]
     remediation: merchandise/cost-of-goods-sold
+  - id: payable_as_loan
+    name: 後で払う代金も借入金
+    description: 商品の代金を後で払う約束を、お金を借りたことと同じと考えて、買掛金ではなく借入金で記録してしまう
+    correct: 借入金は銀行などからお金を借りて返す義務。商品を掛けで買ったときはお金を借りておらず、代金を後で払う義務を買掛金で記録する。どちらも負債だが「お金を借りたのか、商品を買ったのか」で見分ける
+    concepts: [credit_transaction, accounts_payable, liability]
+    remediation: merchandise/credit-transactions
   - id: credit_purchase_paid_in_cash
     name: 掛けで買っても現金が減る
     description: 商品を掛けで仕入れたり返品したりしたときに、代金をまだ払っていないのに現金の減少や戻りとして記録してしまう
