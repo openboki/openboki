@@ -88,7 +88,7 @@ wrong_patterns:
     misconception: credit_purchase_as_claim
     feedback: 買ったので、絹の口にかかった額が左です。ニッコロはこちらが彼に負う側なので右です。
   - match: { credit: [{ account: cash }] }
-    misconception: credit_purchase_paid_in_cash
+    misconception: credit_purchase_as_cash_payment
     feedback: 代金はまだ払っていません。いま増えたのは、こちらがニッコロに負う分です。
   - match: { credit: [{ account: giovanni }] }
     misconception: personal_account_wrong_party

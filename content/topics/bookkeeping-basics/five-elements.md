@@ -209,6 +209,12 @@ wrong_patterns:
   - match: { credit: [{ account: loans_payable }] }
     misconception: expense_as_liability
     feedback: 家賃は現金で払い終えたので、銀行に返す義務は増えていません。減ったのは現金です。右は現金にしてみましょう。
+  - match: { credit: [{ account: accounts_payable_other }] }
+    misconception: expense_as_liability
+    feedback: 未払金は、後で払う約束のお金を表す科目です。家賃はその場で現金で払い終えたので、後で払う義務は残っていません。減ったのは現金です。右は現金にしてみましょう。
+  - match: { credit: [{ account: accounts_payable }] }
+    misconception: expense_as_liability
+    feedback: 買掛金は、商品を仕入れて代金を後で払う義務を表す科目です。家賃は商品の代金ではなく、現金で払い終えています。減ったのは現金です。右は現金にしてみましょう。
   - match: { unbalanced: true }
     feedback: 左の合計と右の合計がそろっていません。どちらも50,000にしましょう。
 hint: 左に支払家賃50,000、右に現金50,000です。
