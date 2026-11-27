@@ -10,6 +10,8 @@ export interface AccountInfo {
   aliases: string[];
   // 候補検索だけで引く読み(ひらがな)。科目名としては確定させない
   reading?: string[];
+  // 候補検索だけで引く語(手付金 → 前払金・前受金)。複数の科目に当たるので、読みと違って完全一致でも確定させない(Issue #618)
+  keywords?: string[];
   element: Element;
   contra: boolean;
   // 仮勘定(現金過不足)。残高が逆側に出たら、その側の部に正の金額で並べる
@@ -133,10 +135,13 @@ export const toHiragana = (text: string) => text.replace(/[ァ-ヶ]/g, (c) => St
 /** 検索語と候補を比べられる形に揃える。全角・半角、英字の大文字・小文字、空白の有無を無視し、カタカナはひらがなにする */
 export const normalizeSearchText = (text: string) => toHiragana(text.normalize("NFKC").toLowerCase().replace(/\s/g, ""));
 
-/** 入力途中の文字が科目名・別名・読みのどこかに部分一致するか */
+/** 候補検索で見る文字列。科目名・別名・読み・検索語。完全一致の解決(findAccountByName / findAccountByReading)はこれを使わない */
+const searchTexts = (account: AccountInfo) => [account.name, ...account.aliases, ...(account.reading ?? []), ...(account.keywords ?? [])];
+
+/** 入力途中の文字が科目名・別名・読み・検索語のどこかに部分一致するか */
 export function matchesAccountQuery(account: AccountInfo, query: string): boolean {
   const q = normalizeSearchText(query);
-  return [account.name, ...account.aliases, ...(account.reading ?? [])].some((text) => normalizeSearchText(text).includes(q));
+  return searchTexts(account).some((text) => normalizeSearchText(text).includes(q));
 }
 
 /**
@@ -147,7 +152,7 @@ export function matchesAccountQuery(account: AccountInfo, query: string): boolea
  */
 export function groupAccountCandidates(accounts: AccountInfo[], query: string): { element: Element; items: AccountInfo[] }[] {
   const q = normalizeSearchText(query);
-  const prefix = (a: AccountInfo) => [a.name, ...a.aliases, ...(a.reading ?? [])].some((t) => normalizeSearchText(t).startsWith(q));
+  const prefix = (a: AccountInfo) => searchTexts(a).some((t) => normalizeSearchText(t).startsWith(q));
   const matched = accounts.filter((a) => matchesAccountQuery(a, query));
   const byElement = (items: AccountInfo[]) =>
     ELEMENTS.map((element) => ({ element, items: items.filter((a) => a.element === element) })).filter((g) => g.items.length > 0);
