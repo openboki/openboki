@@ -191,7 +191,7 @@ export function ClassifyBoard({ boxes, items, placed, onChange, wrong, disabled 
                 type="button"
                 aria-disabled={disabled || !selected}
                 onClick={(e) => !disabled && selected && place(el, e.detail === 0)}
-                className={`w-full text-left text-xs font-semibold mb-1 rounded hover:bg-background/70 px-1 min-h-10 ${boxStyle(el).text} ${selected ? "" : "opacity-70"}`}
+                className={`w-full text-left text-xs font-semibold mb-1 rounded px-1 min-h-10 ${boxStyle(el).text} ${selected ? "hover:bg-background/70" : "cursor-default"}`}
               >
                 {elementBoxes && <span aria-hidden>{ELEMENT_STYLE[el as Element].symbol} </span>}
                 {label}
