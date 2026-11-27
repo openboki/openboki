@@ -15,6 +15,8 @@ const account = s.object({
   aliases: s.array(s.string()).default([]),
   // 読み(ひらがな)。仕訳エディタの候補検索と用語集の検索で引く。別名(aliases)とは混ぜない
   reading: s.array(s.string()).default([]),
+  // 候補検索だけで引く語(手付金 → 前払金・前受金)。複数の科目に当たる語を置くので、別名と違って科目名には確定させない(Issue #618)
+  keywords: s.array(s.string()).default([]),
   short: s.string(),
   element,
   contra: s.boolean().default(false),
