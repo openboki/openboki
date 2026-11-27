@@ -157,6 +157,15 @@ content/
   contra: true                # 評価勘定。資産の控除項目で、増加は貸方
   why: 固定資産の帳簿価額を直接減らさず、取得原価と減価の累計を別々に見せるためです。
   concepts: [cost_allocation, contra_account]
+- id: advance_payment
+  name: 前払金
+  aliases: [前渡金, 前払い金]
+  reading: [まえばらいきん, まえわたしきん]
+  keywords: [手付金, てつけきん]   # 科目欄の候補検索だけで引く語。前受金にも同じ語を置く。複数の科目に当たるので、別名と違って科目名には確定させない
+  short: 商品を受け取る前に払った手付金
+  element: asset
+  why: 商品を受け取る権利を先に買ってある状態で、将来商品に変わる財産だからです。まだ仕入ではありません。
+  concepts: [asset, advance_payment_receipt]
 - id: cash_over_and_short
   name: 現金過不足
   element: asset              # 仮勘定でも、残高をふだん置く側を書く
