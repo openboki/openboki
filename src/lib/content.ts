@@ -44,6 +44,12 @@ export function getPath(id: string) {
   return paths.find((p) => p.id === id);
 }
 
+/** その単元を含む学習パス。複数のパスに共通の単元(5つの要素と仕訳)のふりかえりで、
+ * テーマ順の「次の単元」とは別に、進んでいるパスの続きへ戻る道を出す(Issue #623) */
+export function pathsOfUnit(unitId: string) {
+  return sortedPaths.filter((p) => p.sections.some((s) => s.units.includes(unitId)));
+}
+
 /** その概念を初めて説明する単元 */
 export function introducingUnit(conceptId: string): Unit | undefined {
   return units.find((u) => u.introduces.includes(conceptId));
