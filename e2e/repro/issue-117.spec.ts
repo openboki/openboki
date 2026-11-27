@@ -108,6 +108,8 @@ test("全部ドラッグで入れて正解でき、間違いは正しい箱へ�
   const status = page.getByRole("status");
   await expect(status.getByText("もう一歩")).toBeVisible();
   await expect(board.getByRole("button", { name: "現金 (間違い)" })).toBeVisible();
+  // 初出の案内は誤答のあとも残り(Issue #612)、説明と合わせて資産の箱を画面の外へ押し出すので閉じる
+  await page.getByRole("note").getByRole("button", { name: "わかった" }).click();
 
   await drag(page, board, "現金", "asset");
   await expect(board.getByText("(間違い)")).toHaveCount(0);
