@@ -228,8 +228,14 @@ accounts: [cash, equipment, loans_payable, capital_stock, sales, rent_expense]
 misconceptions:
   loans_payable:
     revenue: revenue_equals_cash_in
+    equity: capital_loan_confused
+  capital_stock:
+    liability: capital_loan_confused
+  sales:
+    liability: sale_proceeds_as_capital_or_loan
   rent_expense:
     liability: expense_as_liability
+    asset: expense_as_asset
   equipment:
     expense: expense_at_payment
 hint: 現金と備品は財産、借入金は返す義務、資本金は元手、売上はもうけの元、支払家賃は使って残らないお金です。
