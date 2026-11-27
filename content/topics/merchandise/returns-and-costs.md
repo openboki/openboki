@@ -252,6 +252,7 @@ accounts: [shipping_expense, purchases, accounts_payable, accounts_receivable]
 misconceptions:
   purchases:
     asset: purchase_is_asset
+    liability: expense_as_liability
   accounts_receivable:
     revenue: receivable_is_cash
     liability: receivable_payable_confused
