@@ -70,6 +70,7 @@ wrong_patterns:
     misconception: credit_purchase_paid_in_cash
     feedback: 代金はまだ払っていないので、現金は減りません。「後で払う義務」を右に書きます。
   - match: { credit: [{ account: loans_payable }] }
+    misconception: payable_as_loan
     feedback: 借入金は銀行から借りたお金です。商品の代金を後で払う義務は買掛金を使います。
   - match: { debit: [{ account: merchandise_inventory }] }
     misconception: purchase_is_asset
@@ -83,6 +84,7 @@ wrong_patterns:
     misconception: trade_as_nontrade
     feedback: 未払金は商品以外の物を買ったときの義務です。商品の代金を後で払う義務は買掛金を使います。
   - match: { credit: [{ account: sales }] }
+    no_misconception: 仕入の相手に売上を置いた科目の取り違えで、掛け取引の考え方の誤りではない
     feedback: 売上は商品を売ったときの収益です。ここでは豆を買っただけで、まだ何も売っていません。右には「後で払う義務」の買掛金を書きます。
 hint: 左に仕入40,000、右に買掛金40,000です。
 success: 負債の箱に買掛金が現れました。現金は1円も動いていないのに、仕入はきちんと記録されています。
@@ -114,11 +116,13 @@ wrong_patterns:
     misconception: receivable_payable_confused
     feedback: 増えたのは受け取る権利で、払う義務ではありません。負債は動きません。
   - match: { equity: none }
+    no_misconception: 収益と純資産のつながりの見落としで、掛け取引の考え方の誤りではない
     feedback: 売上が増えると当期純利益が増え、そのぶん純資産も増えます。
   - match: { asset: decrease }
     misconception: purchase_is_asset
     feedback: 豆は受け取った日に、仕入という費用で記録済みです。資産として持っていたわけではないので、渡しても資産は減りません。増えるのは「後で代金を受け取る権利」です。
   - match: { expense: increase }
+    misconception: purchase_is_asset
     feedback: 豆の代金は、受け取った日に仕入として記録済みです。売るときに費用をもう一度記録しないので、費用は動きません。
 hint: 売上(収益)が増え、受け取る権利(資産)が増えます。収益が増えれば純資産も増えます。
 success: 豆を渡した時点で、お店の義務は果たされ、代金を受け取る権利が確定します。だから納品の日が売上になり、入金はその権利がお金に変わるだけです。左に現れた「売掛金」がこの権利で、現金と同じ資産の箱に入ります。
@@ -141,12 +145,16 @@ wrong_patterns:
     misconception: revenue_only_when_cash
     feedback: 掛けで納品した60,000も売上です。お金が入る前から収益に入っています。
   - match: 80000
+    misconception: expense_at_payment
     feedback: 掛けで仕入れた分も仕入(費用)です。費用から引き忘れていませんか。
   - match: 230000
+    no_misconception: 売上の合計を答えた問いの読み違いで、考え方の誤りではない
     feedback: それは売上の合計です。費用(仕入90,000と支払家賃100,000)を引きましょう。
   - match: 140000
+    no_misconception: 支払家賃の引き忘れで、掛け取引の考え方の誤りではない
     feedback: 費用は仕入だけではありません。支払家賃も引いていますか。
   - match: 90000
+    no_misconception: 家賃を1か月分で計算した問題文の読み違いで、考え方の誤りではない
     feedback: 支払家賃を1か月分しか引いていません。家賃は毎月末に払っているので、先月までの2か月分100,000が費用です。
 hint: 売上230,000 − 仕入90,000 − 支払家賃100,000。
 success: 当期純利益は40,000円。掛けの代金はまだ1円も動いていないのに、掛けの売上も仕入も、取引の日にちゃんと数えられています。
@@ -184,6 +192,9 @@ wrong_patterns:
   - match: { debit: [{ account: checking_account }] }
     misconception: deposit_kinds_confused
     feedback: 振り込まれた先は普通預金の口座です。当座預金は別の種類の口座で科目も別なので、左は普通預金です。
+  - match: { credit: [{ account: accounts_receivable_other }] }
+    misconception: trade_as_nontrade
+    feedback: 未収入金は商品以外の物を売ったときの権利です。商品の代金を受け取る権利は売掛金なので、右は売掛金です。
 hint: 左に普通預金60,000、右に売掛金60,000です。
 success: 売掛金が消えて、普通預金が現れました。資産の中身が変わっただけで、売上も利益も動いていません。
 ```
@@ -218,13 +229,16 @@ wrong_patterns:
     misconception: deposit_is_cash
     feedback: 問屋には手元の現金で払ったので、銀行の口座は動いていません。右は現金です。
   - match: { credit: [{ account: accounts_receivable }] }
+    no_misconception: 買掛金は合っていて、払ったお金の代わりに売掛金を置いた科目の取り違えで、売掛金・買掛金の意味の誤解ではない
     feedback: 売掛金は別の会社から後で受け取る権利で、問屋への支払いには使えません。問屋にはお金で払ったので、右は現金です。
   - match: { credit: [{ account: purchases }] }
+    misconception: payable_payment_is_purchase
     feedback: 仕入は豆を受け取った日の記録のままで、払っても取り消されません。ここで減るのは払ったお金なので、右は現金です。
   - match: { debit: [{ account: accounts_payable_other }] }
     misconception: trade_as_nontrade
     feedback: 未払金は商品以外の物を買ったときの義務です。商品の代金を払って消えるのは買掛金なので、左は買掛金です。
   - match: { debit: [{ account: loans_payable }] }
+    misconception: payable_as_loan
     feedback: 借入金は銀行から借りたお金です。ここで消えるのは問屋に代金を払う義務なので、左は買掛金です。
 hint: 左に買掛金40,000、右に現金40,000です。
 success: 買掛金が消えました。負債が減り、現金も減る。仕入や費用はここでは動きません。
@@ -247,6 +261,7 @@ misconceptions:
     asset: receivable_payable_confused
   purchases:
     asset: purchase_is_asset
+    liability: expense_as_liability
 hint: 売掛金と普通預金は資産、買掛金は負債、売上は収益、仕入は費用です。
 success: 売掛金は受け取る権利なので資産、買掛金は払う義務なので負債。売上と仕入は、代金がいつ動くかに関係なく収益と費用です。
 ```
