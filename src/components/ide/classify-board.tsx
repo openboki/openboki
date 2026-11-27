@@ -99,6 +99,8 @@ export function ClassifyBoard({ boxes, items, placed, onChange, wrong, disabled 
   const [announcement, setAnnouncement] = useState("");
   const poolChips = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
+  // 自動スクロールはマウスだけにする。スマホでは下段の箱と固定バーが画面の下20%に入り、指を箱に置くとページが動いて箱が逃げる(Issue #619)
+  const touchDrag = useRef(false);
   // タッチは長押しで持ち上げ、チップの上から始めたスワイプでもページをスクロールできるようにする
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
@@ -166,7 +168,11 @@ export function ClassifyBoard({ boxes, items, placed, onChange, wrong, disabled 
       sensors={sensors}
       collisionDetection={pointerWithin}
       accessibility={NO_ANNOUNCEMENTS}
-      onDragStart={({ active }) => setDragging(items.find((a) => a.id === active.id) ?? null)}
+      autoScroll={{ canScroll: () => !touchDrag.current }}
+      onDragStart={({ active, activatorEvent }) => {
+        touchDrag.current = typeof TouchEvent !== "undefined" && activatorEvent instanceof TouchEvent;
+        setDragging(items.find((a) => a.id === active.id) ?? null);
+      }}
       onDragEnd={onDragEnd}
       onDragCancel={() => setDragging(null)}
     >
