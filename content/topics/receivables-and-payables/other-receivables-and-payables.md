@@ -84,6 +84,12 @@ wrong_patterns:
   - match: { debit: [{ account: accounts_payable_other }] }
     misconception: nontrade_receivable_payable_confused
     feedback: 未払金は「後で払う義務」(負債)です。ショーケースを売って代金をこれから受け取るので、増えるのは「後で受け取る権利」である未収入金です。
+  - match: { debit: [{ account: equipment }], credit: [{ account: accounts_receivable }] }
+    misconception: nontrade_as_trade
+    feedback: 向きと科目の2つが違います。減る備品は右、増える「後で受け取る権利」は左です。その権利は、売ったのが商品ではなく備品なので、売掛金ではなく未収入金です。
+  - match: { debit: [{ account: equipment }], credit: [{ account: accounts_payable_other }] }
+    misconception: nontrade_receivable_payable_confused
+    feedback: 向きと科目の2つが違います。減る備品は右、増える科目は左です。増えるのは「後で払う義務」の未払金ではなく、代金をこれから受け取る「後で受け取る権利」の未収入金です。
   - match: { unbalanced: true }
     feedback: 左の合計と右の合計がそろっていません。どちらも50,000にしましょう。
 hint: 左に未収入金50,000、右に備品50,000です。
@@ -148,6 +154,15 @@ wrong_patterns:
   - match: { debit: [{ account: accounts_receivable_other }] }
     misconception: advance_payment_as_receivable
     feedback: 未収入金は、商品以外の物を売った代金を後で受け取る権利です。今回は何も売っていません。お金を先に払って「豆を受け取る権利」を持ったので、前払金です。
+  - match: { debit: [{ account: cash }], credit: [{ account: purchases }] }
+    misconception: advance_is_expense
+    feedback: 向きと科目の2つが違います。払って減る現金は右、増える科目は左です。増えるのは仕入ではありません。豆はまだ届いていないので、届くまでは前払金という資産です。
+  - match: { debit: [{ account: cash }], credit: [{ account: advance_received }] }
+    misconception: advance_payment_received_confused
+    feedback: 向きと科目の2つが違います。払って減る現金は右、増える科目は左です。前受金は手付金を受け取った側の科目で、払った側が増やすのは前払金です。
+  - match: { debit: [{ account: cash }], credit: [{ account: accounts_receivable_other }] }
+    misconception: advance_payment_as_receivable
+    feedback: 向きと科目の2つが違います。払って減る現金は右、増える科目は左です。未収入金は商品以外の物を売った代金を受け取る権利で、今回は何も売っていません。お金を先に払って「豆を受け取る権利」を持ったので、前払金です。
   - match: { unbalanced: true }
     feedback: 左の合計と右の合計がそろっていません。どちらも10,000にしましょう。
 hint: 左に前払金10,000、右に現金10,000です。
